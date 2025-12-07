@@ -61,7 +61,12 @@ function showAdminPanel() {
 
 async function handleLogin(event) {
     event.preventDefault();
-    const password = document.getElementById('adminPasswordInput').value.trim();
+    const passwordInput = document.getElementById('adminPasswordInput') || document.getElementById('clave');
+    if (!passwordInput) {
+        console.error('Campo de contraseña no encontrado');
+        return;
+    }
+    const password = passwordInput.value.trim();
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     
@@ -91,11 +96,11 @@ async function handleLogin(event) {
             localStorage.setItem("adminAuth", "1");
             setAdminSession();
             showAdminPanel();
-            document.getElementById('adminPasswordInput').value = '';
+            passwordInput.value = '';
         } else {
             showIncorrectPasswordModal();
-            document.getElementById('adminPasswordInput').value = '';
-            document.getElementById('adminPasswordInput').focus();
+            passwordInput.value = '';
+            passwordInput.focus();
         }
     } catch (error) {
         console.error('Error verificando clave:', error);

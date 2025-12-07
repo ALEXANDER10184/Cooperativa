@@ -14,8 +14,30 @@ import {
     onConnectionChange
 } from './firebase.js';
 
-// Admin token constant
-const ADMIN_TOKEN = 'esperanza2025';
+// Admin token - will be read from Firebase
+let ADMIN_TOKEN = 'esperanza2025'; // Default fallback
+
+// Initialize admin token from Firebase
+async function initializeAdminToken() {
+    try {
+        const configData = await readDataOnce('config');
+        if (configData && configData.adminToken) {
+            ADMIN_TOKEN = configData.adminToken;
+        } else {
+            // Initialize with default if not exists
+            await saveData('config', {
+                adminToken: 'esperanza2025',
+                ultimaActualizacion: Date.now()
+            });
+        }
+    } catch (error) {
+        console.error('Error initializing admin token:', error);
+        // Keep default token
+    }
+}
+
+// Initialize on load
+initializeAdminToken();
 
 // Check if user is admin (from localStorage)
 function isAdmin() {
@@ -157,6 +179,16 @@ window.readDataOnce = readDataOnce;
 window.isFirebaseConnected = isFirebaseConnected;
 window.onConnectionChange = onConnectionChange;
 
+// Get current admin token
+async function getAdminToken() {
+    try {
+        const configData = await readDataOnce('config');
+        return configData?.adminToken || ADMIN_TOKEN;
+    } catch (error) {
+        return ADMIN_TOKEN;
+    }
+}
+
 // Export secure functions
 window.saveDataSecure = saveDataSecure;
 window.pushDataSecure = pushDataSecure;
@@ -164,4 +196,5 @@ window.updateDataSecure = updateDataSecure;
 window.deleteDataSecure = deleteDataSecure;
 window.isAdmin = isAdmin;
 window.validateData = validateData;
+window.getAdminToken = getAdminToken;
 

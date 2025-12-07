@@ -2,8 +2,6 @@
 // ADMIN PANEL LOGIC
 // ============================================
 
-const ADMIN_PASSWORD = 'esperanza2025';
-
 document.addEventListener('DOMContentLoaded', function() {
     // Check if already authenticated
     if (isAdminAuthenticated()) {
@@ -16,6 +14,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
+    }
+    
+    // Recovery form handler
+    const recoveryForm = document.getElementById('recoveryForm');
+    if (recoveryForm) {
+        recoveryForm.addEventListener('submit', handleRecovery);
+    }
+    
+    // Change password form handler
+    const changePasswordForm = document.getElementById('changePasswordForm');
+    if (changePasswordForm) {
+        changePasswordForm.addEventListener('submit', handleChangePassword);
     }
     
     // Movimiento form handler
@@ -36,15 +46,42 @@ function showAdminPanel() {
     loadAllData();
 }
 
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
     const password = document.getElementById('adminPasswordInput').value;
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
     
-    if (checkAdminPassword(password)) {
-        setAdminSession();
-        showAdminPanel();
-    } else {
-        alert('Contraseña incorrecta');
+    // Disable button
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="material-icons-round spinner">sync</span> Verificando...';
+    
+    try {
+        // Read adminToken from Firebase
+        const configData = await readDataOnce('config');
+        const adminToken = configData?.adminToken || 'esperanza2025'; // Fallback to default
+        
+        if (password === adminToken) {
+            setAdminSession();
+            showAdminPanel();
+            document.getElementById('adminPasswordInput').value = '';
+        } else {
+            showIncorrectPasswordModal();
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('adminPasswordInput').focus();
+        }
+    } catch (error) {
+        console.error('Error verificando clave:', error);
+        // Fallback to local check
+        if (checkAdminPassword(password)) {
+            setAdminSession();
+            showAdminPanel();
+        } else {
+            showIncorrectPasswordModal();
+        }
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
     }
 }
 
@@ -86,6 +123,12 @@ function showTab(tabName) {
         loadBalance();
     } else if (tabName === 'eventos') {
         loadEventos();
+    } else if (tabName === 'configuracion') {
+        // Clear form when opening config tab
+        const form = document.getElementById('changePasswordForm');
+        if (form) {
+            form.reset();
+        }
     }
 }
 
@@ -569,4 +612,195 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// ============================================
+// PASSWORD MANAGEMENT
+// ============================================
+
+// Show incorrect password modal
+function showIncorrectPasswordModal() {
+    const modal = document.getElementById('incorrectPasswordModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+    }
+}
+
+function closeIncorrectPasswordModal() {
+    const modal = document.getElementById('incorrectPasswordModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+// Show recovery modal
+function showRecoveryModal() {
+    const modal = document.getElementById('recoveryModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.getElementById('recoveryEmailInput').focus();
+    }
+}
+
+function closeRecoveryModal() {
+    const modal = document.getElementById('recoveryModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        const form = document.getElementById('recoveryForm');
+        if (form) {
+            form.reset();
+        }
+    }
+}
+
+// Handle recovery form
+async function handleRecovery(event) {
+    event.preventDefault();
+    const email = document.getElementById('recoveryEmailInput').value.trim();
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    if (!email) {
+        alert('Por favor ingresa un correo electrónico');
+        return;
+    }
+    
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="material-icons-round spinner">sync</span> Enviando...';
+    
+    try {
+        // Get current admin token from Firebase
+        const configData = await readDataOnce('config');
+        const adminToken = configData?.adminToken || 'esperanza2025';
+        
+        // Send recovery email
+        const success = await sendRecoveryEmail(email, adminToken);
+        
+        if (success) {
+            alert('Clave enviada al correo registrado');
+            closeRecoveryModal();
+        } else {
+            alert('Error al enviar el correo. Por favor, contacta al administrador.');
+        }
+    } catch (error) {
+        console.error('Error en recuperación:', error);
+        alert('Error al procesar la solicitud');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
+}
+
+// Send recovery email (prepared for EmailJS)
+async function sendRecoveryEmail(email, clave) {
+    try {
+        // TODO: Integrate EmailJS here
+        // Example:
+        // emailjs.send('service_id', 'template_id', {
+        //     to_email: email,
+        //     admin_password: clave
+        // });
+        
+        // For now, log to console (in production, use EmailJS)
+        console.log(`Recovery email would be sent to: ${email}`);
+        console.log(`Admin password: ${clave}`);
+        
+        // Simulate success (replace with actual EmailJS call)
+        return true;
+        
+        // Actual EmailJS implementation would look like:
+        // return emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
+        //     to_email: email,
+        //     admin_password: clave,
+        //     message: `Tu clave de administrador es: ${clave}`
+        // }).then(() => true, () => false);
+    } catch (error) {
+        console.error('Error sending recovery email:', error);
+        return false;
+    }
+}
+
+// Handle change password form
+async function handleChangePassword(event) {
+    event.preventDefault();
+    
+    const currentPassword = document.getElementById('currentPasswordInput').value;
+    const newPassword = document.getElementById('newPasswordInput').value;
+    const confirmPassword = document.getElementById('confirmPasswordInput').value;
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    // Validate passwords match
+    if (newPassword !== confirmPassword) {
+        alert('Las contraseñas no coinciden');
+        return;
+    }
+    
+    // Validate new password is not empty
+    if (!newPassword || newPassword.length === 0) {
+        alert('La nueva contraseña no puede estar vacía');
+        return;
+    }
+    
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="material-icons-round spinner">sync</span> Actualizando...';
+    
+    try {
+        const success = await changeAdminPassword(currentPassword, newPassword);
+        
+        if (success) {
+            alert('Clave actualizada correctamente');
+            // Clear form
+            event.target.reset();
+            // Logout and redirect
+            clearAdminSession();
+            localStorage.removeItem('isAdmin');
+            setTimeout(() => {
+                showLoginScreen();
+                alert('Por favor, inicia sesión nuevamente con la nueva clave');
+            }, 1000);
+        } else {
+            alert('Clave actual incorrecta');
+            document.getElementById('currentPasswordInput').value = '';
+            document.getElementById('currentPasswordInput').focus();
+        }
+    } catch (error) {
+        console.error('Error cambiando clave:', error);
+        alert('Error al cambiar la clave');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
+}
+
+// Change admin password
+async function changeAdminPassword(oldPass, newPass) {
+    try {
+        // Get current admin token from Firebase
+        const configData = await readDataOnce('config');
+        const currentToken = configData?.adminToken || 'esperanza2025';
+        
+        // Validate current password
+        if (oldPass !== currentToken) {
+            return false;
+        }
+        
+        // Update admin token in Firebase
+        const config = configData || {};
+        config.adminToken = newPass;
+        config.ultimaActualizacion = Date.now();
+        
+        const result = await saveData('config', config);
+        
+        if (result.success) {
+            // Also update in firebase-global.js if needed
+            // The adminToken constant will be read from Firebase on next login
+            return true;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error('Error changing password:', error);
+        return false;
+    }
 }

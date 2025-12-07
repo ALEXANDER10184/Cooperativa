@@ -829,34 +829,6 @@ async function handleRecovery(event) {
     return handleRecoveryEmail(event);
 }
 
-// Send recovery email (prepared for EmailJS)
-async function sendRecoveryEmail(email, clave) {
-    try {
-        // TODO: Integrate EmailJS here
-        // Example:
-        // emailjs.send('service_id', 'template_id', {
-        //     to_email: email,
-        //     admin_password: clave
-        // });
-        
-        // For now, log to console (in production, use EmailJS)
-        console.log(`Recovery email would be sent to: ${email}`);
-        console.log(`Admin password: ${clave}`);
-        
-        // Simulate success (replace with actual EmailJS call)
-        return true;
-        
-        // Actual EmailJS implementation would look like:
-        // return emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
-        //     to_email: email,
-        //     admin_password: clave,
-        //     message: `Tu clave de administrador es: ${clave}`
-        // }).then(() => true, () => false);
-    } catch (error) {
-        console.error('Error sending recovery email:', error);
-        return false;
-    }
-}
 
 // Handle change password form
 async function handleChangePassword(event) {

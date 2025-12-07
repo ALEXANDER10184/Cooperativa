@@ -14,6 +14,7 @@ import {
 
 // Importar funciones del panel de administración
 import {
+    switchTab,
     switchMainTab,
     switchAdminTab,
     renderGastosTable,
@@ -539,6 +540,7 @@ window.openEditModal = openEditModal;
 window.closeModal = closeModal;
 window.handleDeleteSocio = handleDeleteSocio;
 window.handleSubmitForm = handleSubmitForm;
+window.switchTab = switchTab;
 window.switchMainTab = switchMainTab;
 window.switchAdminTab = switchAdminTab;
 window.renderPagosTable = renderPagosTable;

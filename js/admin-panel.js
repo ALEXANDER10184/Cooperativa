@@ -81,34 +81,71 @@ function showNotification(message, type = 'info') {
 /**
  * Cambia entre tabs principales (Socios / Administración)
  */
+function switchTab(tab) {
+    const sociosPanel = document.getElementById("panelSocios");
+    const adminPanel = document.getElementById("panelAdmin");
+    const tabSocios = document.getElementById("tabSocios");
+    const tabAdmin = document.getElementById("tabAdmin");
+
+    if (!sociosPanel || !adminPanel || !tabSocios || !tabAdmin) {
+        console.error("❌ Error: algún ID no existe en el DOM", {
+            sociosPanel: !!sociosPanel,
+            adminPanel: !!adminPanel,
+            tabSocios: !!tabSocios,
+            tabAdmin: !!tabAdmin
+        });
+        return;
+    }
+
+    if (tab === "socios") {
+        // Mostrar panel de socios
+        sociosPanel.classList.remove("hidden");
+        sociosPanel.classList.add("active");
+        
+        // Ocultar panel de administración
+        adminPanel.classList.add("hidden");
+        adminPanel.classList.remove("active");
+        
+        // Activar botón de socios
+        tabSocios.classList.add("active");
+        tabAdmin.classList.remove("active");
+        
+        console.log("✅ Tab Socios activado");
+    }
+
+    if (tab === "admin") {
+        // Mostrar panel de administración
+        adminPanel.classList.remove("hidden");
+        adminPanel.classList.add("active");
+        
+        // Ocultar panel de socios
+        sociosPanel.classList.add("hidden");
+        sociosPanel.classList.remove("active");
+        
+        // Activar botón de administración
+        tabAdmin.classList.add("active");
+        tabSocios.classList.remove("active");
+        
+        // Renderizar tablas de administración
+        try {
+            renderGastosTable();
+            renderIngresosTable();
+            loadSociosSelector();
+            console.log("✅ Tab Administración activado y tablas renderizadas");
+        } catch (error) {
+            console.error("❌ Error al renderizar tablas de administración:", error);
+        }
+    }
+}
+
+/**
+ * Alias para compatibilidad
+ */
 function switchMainTab(tabName) {
-    // Ocultar todas las secciones
-    document.querySelectorAll('.tab-content-section').forEach(section => {
-        section.classList.remove('active');
-    });
-
-    // Remover active de todos los botones
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-
-    // Mostrar sección seleccionada
-    const section = document.getElementById(`${tabName}Section`);
-    if (section) {
-        section.classList.add('active');
-    }
-
-    // Activar botón
-    const btn = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
-    if (btn) {
-        btn.classList.add('active');
-    }
-
-    // Si es administración, renderizar datos
-    if (tabName === 'administracion') {
-        renderGastosTable();
-        renderIngresosTable();
-        loadSociosSelector();
+    if (tabName === 'socios') {
+        switchTab('socios');
+    } else if (tabName === 'administracion' || tabName === 'admin') {
+        switchTab('admin');
     }
 }
 
@@ -873,6 +910,7 @@ function showNotification(message, type = 'info') {
 
 // Exportar funciones
 export {
+    switchTab,
     switchMainTab,
     switchAdminTab,
     renderGastosTable,

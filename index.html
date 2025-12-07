@@ -77,12 +77,16 @@
             border-bottom-color: #2563eb;
         }
 
-        .tab-content-section {
+        .tab-panel {
             display: none;
         }
 
-        .tab-content-section.active {
+        .tab-panel.active {
             display: block;
+        }
+
+        .tab-panel.hidden {
+            display: none !important;
         }
 
         .sub-tabs {
@@ -451,16 +455,16 @@
     <div class="main-container">
         <!-- Tabs de Navegación Principal -->
         <div class="tabs">
-            <button class="tab-btn active" id="tabSocios" onclick="switchMainTab('socios')">
+            <button class="tab-btn active" id="tabSocios">
                 <span class="material-icons-round">people</span> Socios
             </button>
-            <button class="tab-btn" id="tabAdministracion" onclick="switchMainTab('administracion')">
+            <button class="tab-btn" id="tabAdmin">
                 <span class="material-icons-round">admin_panel_settings</span> Administración
             </button>
         </div>
 
         <!-- Tab: Socios -->
-        <div id="sociosSection" class="tab-content-section active">
+        <div id="panelSocios" class="tab-panel active">
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title">Gestión de Socios</h2>
@@ -499,7 +503,7 @@
         </div>
 
         <!-- Tab: Administración -->
-        <div id="administracionSection" class="tab-content-section">
+        <div id="panelAdmin" class="tab-panel hidden">
             <!-- Sub-tabs de Administración -->
             <div class="sub-tabs">
                 <button class="sub-tab-btn active" id="subTabGastos" onclick="switchAdminTab('gastos')">

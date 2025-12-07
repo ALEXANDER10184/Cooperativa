@@ -64,12 +64,17 @@
 
                 <div class="form-group">
                     <label class="form-label required" data-i18n="name">Nombre</label>
-                    <input type="text" id="name" class="form-input" required>
+                    <input type="text" id="nombre" class="form-input" required>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label required" data-i18n="lastName">Apellidos</label>
-                    <input type="text" id="lastName" class="form-input" required>
+                    <input type="text" id="apellido" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required">Edad</label>
+                    <input type="number" id="edad" class="form-input" min="0" max="120" required>
                 </div>
 
                 <div class="form-group">
@@ -145,7 +150,7 @@
                 <h3 data-i18n="additionalInfo" class="mt-3">Información Adicional (Opcional)</h3>
 
                 <div class="form-group">
-                    <textarea id="additionalInfo" class="form-textarea"
+                    <textarea id="info" class="form-textarea"
                         data-i18n-placeholder="additionalInfoPlaceholder"></textarea>
                 </div>
 
@@ -167,6 +172,39 @@
     <script src="js/i18n.js"></script>
     <script src="js/main.js"></script>
     <script src="js/registro.js"></script>
+    
+    <!-- Cloudflare Worker Integration -->
+    <script>
+        document.getElementById("btnEnviar").addEventListener("click", async (e) => {
+            e.preventDefault();
+            
+            const payload = {
+                nombre: document.getElementById("nombre").value,
+                apellido: document.getElementById("apellido").value,
+                edad: document.getElementById("edad").value,
+                info: document.getElementById("info").value,
+                timestamp: Date.now()
+            };
+            
+            try {
+                const res = await fetch("https://rough-lake-0310.cacero1018.workers.dev/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                
+                const out = await res.json();
+                
+                if (out.ok) {
+                    alert("Registro completado ✔️");
+                } else {
+                    alert("Error al registrar ❌");
+                }
+            } catch (err) {
+                alert("Error de red ❌");
+            }
+        });
+    </script>
 </body>
 
 </html>

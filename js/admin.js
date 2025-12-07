@@ -76,8 +76,11 @@ async function handleLogin(event) {
     
     try {
         // Get admin token from Firebase using getAdminToken()
+        // getAdminToken is available globally via firebase-global.js
         let tokenReal;
-        if (typeof getAdminToken === 'function') {
+        if (typeof window.getAdminToken === 'function') {
+            tokenReal = await window.getAdminToken();
+        } else if (typeof getAdminToken === 'function') {
             tokenReal = await getAdminToken();
         } else {
             // Fallback: read from config

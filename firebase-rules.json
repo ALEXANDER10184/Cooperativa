@@ -1,29 +1,7 @@
 {
   "rules": {
-    "config": {
-      ".read": true,
-      ".write": true
-    },
-    "socios": {
-      ".read": true,
-      ".write": true
-    },
-    "chat": {
-      ".read": true,
-      ".write": true
-    },
-    "ingresos": {
-      ".read": true,
-      ".write": true
-    },
-    "gastos": {
-      ".read": true,
-      ".write": true
-    },
-    "balance": {
-      ".read": true,
-      ".write": true
-    }
+    ".read": true,
+    ".write": true
   }
 }
 

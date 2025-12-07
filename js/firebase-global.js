@@ -12,37 +12,12 @@ import {
     readDataOnce,
     isFirebaseConnected,
     onConnectionChange,
-    getAdminToken,
     getSocios,
     addSocio,
     updateSocio,
     deleteSocio
 } from './firebase.js';
 
-// Admin token - will be read from Firebase
-let ADMIN_TOKEN = 'esperanza2025'; // Default fallback
-
-// Initialize admin token from Firebase
-async function initializeAdminToken() {
-    try {
-        const configData = await readDataOnce('config');
-        if (configData && configData.adminToken) {
-            ADMIN_TOKEN = configData.adminToken;
-        } else {
-            // Initialize with default if not exists
-            await saveData('config', {
-                adminToken: 'esperanza2025',
-                ultimaActualizacion: Date.now()
-            });
-        }
-    } catch (error) {
-        console.error('Error initializing admin token:', error);
-        // Keep default token
-    }
-}
-
-// Initialize on load
-initializeAdminToken();
 
 // Check if user is admin (from localStorage)
 function isAdmin() {
@@ -72,11 +47,7 @@ async function saveDataSecure(path, data, requireAdmin = false) {
         return { success: false, error: 'Datos inválidos' };
     }
     
-    // Add admin token if admin operation
-    if (requireAdmin) {
-        const currentToken = await getAdminToken();
-        data.adminToken = currentToken;
-    }
+    // Admin operations no longer require token
     
     return await saveData(path, data);
 }
@@ -92,11 +63,7 @@ async function pushDataSecure(path, data, requireAdmin = false) {
         return { success: false, error: 'Datos inválidos' };
     }
     
-    // Add admin token if admin operation
-    if (requireAdmin) {
-        const currentToken = await getAdminToken();
-        data.adminToken = currentToken;
-    }
+    // Admin operations no longer require token
     
     // Add timestamp if not present
     if (!data.timestamp) {
@@ -188,7 +155,6 @@ window.isFirebaseConnected = isFirebaseConnected;
 window.onConnectionChange = onConnectionChange;
 
 // Export CRUD functions globally
-window.getAdminToken = getAdminToken;
 window.getSocios = getSocios;
 window.addSocio = addSocio;
 window.updateSocio = updateSocio;

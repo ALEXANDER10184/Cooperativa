@@ -15,53 +15,8 @@
 </head>
 
 <body>
-    <!-- Login Screen -->
-    <div id="loginScreen">
-        <header class="header">
-            <div class="header-content container">
-                <div class="logo-container">
-                    <div class="logo-icon"><span class="material-icons-round">volunteer_activism</span></div>
-                    <div class="logo-text">
-                        <div class="main-logo-text">Cooperativa Provivienda</div>
-                        <div class="sub-logo-text">Mi Esperanza</div>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <div class="container-sm">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title text-center">Panel Administrativo</h2>
-                </div>
-
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label class="form-label required">Contraseña de administrador</label>
-                        <input type="password" id="adminPassword" class="form-input" required autofocus>
-                    </div>
-
-                    <div class="text-center mb-2">
-                        <a href="#" onclick="event.preventDefault(); showRecoveryModal();" style="color: var(--color-primary); text-decoration: underline; font-size: 0.9em;">
-                            ¿Olvidaste la clave?
-                        </a>
-                    </div>
-
-                    <div class="flex flex-gap">
-                        <button type="button" class="btn btn-outline" onclick="navigateTo('index.html')">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-primary" style="flex: 1;">
-                            <span class="material-icons-round">login</span> Ingresar
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Panel (shown after login) -->
-    <div id="adminPanel" class="hidden">
+    <!-- Admin Panel -->
+    <div id="adminPanel">
         <header class="header">
             <div class="header-content container">
                 <div class="logo-container">
@@ -72,9 +27,6 @@
                     </div>
                 </div>
                 <div class="header-controls">
-                    <button class="icon-btn-light" onclick="logout()" title="Cerrar sesión">
-                        <span class="material-icons-round">logout</span>
-                    </button>
                     <button class="icon-btn-light" onclick="navigateTo('index.html')" title="Volver">
                         <span class="material-icons-round">arrow_back</span>
                     </button>
@@ -100,9 +52,6 @@
                     </button>
                     <button class="btn btn-outline" onclick="showTab('eventos')" id="tabEventos">
                         <span class="material-icons-round">history</span> Eventos
-                    </button>
-                    <button class="btn btn-outline" onclick="showTab('configuracion')" id="tabConfiguracion">
-                        <span class="material-icons-round">settings</span> Configuración
                     </button>
                 </div>
             </div>
@@ -190,83 +139,10 @@
                 </div>
             </div>
 
-            <!-- Configuración Tab -->
-            <div id="configuracionTab" class="tab-content hidden">
-                <div class="card">
-                    <h3 class="card-title">Cambiar Clave de Administrador</h3>
-                    <form id="changePasswordForm">
-                        <div class="form-group">
-                            <label class="form-label required">Clave Actual</label>
-                            <input type="password" id="currentPasswordInput" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label required">Nueva Clave</label>
-                            <input type="password" id="newPasswordInput" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label required">Confirmar Nueva Clave</label>
-                            <input type="password" id="confirmPasswordInput" class="form-input" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            <span class="material-icons-round">lock</span> Guardar Nueva Clave
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal: Clave Incorrecta -->
-    <div id="incorrectPasswordModal" class="hidden modal-overlay">
-        <div class="container-sm" style="margin-top: var(--spacing-lg);">
-            <div class="card relative">
-                <button class="icon-btn-light" style="position: absolute; right: 10px; top: 10px; background: #ddd; color: #333;" onclick="closeIncorrectPasswordModal()">
-                    <span class="material-icons-round">close</span>
-                </button>
-                <div class="text-center mb-2">
-                    <span class="material-icons-round" style="font-size: 3em; color: #dc3545;">error</span>
-                </div>
-                <h3 class="text-center mb-2" style="color: #dc3545;">Clave Incorrecta</h3>
-                <p class="text-center mb-3">La contraseña ingresada no es correcta. Por favor, inténtalo de nuevo.</p>
-                <button class="btn btn-primary btn-block" onclick="closeIncorrectPasswordModal()">
-                    Aceptar
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal: Recuperación de Clave -->
-    <div id="recoveryModal" class="hidden modal-overlay">
-        <div class="container-sm" style="margin-top: var(--spacing-lg);">
-            <div class="card relative">
-                <button class="icon-btn-light" style="position: absolute; right: 10px; top: 10px; background: #ddd; color: #333;" onclick="closeRecoveryModal()">
-                    <span class="material-icons-round">close</span>
-                </button>
-                <div class="text-center mb-2">
-                    <span class="material-icons-round" style="font-size: 3em; color: var(--color-primary);">lock_reset</span>
-                </div>
-                <h3 class="text-center mb-2">Recuperar Clave</h3>
-                <p class="text-center mb-3">Ingresa tu correo electrónico y te enviaremos la clave de administrador.</p>
-                <form id="recoveryForm">
-                    <div class="form-group">
-                        <label class="form-label required">Correo Electrónico</label>
-                        <input type="email" id="recoveryEmailInput" class="form-input" required>
-                    </div>
-                    <div class="flex flex-gap">
-                        <button type="button" class="btn btn-outline" onclick="closeRecoveryModal()">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-primary" style="flex: 1;">
-                            <span class="material-icons-round">send</span> Enviar Clave
-                        </button>
-                    </div>
-                </form>
-            </div>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="js/i18n.js"></script>
     <script src="js/main.js"></script>
     <script src="js/api.js"></script>

@@ -172,19 +172,6 @@ export function readDataOnce(path) {
         });
 }
 
-/**
- * Get admin token from Firebase
- * @returns {Promise<string|null>} Admin token or null if not found
- */
-export async function getAdminToken() {
-    try {
-        const snapshot = await get(ref(db, "config/adminToken"));
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error("Error getting admin token:", error);
-        return null;
-    }
-}
 
 /**
  * Get socios with real-time listener

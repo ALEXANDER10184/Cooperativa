@@ -5,6 +5,7 @@
 import { 
     initDB, 
     getAll, 
+    getItem,
     addItem, 
     updateItem, 
     deleteItem
@@ -12,6 +13,9 @@ import {
 
 // Estado global
 let currentEditId = null;
+
+// Referencias a elementos del DOM (se inicializan después de que el DOM cargue)
+let socioModal, modalTitle, socioForm, nombre, apellido, email, telefono, estado, submitSocioBtn, cancelModalBtn, closeModalBtn;
 
 // ============================================
 // INITIALIZATION
@@ -22,6 +26,9 @@ let currentEditId = null;
  */
 async function initUI() {
     try {
+        // Inicializar referencias del DOM
+        initDOMReferences();
+        
         // Inicializar base de datos
         await initDB();
         console.log('✅ Base de datos inicializada');
@@ -38,6 +45,35 @@ async function initUI() {
 }
 
 /**
+ * Inicializa las referencias a elementos del DOM
+ */
+function initDOMReferences() {
+    socioModal = document.getElementById('socioModal');
+    modalTitle = document.getElementById('modalTitle');
+    socioForm = document.getElementById('socioForm');
+    nombre = document.getElementById('nombre');
+    apellido = document.getElementById('apellido');
+    email = document.getElementById('email');
+    telefono = document.getElementById('telefono');
+    estado = document.getElementById('estado');
+    submitSocioBtn = document.getElementById('submitSocioBtn');
+    cancelModalBtn = document.getElementById('cancelModalBtn');
+    closeModalBtn = document.getElementById('closeModalBtn');
+
+    // Verificar que todos los elementos existan
+    const elements = {
+        socioModal, modalTitle, socioForm, nombre, apellido, email, telefono, estado, submitSocioBtn, cancelModalBtn
+    };
+
+    const missing = Object.entries(elements).filter(([name, el]) => !el).map(([name]) => name);
+    if (missing.length > 0) {
+        console.error('❌ Elementos faltantes:', missing);
+    } else {
+        console.log('✅ Todas las referencias del DOM inicializadas');
+    }
+}
+
+/**
  * Configura los event listeners
  */
 function setupEventListeners() {
@@ -50,24 +86,21 @@ function setupEventListeners() {
         console.error('❌ No se encontró el botón con ID "addSocioBtn"');
     }
 
-    // Listener para botón "Cerrar Modal"
-    const closeModalBtn = document.getElementById('closeModalBtn');
+    // Listener para botón "Cerrar Modal" (si existe)
     if (closeModalBtn) {
         closeModalBtn.addEventListener('click', closeModal);
         console.log('✅ Listener agregado a botón "Cerrar Modal"');
-    } else {
-        console.error('❌ No se encontró el botón con ID "closeModalBtn"');
     }
 
     // Listener para botón "Cancelar"
-    const cancelModalBtn = document.getElementById('cancelModalBtn');
     if (cancelModalBtn) {
         cancelModalBtn.addEventListener('click', closeModal);
         console.log('✅ Listener agregado a botón "Cancelar"');
+    } else {
+        console.error('❌ No se encontró el botón con ID "cancelModalBtn"');
     }
 
     // Listener para formulario
-    const socioForm = document.getElementById('socioForm');
     if (socioForm) {
         socioForm.addEventListener('submit', handleSubmitForm);
         console.log('✅ Listener agregado a formulario "socioForm"');
@@ -113,7 +146,7 @@ function renderSociosTable() {
         socios.forEach(socio => {
             const row = document.createElement('tr');
             
-            const estadoBadge = socio.estado === 'activo' 
+            const estadoBadge = (socio.estado === 'Activo' || socio.estado === 'activo')
                 ? '<span class="badge badge-active">Activo</span>'
                 : '<span class="badge badge-inactive">Inactivo</span>';
 
@@ -176,34 +209,21 @@ function renderSociosTable() {
  */
 function openAddModal() {
     console.log('🔵 openAddModal() llamado');
+    
+    if (!socioModal || !modalTitle || !socioForm) {
+        console.error('❌ Referencias del DOM no inicializadas');
+        return;
+    }
+
     currentEditId = null;
-    const modal = document.getElementById('socioModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const form = document.getElementById('socioForm');
-    const submitBtn = document.getElementById('submitSocioBtn');
-
-    if (!modal) {
-        console.error('❌ Modal con ID "socioModal" no encontrado');
-        return;
-    }
-
-    if (!modalTitle || !form || !submitBtn) {
-        console.error('❌ Elementos del modal no encontrados:', {
-            modalTitle: !!modalTitle,
-            form: !!form,
-            submitBtn: !!submitBtn
-        });
-        return;
-    }
-
-    // Resetear formulario
-    form.reset();
+    socioForm.reset();
     modalTitle.textContent = 'Agregar Socio';
-    submitBtn.textContent = 'Guardar';
-    submitBtn.innerHTML = '<span class="material-icons-round">save</span> Guardar';
+    
+    if (submitSocioBtn) {
+        submitSocioBtn.textContent = 'Guardar';
+    }
 
-    // Mostrar modal
-    modal.classList.remove('hidden');
+    socioModal.classList.remove('hidden');
     console.log('✅ Modal abierto correctamente');
 }
 
@@ -213,40 +233,36 @@ function openAddModal() {
 function openEditModal(id) {
     try {
         console.log('🔵 openEditModal() llamado con ID:', id);
-        currentEditId = id;
         
-        // Buscar el socio usando getItem o getAll
-        const socios = getAll('socios');
-        const socio = socios.find(s => s.id === id);
+        if (!socioModal || !modalTitle || !socioForm || !nombre || !apellido || !email || !telefono || !estado) {
+            console.error('❌ Referencias del DOM no inicializadas');
+            return;
+        }
+
+        // Buscar el socio usando getItem
+        const socio = getItem('socios', id);
 
         if (!socio) {
             alert('Socio no encontrado');
             return;
         }
 
-        const modal = document.getElementById('socioModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const form = document.getElementById('socioForm');
-        const submitBtn = document.getElementById('submitSocioBtn');
+        // Llenar formulario con datos del socio
+        nombre.value = socio.nombre || '';
+        apellido.value = socio.apellido || '';
+        email.value = socio.email || '';
+        telefono.value = socio.telefono || '';
+        estado.value = socio.estado || 'Activo';
 
-        if (!modal || !modalTitle || !form || !submitBtn) {
-            console.error('❌ Elementos del modal no encontrados');
-            return;
+        currentEditId = id;
+        modalTitle.textContent = 'Editar Socio';
+        
+        if (submitSocioBtn) {
+            submitSocioBtn.textContent = 'Actualizar';
         }
 
-        // Llenar formulario con datos del socio
-        document.getElementById('nombre').value = socio.nombre || '';
-        document.getElementById('apellido').value = socio.apellido || '';
-        document.getElementById('email').value = socio.email || '';
-        document.getElementById('telefono').value = socio.telefono || '';
-        document.getElementById('estado').value = socio.estado || 'activo';
-
-        modalTitle.textContent = 'Editar Socio';
-        submitBtn.textContent = 'Actualizar';
-        submitBtn.innerHTML = '<span class="material-icons-round">update</span> Actualizar';
-
         // Mostrar modal
-        modal.classList.remove('hidden');
+        socioModal.classList.remove('hidden');
         console.log('✅ Modal de edición abierto correctamente');
     } catch (error) {
         console.error('❌ Error al abrir modal de edición:', error);
@@ -258,13 +274,12 @@ function openEditModal(id) {
  * Cierra el modal
  */
 function closeModal() {
-    const modal = document.getElementById('socioModal');
-    if (modal) {
-        modal.classList.add('hidden');
+    if (socioModal) {
+        socioModal.classList.add('hidden');
         currentEditId = null;
         console.log('✅ Modal cerrado');
     } else {
-        console.error('❌ Modal con ID "socioModal" no encontrado');
+        console.error('❌ Referencia a socioModal no inicializada');
     }
 }
 
@@ -279,33 +294,38 @@ function handleSubmitForm(event) {
     event.preventDefault();
 
     try {
+        if (!nombre || !apellido || !email || !telefono || !estado) {
+            console.error('❌ Referencias del DOM no inicializadas');
+            return;
+        }
+
         // Obtener valores del formulario
-        const nombre = document.getElementById('nombre').value.trim();
-        const apellido = document.getElementById('apellido').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const telefono = document.getElementById('telefono').value.trim();
-        const estado = document.getElementById('estado').value;
+        const nombreValue = nombre.value.trim();
+        const apellidoValue = apellido.value.trim();
+        const emailValue = email.value.trim();
+        const telefonoValue = telefono.value.trim();
+        const estadoValue = estado.value;
 
         // Validaciones
-        if (!nombre || !apellido || !email || !telefono) {
+        if (!nombreValue || !apellidoValue || !emailValue || !telefonoValue) {
             alert('Por favor completa todos los campos requeridos');
             return;
         }
 
         // Validar email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
+        if (!emailRegex.test(emailValue)) {
             alert('Por favor ingresa un email válido');
             return;
         }
 
         // Preparar datos
         const socioData = {
-            nombre,
-            apellido,
-            email,
-            telefono,
-            estado
+            nombre: nombreValue,
+            apellido: apellidoValue,
+            email: emailValue,
+            telefono: telefonoValue,
+            estado: estadoValue
         };
 
         // Agregar o actualizar
@@ -452,9 +472,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Cerrar modal al hacer clic fuera de él
 document.addEventListener('click', (event) => {
-    const modal = document.getElementById('socioModal');
-    if (modal && !modal.classList.contains('hidden')) {
-        const modalContent = modal.querySelector('.modal');
+    if (socioModal && !socioModal.classList.contains('hidden')) {
+        const modalContent = socioModal.querySelector('.modal-content');
         if (modalContent && !modalContent.contains(event.target)) {
             closeModal();
         }

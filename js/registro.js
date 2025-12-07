@@ -218,15 +218,49 @@ function handleSubmit(event) {
         });
     }
 
-    // 3. Save to Firebase (Replacing saveToStorage)
-    const submitBtn = document.querySelector('button[type="submit"]');
+    // 3. Prepare data for Cloudflare Worker
+    const workerPayload = {
+        nombre: formData.name,
+        apellido: formData.lastName,
+        edad: formData.householdMembers.length > 0 ? formData.householdMembers[0].age : 0,
+        info: formData.additionalInfo || '',
+        timestamp: Date.now()
+    };
+
+    // 4. Save to Firebase and Cloudflare Worker
+    const submitBtn = document.getElementById('btnEnviar');
     const originalText = submitBtn.innerHTML;
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span class="material-icons-round spinner">sync</span> Enviando...';
 
-    pushData('socios', formData)
+    // Send to Cloudflare Worker
+    const workerPromise = fetch('https://rough-lake-0310.cacero1018.workers.dev/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(workerPayload)
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.ok) {
+                console.log('Registro enviado a Cloudflare Worker exitosamente');
+            } else {
+                console.warn('Worker respondió pero sin ok:true');
+            }
+        })
+        .catch(error => {
+            console.error('Error al enviar a Cloudflare Worker:', error);
+        });
+
+    // Save to Firebase (if configured)
+    const firebasePromise = pushData('socios', formData)
+        .catch(error => {
+            console.error('Error al guardar en Firebase:', error);
+        });
+
+    // Wait for both operations
+    Promise.all([workerPromise, firebasePromise])
         .then(() => {
-            showAlert(i18n.t('registrationSuccess') || 'Registro completado con éxito', 'success');
+            showAlert(i18n.t('registrationSuccess') || 'Registro completado con éxito ✔️', 'success');
             document.getElementById('registrationForm').reset();
             setTimeout(() => {
                 navigateTo('index.html');
@@ -234,7 +268,7 @@ function handleSubmit(event) {
         })
         .catch(error => {
             console.error(error);
-            showAlert('Error al registrar. Verifique su conexión.', 'error');
+            showAlert('Error al registrar. Verifique su conexión. ❌', 'error');
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
         });

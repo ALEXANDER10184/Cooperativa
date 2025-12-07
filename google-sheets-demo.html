@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheets Demo - Cooperativa</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .demo-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .demo-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .demo-section h2 {
+            margin-top: 0;
+            color: var(--color-primary, #2563eb);
+        }
+        .result-box {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .btn-demo {
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+        .input-group {
+            margin: 1rem 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .input-group textarea {
+            min-height: 100px;
+            font-family: monospace;
+        }
+        .status {
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <header style="text-align: center; margin-bottom: 2rem;">
+            <h1>📊 Google Sheets API Demo</h1>
+            <p>Integración con Google Sheets usando JavaScript puro</p>
+        </header>
+
+        <!-- Sección: Leer Datos -->
+        <div class="demo-section">
+            <h2>📖 Leer Datos</h2>
+            <p>Lee datos de un rango específico en Google Sheets</p>
+            
+            <div class="input-group">
+                <label for="rangoLeer">Rango (ej: A1:C10 o Hoja1!A1:C10):</label>
+                <input type="text" id="rangoLeer" value="A1:C10" placeholder="A1:C10">
+            </div>
+            
+            <button class="btn btn-primary btn-demo" onclick="leerDatosDemo()">
+                Leer Datos
+            </button>
+            
+            <div id="resultadoLeer" class="result-box" style="display: none;"></div>
+            <div id="statusLeer" class="status" style="display: none;"></div>
+        </div>
+
+        <!-- Sección: Agregar Fila -->
+        <div class="demo-section">
+            <h2>➕ Agregar Fila</h2>
+            <p>Agrega una nueva fila al final de la hoja</p>
+            
+            <div class="input-group">
+                <label for="valoresFila">Valores (separados por comas, ej: Nombre, Apellido, Email):</label>
+                <input type="text" id="valoresFila" value="Nuevo, Registro, prueba@email.com" placeholder="Valor1, Valor2, Valor3">
+            </div>
+            
+            <button class="btn btn-primary btn-demo" onclick="agregarFilaDemo()">
+                Agregar Fila
+            </button>
+            
+            <div id="resultadoAgregar" class="result-box" style="display: none;"></div>
+            <div id="statusAgregar" class="status" style="display: none;"></div>
+        </div>
+
+        <!-- Sección: Actualizar Rango -->
+        <div class="demo-section">
+            <h2>✏️ Actualizar Rango</h2>
+            <p>Actualiza un rango específico con nuevos valores</p>
+            
+            <div class="input-group">
+                <label for="rangoActualizar">Rango (ej: A1:C3):</label>
+                <input type="text" id="rangoActualizar" value="A1:C3" placeholder="A1:C3">
+            </div>
+            
+            <div class="input-group">
+                <label for="valoresActualizar">Valores (una fila por línea, valores separados por comas):</label>
+                <textarea id="valoresActualizar" placeholder="Fila1,Col1,Fila1,Col2,Fila1,Col3
+Fila2,Col1,Fila2,Col2,Fila2,Col3">Fila1,Col1,Fila1,Col2,Fila1,Col3
+Fila2,Col1,Fila2,Col2,Fila2,Col3</textarea>
+            </div>
+            
+            <button class="btn btn-primary btn-demo" onclick="actualizarRangoDemo()">
+                Actualizar Rango
+            </button>
+            
+            <div id="resultadoActualizar" class="result-box" style="display: none;"></div>
+            <div id="statusActualizar" class="status" style="display: none;"></div>
+        </div>
+
+        <!-- Sección: Info del Spreadsheet -->
+        <div class="demo-section">
+            <h2>ℹ️ Información del Spreadsheet</h2>
+            <p>Obtiene información general del documento</p>
+            
+            <button class="btn btn-secondary btn-demo" onclick="obtenerInfoDemo()">
+                Obtener Info
+            </button>
+            
+            <div id="resultadoInfo" class="result-box" style="display: none;"></div>
+            <div id="statusInfo" class="status" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+        import { leerDatos, agregarFila, actualizarRango, obtenerInfo } from './js/googleSheets.js';
+
+        // Hacer funciones disponibles globalmente
+        window.leerDatos = leerDatos;
+        window.agregarFila = agregarFila;
+        window.actualizarRango = actualizarRango;
+        window.obtenerInfo = obtenerInfo;
+
+        // Función para leer datos
+        window.leerDatosDemo = async function() {
+            const rango = document.getElementById('rangoLeer').value.trim();
+            const resultadoDiv = document.getElementById('resultadoLeer');
+            const statusDiv = document.getElementById('statusLeer');
+            
+            if (!rango) {
+                mostrarError(statusDiv, 'Por favor ingresa un rango válido');
+                return;
+            }
+
+            try {
+                resultadoDiv.style.display = 'none';
+                statusDiv.style.display = 'none';
+                
+                const datos = await leerDatos(rango);
+                
+                resultadoDiv.textContent = JSON.stringify(datos, null, 2);
+                resultadoDiv.style.display = 'block';
+                
+                mostrarExito(statusDiv, `✅ Datos leídos exitosamente: ${datos.length} filas`);
+                
+                console.log('Datos leídos:', datos);
+            } catch (error) {
+                mostrarError(statusDiv, `❌ Error: ${error.message}`);
+                console.error('Error al leer datos:', error);
+            }
+        };
+
+        // Función para agregar fila
+        window.agregarFilaDemo = async function() {
+            const valoresInput = document.getElementById('valoresFila').value.trim();
+            const resultadoDiv = document.getElementById('resultadoAgregar');
+            const statusDiv = document.getElementById('statusAgregar');
+            
+            if (!valoresInput) {
+                mostrarError(statusDiv, 'Por favor ingresa valores para la fila');
+                return;
+            }
+
+            try {
+                resultadoDiv.style.display = 'none';
+                statusDiv.style.display = 'none';
+                
+                // Convertir string separado por comas en array
+                const valoresArray = valoresInput.split(',').map(v => v.trim());
+                
+                const resultado = await agregarFila(valoresArray);
+                
+                resultadoDiv.textContent = JSON.stringify(resultado, null, 2);
+                resultadoDiv.style.display = 'block';
+                
+                mostrarExito(statusDiv, `✅ Fila agregada exitosamente en: ${resultado.updatedRange || 'N/A'}`);
+                
+                console.log('Fila agregada:', resultado);
+            } catch (error) {
+                mostrarError(statusDiv, `❌ Error: ${error.message}`);
+                console.error('Error al agregar fila:', error);
+            }
+        };
+
+        // Función para actualizar rango
+        window.actualizarRangoDemo = async function() {
+            const rango = document.getElementById('rangoActualizar').value.trim();
+            const valoresInput = document.getElementById('valoresActualizar').value.trim();
+            const resultadoDiv = document.getElementById('resultadoActualizar');
+            const statusDiv = document.getElementById('statusActualizar');
+            
+            if (!rango || !valoresInput) {
+                mostrarError(statusDiv, 'Por favor completa el rango y los valores');
+                return;
+            }
+
+            try {
+                resultadoDiv.style.display = 'none';
+                statusDiv.style.display = 'none';
+                
+                // Convertir texto en array de arrays (cada línea es una fila)
+                const valoresArray = valoresInput.split('\n')
+                    .map(linea => linea.split(',').map(v => v.trim()))
+                    .filter(fila => fila.length > 0);
+                
+                const resultado = await actualizarRango(rango, valoresArray);
+                
+                resultadoDiv.textContent = JSON.stringify(resultado, null, 2);
+                resultadoDiv.style.display = 'block';
+                
+                mostrarExito(statusDiv, `✅ Rango actualizado exitosamente: ${resultado.updatedRange || 'N/A'}`);
+                
+                console.log('Rango actualizado:', resultado);
+            } catch (error) {
+                mostrarError(statusDiv, `❌ Error: ${error.message}`);
+                console.error('Error al actualizar rango:', error);
+            }
+        };
+
+        // Función para obtener info
+        window.obtenerInfoDemo = async function() {
+            const resultadoDiv = document.getElementById('resultadoInfo');
+            const statusDiv = document.getElementById('statusInfo');
+            
+            try {
+                resultadoDiv.style.display = 'none';
+                statusDiv.style.display = 'none';
+                
+                const info = await obtenerInfo();
+                
+                resultadoDiv.textContent = JSON.stringify(info, null, 2);
+                resultadoDiv.style.display = 'block';
+                
+                mostrarExito(statusDiv, '✅ Información obtenida exitosamente');
+                
+                console.log('Info del spreadsheet:', info);
+            } catch (error) {
+                mostrarError(statusDiv, `❌ Error: ${error.message}`);
+                console.error('Error al obtener info:', error);
+            }
+        };
+
+        // Funciones auxiliares
+        function mostrarExito(div, mensaje) {
+            div.textContent = mensaje;
+            div.className = 'status success';
+            div.style.display = 'block';
+        }
+
+        function mostrarError(div, mensaje) {
+            div.textContent = mensaje;
+            div.className = 'status error';
+            div.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
+

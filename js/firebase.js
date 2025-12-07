@@ -1,25 +1,33 @@
 // ============================================
-// FIREBASE REALTIME DATABASE CONFIGURATION
+// FIREBASE REALTIME DATABASE - MODULAR V9+
 // ============================================
 
-// TODO: Reemplaza este objeto con tu propia configuración de Firebase
-// La obtienes en la consola de Firebase: Project Settings > General > Your apps > SDK setup/config
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { 
+  getDatabase, 
+  ref, 
+  set, 
+  push, 
+  update, 
+  remove, 
+  onValue,
+  get,
+  onDisconnect
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
 const firebaseConfig = {
-    apiKey: "API_KEY_AQUI",
-    authDomain: "tu-proyecto.firebaseapp.com",
-    databaseURL: "https://tu-proyecto-default-rtdb.firebaseio.com",
-    projectId: "tu-proyecto",
-    storageBucket: "tu-proyecto.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcdef123456"
+  apiKey: "AIzaSyD6hwo0J7j5knmBwUDEaloKbbCQe1wFrZI",
+  authDomain: "cooperativa-mi-esperanza.firebaseapp.com",
+  databaseURL: "https://cooperativa-mi-esperanza-default-rtdb.firebaseio.com",
+  projectId: "cooperativa-mi-esperanza",
+  storageBucket: "cooperativa-mi-esperanza.firebasestorage.app",
+  messagingSenderId: "52553896544",
+  appId: "1:52553896544:web:f506f03781432758b22905",
+  measurementId: "G-ZJZK9KVS2R"
 };
 
-// Initialize Firebase if not already initialized
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-
-const db = firebase.database();
+export const app = initializeApp(firebaseConfig);
+export const db = getDatabase(app);
 
 // Connection state monitoring
 let isOnline = navigator.onLine;
@@ -38,8 +46,8 @@ window.addEventListener('offline', () => {
 });
 
 // Monitor Firebase connection
-const connectedRef = db.ref('.info/connected');
-connectedRef.on('value', (snap) => {
+const connectedRef = ref(db, '.info/connected');
+onValue(connectedRef, (snap) => {
     if (snap.val() === true) {
         isOnline = true;
         connectionListeners.forEach(cb => cb(true));
@@ -55,8 +63,8 @@ connectedRef.on('value', (snap) => {
  * @param {object} data - The data to save
  * @returns {Promise} Promise that resolves when data is saved
  */
-function saveData(path, data) {
-    return db.ref(path).set(data)
+export function saveData(path, data) {
+    return set(ref(db, path), data)
         .then(() => {
             console.log(`Data saved to ${path}`);
             return { success: true };
@@ -74,19 +82,18 @@ function saveData(path, data) {
  * @param {object} data - The data to add
  * @returns {Promise} Promise that resolves with the new key
  */
-function pushData(path, data) {
-    const newRef = db.ref(path).push();
-    const newKey = newRef.key;
-    return newRef.set({ ...data, id: newKey })
-        .then(() => {
-            console.log(`Data pushed to ${path} with key: ${newKey}`);
-            return { success: true, key: newKey };
-        })
-        .catch((error) => {
-            console.error("Error pushing data: ", error);
-            showConnectionError();
-            return { success: false, error: error.message };
-        });
+export async function pushData(path, data) {
+    try {
+        const newRef = push(ref(db, path));
+        const newKey = newRef.key;
+        await set(newRef, { ...data, id: newKey });
+        console.log(`Data pushed to ${path} with key: ${newKey}`);
+        return { success: true, key: newKey };
+    } catch (error) {
+        console.error("Error pushing data: ", error);
+        showConnectionError();
+        return { success: false, error: error.message };
+    }
 }
 
 /**
@@ -95,8 +102,8 @@ function pushData(path, data) {
  * @param {object} updates - Object containing fields to update
  * @returns {Promise} Promise that resolves when data is updated
  */
-function updateData(path, updates) {
-    return db.ref(path).update(updates)
+export function updateData(path, partialData) {
+    return update(ref(db, path), partialData)
         .then(() => {
             console.log(`Data updated at ${path}`);
             return { success: true };
@@ -113,8 +120,8 @@ function updateData(path, updates) {
  * @param {string} path - The database path
  * @returns {Promise} Promise that resolves when data is deleted
  */
-function deleteData(path) {
-    return db.ref(path).remove()
+export function deleteData(path) {
+    return remove(ref(db, path))
         .then(() => {
             console.log(`Data removed from ${path}`);
             return { success: true };
@@ -133,19 +140,19 @@ function deleteData(path) {
  * @param {function} onData - Callback function (data) => {}
  * @returns {function} Unsubscribe function
  */
-function listenData(path, onData) {
-    const ref = db.ref(path);
-    const listener = ref.on('value', (snapshot) => {
+export function listenData(path, callback) {
+    const dbRef = ref(db, path);
+    const unsubscribe = onValue(dbRef, (snapshot) => {
         const data = snapshot.val();
-        onData(data);
+        callback(data);
     }, (error) => {
         console.error(`Error listening to ${path}:`, error);
         showConnectionError();
-        onData(null);
+        callback(null);
     });
     
     // Return unsubscribe function
-    return () => ref.off('value', listener);
+    return unsubscribe;
 }
 
 /**
@@ -153,8 +160,8 @@ function listenData(path, onData) {
  * @param {string} path - The database path
  * @returns {Promise} Promise that resolves with the data
  */
-function readDataOnce(path) {
-    return db.ref(path).once('value')
+export function readDataOnce(path) {
+    return get(ref(db, path))
         .then(snapshot => snapshot.val())
         .catch((error) => {
             console.error(`Error reading from ${path}:`, error);
@@ -178,7 +185,7 @@ function showConnectionError() {
  * Check if Firebase is connected
  * @returns {boolean} True if connected
  */
-function isFirebaseConnected() {
+export function isFirebaseConnected() {
     return isOnline;
 }
 
@@ -186,7 +193,7 @@ function isFirebaseConnected() {
  * Add connection state listener
  * @param {function} callback - Function called with connection state (true/false)
  */
-function onConnectionChange(callback) {
+export function onConnectionChange(callback) {
     connectionListeners.push(callback);
     return () => {
         connectionListeners = connectionListeners.filter(cb => cb !== callback);

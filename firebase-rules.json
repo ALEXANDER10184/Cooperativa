@@ -38,8 +38,13 @@
     },
     "balance": {
       ".read": true,
-      ".write": "newData.hasChild('adminToken') && newData.child('adminToken').val() == 'esperanza2025'",
-      ".validate": "newData.hasChildren(['ingresosTotales', 'gastosTotales', 'balanceActual', 'ultimaActualizacion', 'adminToken']) && newData.child('ingresosTotales').isNumber() && newData.child('gastosTotales').isNumber() && newData.child('balanceActual').isNumber() && newData.child('ultimaActualizacion').isNumber() && newData.child('ultimaActualizacion').val() > 0 && newData.child('adminToken').val() == 'esperanza2025'"
+      ".write": "newData.hasChild('adminToken') && (newData.child('adminToken').val() == 'esperanza2025' || (root.child('config').child('adminToken').exists() && newData.child('adminToken').val() == root.child('config').child('adminToken').val()))",
+      ".validate": "newData.hasChildren(['ingresosTotales', 'gastosTotales', 'balanceActual', 'ultimaActualizacion', 'adminToken']) && newData.child('ingresosTotales').isNumber() && newData.child('gastosTotales').isNumber() && newData.child('balanceActual').isNumber() && newData.child('ultimaActualizacion').isNumber() && newData.child('ultimaActualizacion').val() > 0"
+    },
+    "config": {
+      ".read": false,
+      ".write": "!data.exists() || (newData.hasChild('adminToken') && data.hasChild('adminToken') && newData.child('adminToken').val() == data.child('adminToken').val())",
+      ".validate": "newData.hasChildren(['adminToken', 'ultimaActualizacion']) && newData.child('adminToken').isString() && newData.child('adminToken').val().length > 0 && newData.child('ultimaActualizacion').isNumber()"
     },
     ".read": false,
     ".write": false

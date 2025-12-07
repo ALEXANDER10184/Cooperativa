@@ -69,7 +69,8 @@ async function saveDataSecure(path, data, requireAdmin = false) {
     
     // Add admin token if admin operation
     if (requireAdmin) {
-        data.adminToken = ADMIN_TOKEN;
+        const currentToken = await getAdminToken();
+        data.adminToken = currentToken;
     }
     
     return await saveData(path, data);
@@ -88,7 +89,8 @@ async function pushDataSecure(path, data, requireAdmin = false) {
     
     // Add admin token if admin operation
     if (requireAdmin) {
-        data.adminToken = ADMIN_TOKEN;
+        const currentToken = await getAdminToken();
+        data.adminToken = currentToken;
     }
     
     // Add timestamp if not present
@@ -112,7 +114,8 @@ async function updateDataSecure(path, partialData, requireAdmin = false) {
     
     // Add admin token if admin operation
     if (requireAdmin) {
-        partialData.adminToken = ADMIN_TOKEN;
+        const currentToken = await getAdminToken();
+        partialData.adminToken = currentToken;
     }
     
     return await updateData(path, partialData);

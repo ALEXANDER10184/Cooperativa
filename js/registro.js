@@ -79,16 +79,23 @@ function validateForm() {
     clearAllErrors(form);
 
     // Validate name
-    const name = document.getElementById('name');
-    if (!validateRequired(name.value)) {
-        showError(name, i18n.t('required'));
+    const name = document.getElementById('nombre');
+    if (!name || !validateRequired(name.value)) {
+        if (name) showError(name, i18n.t('required'));
         isValid = false;
     }
 
     // Validate last name
-    const lastName = document.getElementById('lastName');
-    if (!validateRequired(lastName.value)) {
-        showError(lastName, i18n.t('required'));
+    const lastName = document.getElementById('apellido');
+    if (!lastName || !validateRequired(lastName.value)) {
+        if (lastName) showError(lastName, i18n.t('required'));
+        isValid = false;
+    }
+
+    // Validate age
+    const age = document.getElementById('edad');
+    if (!age || !validateRequired(age.value)) {
+        if (age) showError(age, i18n.t('required'));
         isValid = false;
     }
 
@@ -180,97 +187,85 @@ function validateForm() {
 // FORM SUBMISSION
 // ============================================
 
-function handleSubmit(event) {
+async function handleSubmit(event) {
     event.preventDefault();
 
+    // Get submit button and save original state
+    const submitBtn = document.getElementById('btnEnviar');
+    if (!submitBtn) {
+        console.error('Botón btnEnviar no encontrado');
+        return;
+    }
+
+    const originalText = submitBtn.innerHTML;
+    const originalDisabled = submitBtn.disabled;
+
+    // Validate form
     if (!validateForm()) {
         return;
     }
 
-    // Collect form data
-    const formData = {
-        name: document.getElementById('name').value.trim(),
-        lastName: document.getElementById('lastName').value.trim(),
-        city: document.getElementById('city').value.trim(),
-        country: document.getElementById('country').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        employmentStatus: document.getElementById('employmentStatus').value,
-        housingType: document.getElementById('housingType').value,
-        urgencyLevel: document.getElementById('urgencyLevel').value,
-        householdCount: document.getElementById('householdCount').value,
-        additionalInfo: document.getElementById('additionalInfo').value.trim(),
-        registrationDate: new Date().toISOString(),
-        status: 'pending', // pending, active, rejected
-        householdMembers: []
-    };
-
-    // 2. Collect Household Members
-    const memberNames = document.querySelectorAll('.member-name');
-    const memberLastnames = document.querySelectorAll('.member-lastname');
-    const memberAges = document.querySelectorAll('.member-age');
-
-    for (let i = 0; i < memberNames.length; i++) {
-        formData.householdMembers.push({
-            name: memberNames[i].value.trim(),
-            lastName: memberLastnames[i].value.trim(),
-            age: parseInt(memberAges[i].value)
-        });
-    }
-
-    // 3. Prepare data for Cloudflare Worker
-    const workerPayload = {
-        nombre: formData.name,
-        apellido: formData.lastName,
-        edad: formData.householdMembers.length > 0 ? formData.householdMembers[0].age : 0,
-        info: formData.additionalInfo || '',
-        timestamp: Date.now()
-    };
-
-    // 4. Save to Firebase and Cloudflare Worker
-    const submitBtn = document.getElementById('btnEnviar');
-    const originalText = submitBtn.innerHTML;
+    // Disable button and show loading state
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span class="material-icons-round spinner">sync</span> Enviando...';
 
-    // Send to Cloudflare Worker
-    const workerPromise = fetch('https://rough-lake-0310.cacero1018.workers.dev/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(workerPayload)
-    })
-        .then(res => res.json())
-        .then(data => {
-            if (data.ok) {
-                console.log('Registro enviado a Cloudflare Worker exitosamente');
-            } else {
-                console.warn('Worker respondió pero sin ok:true');
-            }
-        })
-        .catch(error => {
-            console.error('Error al enviar a Cloudflare Worker:', error);
+    try {
+        // Prepare payload for Cloudflare Worker (exact format required)
+        const workerPayload = {
+            nombre: document.getElementById('nombre').value.trim(),
+            apellido: document.getElementById('apellido').value.trim(),
+            edad: document.getElementById('edad').value.trim(),
+            info: document.getElementById('info').value.trim() || '',
+            timestamp: Date.now()
+        };
+
+        // Validate payload has required fields
+        if (!workerPayload.nombre || !workerPayload.apellido || !workerPayload.edad) {
+            throw new Error('Faltan campos requeridos');
+        }
+
+        // Send to Cloudflare Worker
+        console.log('Enviando datos al Worker:', workerPayload);
+        
+        const response = await fetch('https://rough-lake-0310.cacero1018.workers.dev/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(workerPayload)
         });
 
-    // Save to Firebase (if configured)
-    const firebasePromise = pushData('socios', formData)
-        .catch(error => {
-            console.error('Error al guardar en Firebase:', error);
-        });
+        // Check if response is ok
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-    // Wait for both operations
-    Promise.all([workerPromise, firebasePromise])
-        .then(() => {
-            showAlert(i18n.t('registrationSuccess') || 'Registro completado con éxito ✔️', 'success');
+        // Parse response
+        const data = await response.json();
+        console.log('Respuesta del Worker:', data);
+
+        // Check if Worker returned ok: true
+        if (data.ok === true) {
+            // Success - show alert and reset form
+            alert('Registro completado ✔️');
+            showAlert('Registro completado con éxito ✔️', 'success');
             document.getElementById('registrationForm').reset();
+            
+            // Navigate after short delay
             setTimeout(() => {
                 navigateTo('index.html');
             }, 2000);
-        })
-        .catch(error => {
-            console.error(error);
-            showAlert('Error al registrar. Verifique su conexión. ❌', 'error');
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-        });
+        } else {
+            throw new Error('Worker no devolvió ok: true');
+        }
+
+    } catch (error) {
+        // Error handling
+        console.error('Error al enviar al Worker:', error);
+        alert('Error al registrar ❌\n' + error.message);
+        showAlert('Error al registrar. Verifique su conexión. ❌', 'error');
+        
+        // Restore button state
+        submitBtn.disabled = originalDisabled;
+        submitBtn.innerHTML = originalText;
+    }
 }
 

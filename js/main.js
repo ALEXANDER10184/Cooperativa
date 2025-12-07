@@ -49,6 +49,31 @@ function setupEventListeners() {
     } else {
         console.error('❌ No se encontró el botón con ID "addSocioBtn"');
     }
+
+    // Listener para botón "Cerrar Modal"
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', closeModal);
+        console.log('✅ Listener agregado a botón "Cerrar Modal"');
+    } else {
+        console.error('❌ No se encontró el botón con ID "closeModalBtn"');
+    }
+
+    // Listener para botón "Cancelar"
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    if (cancelModalBtn) {
+        cancelModalBtn.addEventListener('click', closeModal);
+        console.log('✅ Listener agregado a botón "Cancelar"');
+    }
+
+    // Listener para formulario
+    const socioForm = document.getElementById('socioForm');
+    if (socioForm) {
+        socioForm.addEventListener('submit', handleSubmitForm);
+        console.log('✅ Listener agregado a formulario "socioForm"');
+    } else {
+        console.error('❌ No se encontró el formulario con ID "socioForm"');
+    }
 }
 
 // ============================================
@@ -101,15 +126,27 @@ function renderSociosTable() {
                 <td>${estadoBadge}</td>
                 <td>
                     <div class="actions">
-                        <button class="btn-icon btn-icon-edit" onclick="openEditModal('${socio.id}')" title="Editar">
+                        <button class="btn-icon btn-icon-edit edit-btn" data-id="${socio.id}" title="Editar">
                             <span class="material-icons-round">edit</span>
                         </button>
-                        <button class="btn-icon btn-icon-delete" onclick="handleDeleteSocio('${socio.id}')" title="Eliminar">
+                        <button class="btn-icon btn-icon-delete delete-btn" data-id="${socio.id}" title="Eliminar">
                             <span class="material-icons-round">delete</span>
                         </button>
                     </div>
                 </td>
             `;
+            
+            // Agregar listeners a los botones de editar y borrar
+            const editBtn = row.querySelector('.edit-btn');
+            const deleteBtn = row.querySelector('.delete-btn');
+            
+            if (editBtn) {
+                editBtn.addEventListener('click', () => openEditModal(socio.id));
+            }
+            
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', () => handleDeleteSocio(socio.id));
+            }
             
             tbody.appendChild(row);
         });
@@ -140,13 +177,13 @@ function renderSociosTable() {
 function openAddModal() {
     console.log('🔵 openAddModal() llamado');
     currentEditId = null;
-    const modal = document.getElementById('modal');
+    const modal = document.getElementById('socioModal');
     const modalTitle = document.getElementById('modalTitle');
     const form = document.getElementById('socioForm');
-    const submitBtn = document.getElementById('submitBtn');
+    const submitBtn = document.getElementById('submitSocioBtn');
 
     if (!modal) {
-        console.error('❌ Modal con ID "modal" no encontrado');
+        console.error('❌ Modal con ID "socioModal" no encontrado');
         return;
     }
 
@@ -175,7 +212,10 @@ function openAddModal() {
  */
 function openEditModal(id) {
     try {
+        console.log('🔵 openEditModal() llamado con ID:', id);
         currentEditId = id;
+        
+        // Buscar el socio usando getItem o getAll
         const socios = getAll('socios');
         const socio = socios.find(s => s.id === id);
 
@@ -184,10 +224,10 @@ function openEditModal(id) {
             return;
         }
 
-        const modal = document.getElementById('modal');
+        const modal = document.getElementById('socioModal');
         const modalTitle = document.getElementById('modalTitle');
         const form = document.getElementById('socioForm');
-        const submitBtn = document.getElementById('submitBtn');
+        const submitBtn = document.getElementById('submitSocioBtn');
 
         if (!modal || !modalTitle || !form || !submitBtn) {
             console.error('❌ Elementos del modal no encontrados');
@@ -207,6 +247,7 @@ function openEditModal(id) {
 
         // Mostrar modal
         modal.classList.remove('hidden');
+        console.log('✅ Modal de edición abierto correctamente');
     } catch (error) {
         console.error('❌ Error al abrir modal de edición:', error);
         alert('Error al cargar los datos del socio');
@@ -217,13 +258,13 @@ function openEditModal(id) {
  * Cierra el modal
  */
 function closeModal() {
-    const modal = document.getElementById('modal');
+    const modal = document.getElementById('socioModal');
     if (modal) {
         modal.classList.add('hidden');
         currentEditId = null;
         console.log('✅ Modal cerrado');
     } else {
-        console.error('❌ Modal con ID "modal" no encontrado');
+        console.error('❌ Modal con ID "socioModal" no encontrado');
     }
 }
 
@@ -411,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Cerrar modal al hacer clic fuera de él
 document.addEventListener('click', (event) => {
-    const modal = document.getElementById('modal');
+    const modal = document.getElementById('socioModal');
     if (modal && !modal.classList.contains('hidden')) {
         const modalContent = modal.querySelector('.modal');
         if (modalContent && !modalContent.contains(event.target)) {

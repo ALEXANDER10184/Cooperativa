@@ -420,16 +420,16 @@
       </div>
 
     <!-- Modal: Agregar/Editar Socio -->
-    <div id="modal" class="modal-overlay hidden">
+    <div id="socioModal" class="modal-overlay hidden">
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title" id="modalTitle">Agregar Socio</h3>
-                <button class="btn-close" onclick="closeModal()">
+                <button class="btn-close" id="closeModalBtn">
                     <span class="material-icons-round">close</span>
-        </button>
-      </div>
+                </button>
+            </div>
 
-            <form id="socioForm" onsubmit="handleSubmitForm(event)">
+            <form id="socioForm">
                 <div class="form-group">
                     <label class="form-label" for="nombre">Nombre *</label>
                     <input type="text" id="nombre" class="form-input" required>
@@ -459,9 +459,9 @@
         </div>
 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="submitBtn">Guardar</button>
-          </div>
+                    <button type="button" class="btn btn-outline" id="cancelModalBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="submitSocioBtn">Guardar</button>
+                </div>
             </form>
       </div>
     </div>

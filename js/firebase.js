@@ -2,7 +2,7 @@
 // FIREBASE REALTIME DATABASE - MODULAR V9+
 // ============================================
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { 
   getDatabase, 
   ref, 
@@ -11,9 +11,8 @@ import {
   update, 
   remove, 
   onValue,
-  get,
-  onDisconnect
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  get
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD6hwo0J7j5knmBwUDEaloKbbCQe1wFrZI",
@@ -168,6 +167,82 @@ export function readDataOnce(path) {
             showConnectionError();
             return null;
         });
+}
+
+/**
+ * Get admin token from Firebase
+ * @returns {Promise<string|null>} Admin token or null if not found
+ */
+export async function getAdminToken() {
+    try {
+        const snapshot = await get(ref(db, "config/adminToken"));
+        return snapshot.exists() ? snapshot.val() : null;
+    } catch (error) {
+        console.error("Error getting admin token:", error);
+        return null;
+    }
+}
+
+/**
+ * Get socios with real-time listener
+ * @param {function} callback - Callback function (snapshot) => {}
+ * @returns {function} Unsubscribe function
+ */
+export function getSocios(callback) {
+    return onValue(ref(db, "socios"), callback, (error) => {
+        console.error("Error getting socios:", error);
+        callback(null);
+    });
+}
+
+/**
+ * Add a new socio
+ * @param {string} id - Socio ID
+ * @param {object} data - Socio data
+ * @returns {Promise} Promise that resolves when data is saved
+ */
+export async function addSocio(id, data) {
+    try {
+        await set(ref(db, "socios/" + id), data);
+        console.log(`Socio added with id: ${id}`);
+        return { success: true };
+    } catch (error) {
+        console.error("Error adding socio:", error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Update an existing socio
+ * @param {string} id - Socio ID
+ * @param {object} data - Partial data to update
+ * @returns {Promise} Promise that resolves when data is updated
+ */
+export async function updateSocio(id, data) {
+    try {
+        await update(ref(db, "socios/" + id), data);
+        console.log(`Socio updated: ${id}`);
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating socio:", error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Delete a socio
+ * @param {string} id - Socio ID
+ * @returns {Promise} Promise that resolves when data is deleted
+ */
+export async function deleteSocio(id) {
+    try {
+        await remove(ref(db, "socios/" + id));
+        console.log(`Socio deleted: ${id}`);
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting socio:", error);
+        return { success: false, error: error.message };
+    }
 }
 
 /**

@@ -11,7 +11,12 @@ import {
     listenData, 
     readDataOnce,
     isFirebaseConnected,
-    onConnectionChange
+    onConnectionChange,
+    getAdminToken,
+    getSocios,
+    addSocio,
+    updateSocio,
+    deleteSocio
 } from './firebase.js';
 
 // Admin token - will be read from Firebase

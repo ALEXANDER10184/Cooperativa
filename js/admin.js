@@ -3,8 +3,11 @@
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if already authenticated
-    if (isAdminAuthenticated()) {
+    // Check if already authenticated (check both methods for compatibility)
+    const adminAuth = localStorage.getItem("adminAuth") === "1";
+    const isAuth = isAdminAuthenticated();
+    
+    if (adminAuth || isAuth) {
         showAdminPanel();
     } else {
         showLoginScreen();
@@ -41,6 +44,16 @@ function showLoginScreen() {
 }
 
 function showAdminPanel() {
+    // Verify admin auth before showing panel
+    const adminAuth = localStorage.getItem("adminAuth") === "1";
+    const isAuth = isAdminAuthenticated();
+    
+    if (!adminAuth && !isAuth) {
+        // Redirect to login if not authenticated
+        showLoginScreen();
+        return;
+    }
+    
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('adminPanel').classList.remove('hidden');
     loadAllData();
@@ -48,7 +61,7 @@ function showAdminPanel() {
 
 async function handleLogin(event) {
     event.preventDefault();
-    const password = document.getElementById('adminPasswordInput').value;
+    const password = document.getElementById('adminPasswordInput').value.trim();
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     
@@ -57,11 +70,25 @@ async function handleLogin(event) {
     submitBtn.innerHTML = '<span class="material-icons-round spinner">sync</span> Verificando...';
     
     try {
-        // Read adminToken from Firebase
-        const configData = await readDataOnce('config');
-        const adminToken = configData?.adminToken || 'esperanza2025'; // Fallback to default
+        // Get admin token from Firebase using getAdminToken()
+        let tokenReal;
+        if (typeof getAdminToken === 'function') {
+            tokenReal = await getAdminToken();
+        } else {
+            // Fallback: read from config
+            const configData = await readDataOnce('config');
+            tokenReal = configData?.adminToken || null;
+        }
         
-        if (password === adminToken) {
+        if (!tokenReal) {
+            alert("⚠ Error: No se pudo obtener el token de administrador.");
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            return;
+        }
+        
+        if (password === tokenReal) {
+            localStorage.setItem("adminAuth", "1");
             setAdminSession();
             showAdminPanel();
             document.getElementById('adminPasswordInput').value = '';
@@ -72,13 +99,7 @@ async function handleLogin(event) {
         }
     } catch (error) {
         console.error('Error verificando clave:', error);
-        // Fallback to local check
-        if (checkAdminPassword(password)) {
-            setAdminSession();
-            showAdminPanel();
-        } else {
-            showIncorrectPasswordModal();
-        }
+        alert("⚠ Error: No se pudo obtener el token de administrador.");
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
@@ -87,6 +108,7 @@ async function handleLogin(event) {
 
 function logout() {
     clearAdminSession();
+    localStorage.removeItem("adminAuth");
     showLoginScreen();
 }
 
@@ -182,9 +204,25 @@ let unsubscribeMembers = null;
 async function loadMembers() {
     const content = document.getElementById('membersList');
     
-    // Try Firebase first
-    if (typeof listenData === 'function') {
+    // Try getSocios first (new Firebase function)
+    if (typeof getSocios === 'function') {
         // Unsubscribe previous listener if exists
+        if (unsubscribeMembers) {
+            unsubscribeMembers();
+        }
+        
+        unsubscribeMembers = getSocios((snapshot) => {
+            if (!snapshot || !snapshot.exists()) {
+                content.innerHTML = '<p>No hay miembros registrados</p>';
+                return;
+            }
+            
+            const data = snapshot.val();
+            const members = Object.values(data);
+            renderMembersTable(members, content);
+        });
+    } else if (typeof listenData === 'function') {
+        // Fallback to listenData
         if (unsubscribeMembers) {
             unsubscribeMembers();
         }
@@ -548,7 +586,16 @@ async function clearEventos() {
 
 async function viewMember(id) {
     try {
-        // Try Firebase first
+        // Try readDataOnce first
+        if (typeof readDataOnce === 'function') {
+            const member = await readDataOnce(`socios/${id}`);
+            if (member) {
+                alert(`Miembro: ${member.nombre} ${member.apellido}\nEmail: ${member.email}\nTeléfono: ${member.telefono}\nCiudad: ${member.ciudad}\nAporte: €${(member.aporteMensual || 0).toFixed(2)}`);
+                return;
+            }
+        }
+        
+        // Fallback to getMemberById
         if (typeof getMemberById === 'function') {
             const member = await getMemberById(id);
             if (member) {
@@ -582,7 +629,16 @@ async function deactivateMember(id) {
     }
     
     try {
-        // Try Firebase first
+        // Try updateSocio first (new Firebase function)
+        if (typeof updateSocio === 'function') {
+            const result = await updateSocio(id, { estado: 'inactivo' });
+            if (result.success) {
+                alert('Miembro desactivado');
+                return;
+            }
+        }
+        
+        // Fallback to updateMember
         if (typeof updateMember === 'function') {
             const success = await updateMember(id, { estado: 'inactivo' });
             if (success) {
@@ -669,9 +725,19 @@ async function handleRecovery(event) {
     submitBtn.innerHTML = '<span class="material-icons-round spinner">sync</span> Enviando...';
     
     try {
-        // Get current admin token from Firebase
-        const configData = await readDataOnce('config');
-        const adminToken = configData?.adminToken || 'esperanza2025';
+        // Get current admin token from Firebase using getAdminToken()
+        let adminToken;
+        if (typeof getAdminToken === 'function') {
+            adminToken = await getAdminToken();
+        } else {
+            const configData = await readDataOnce('config');
+            adminToken = configData?.adminToken || 'esperanza2025';
+        }
+        
+        if (!adminToken) {
+            alert('Error: No se pudo obtener el token de administrador.');
+            return;
+        }
         
         // Send recovery email
         const success = await sendRecoveryEmail(email, adminToken);
@@ -776,9 +842,18 @@ async function handleChangePassword(event) {
 // Change admin password
 async function changeAdminPassword(oldPass, newPass) {
     try {
-        // Get current admin token from Firebase
-        const configData = await readDataOnce('config');
-        const currentToken = configData?.adminToken || 'esperanza2025';
+        // Get current admin token from Firebase using getAdminToken()
+        let currentToken;
+        if (typeof getAdminToken === 'function') {
+            currentToken = await getAdminToken();
+        } else {
+            const configData = await readDataOnce('config');
+            currentToken = configData?.adminToken || 'esperanza2025';
+        }
+        
+        if (!currentToken) {
+            return false;
+        }
         
         // Validate current password
         if (oldPass !== currentToken) {
@@ -786,15 +861,13 @@ async function changeAdminPassword(oldPass, newPass) {
         }
         
         // Update admin token in Firebase
-        const config = configData || {};
+        const config = await readDataOnce('config') || {};
         config.adminToken = newPass;
         config.ultimaActualizacion = Date.now();
         
         const result = await saveData('config', config);
         
         if (result.success) {
-            // Also update in firebase-global.js if needed
-            // The adminToken constant will be read from Firebase on next login
             return true;
         } else {
             return false;

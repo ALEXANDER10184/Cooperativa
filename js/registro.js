@@ -211,7 +211,7 @@ function handleSubmit(event) {
     const memberAges = document.querySelectorAll('.member-age');
 
     for (let i = 0; i < memberNames.length; i++) {
-        memberData.householdMembers.push({
+        formData.householdMembers.push({
             name: memberNames[i].value.trim(),
             lastName: memberLastnames[i].value.trim(),
             age: parseInt(memberAges[i].value)
@@ -224,7 +224,7 @@ function handleSubmit(event) {
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span class="material-icons-round spinner">sync</span> Enviando...';
 
-    pushData('socios', memberData)
+    pushData('socios', formData)
         .then(() => {
             showAlert(i18n.t('registrationSuccess') || 'Registro completado con éxito', 'success');
             document.getElementById('registrationForm').reset();

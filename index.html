@@ -1,463 +1,477 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cooperativa Provivienda "Mi Esperanza"</title>
-  <!-- Google Fonts: Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Material Icons -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cooperativa ProVivienda - Gestión de Socios</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- Firebase Logic (Modular v9+) -->
-  <script type="module" src="js/firebase-global.js"></script>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-secondary {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #2563eb;
+            border: 2px solid #2563eb;
+        }
+
+        .btn-outline:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        thead {
+            background: #f3f4f6;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            color: #4b5563;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .badge-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon-edit {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .btn-icon-edit:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-icon-delete {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .btn-icon-delete:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+
+        .modal-overlay.hidden {
+            display: none;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .btn-close {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-close:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            text-align: center;
+            color: #6b7280;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .main-container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            table {
+                font-size: 0.875rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <!-- Language Selector (shown first time or when changing language) -->
-  <div id="languageSelector" class="hidden">
-    <div class="container-sm">
-      <div class="logo-area text-center mb-3">
-        <div class="logo-icon-large"><span class="material-icons-round"
-            style="font-size: 4rem; color: var(--color-primary);">volunteer_activism</span></div>
-      </div>
-      <div class="card">
-        <h1 class="text-center" data-i18n="selectLanguage">Selecciona tu idioma</h1>
-        <div class="language-selector">
-          <button class="language-btn" onclick="selectLanguage('es')">
-            <span class="lang-flag">🇪🇸</span><br><span data-i18n="spanish">Español</span>
-          </button>
-          <button class="language-btn" onclick="selectLanguage('en')">
-            <span class="lang-flag">🇬🇧</span><br><span data-i18n="english">English</span>
-          </button>
-          <button class="language-btn" onclick="selectLanguage('fr')">
-            <span class="lang-flag">🇫🇷</span><br><span data-i18n="french">Français</span>
-          </button>
-          <button class="language-btn" onclick="selectLanguage('ro')">
-            <span class="lang-flag">🇷🇴</span><br><span data-i18n="romanian">Română</span>
-          </button>
-          <button class="language-btn" onclick="selectLanguage('ar')">
-            <span class="lang-flag">🇸🇦</span><br><span data-i18n="arabic">العربية</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Access Code Screen (shown after language if not authenticated) -->
-  <div id="accessScreen" class="hidden">
-    <div class="container-sm">
-      <div class="card mb-2">
-        <div class="text-center mb-2">
-          <span class="material-icons-round" style="font-size: 3em; color: var(--color-primary);">lock</span>
-        </div>
-        <h2 class="text-center" data-i18n="accessTitle">Acceso a Socios</h2>
-        <p class="text-center" data-i18n="accessSubtitle">Introduce el código de la cooperativa para entrar.</p>
-
-        <form id="accessForm" onsubmit="handleAccess(event)">
-          <div class="form-group">
-            <input type="password" id="accessCodeInput" class="form-input text-center"
-              style="font-size: 1.5em; letter-spacing: 2px;" placeholder="****" required>
-          </div>
-          <button type="submit" class="btn btn-primary btn-block btn-lg">
-            <span class="material-icons-round">login</span> <span data-i18n="enterBtn">Entrar</span>
-          </button>
-        </form>
-        <p class="text-center mt-2 text-sm text-secondary" style="font-size: 0.9em; opacity: 0.7;">
-          <span data-i18n="accessHelp">El código predeterminado es:</span> <strong>esperanza</strong>
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Content (shown after language selection AND access code) -->
-  <div id="mainContent" class="hidden">
-    <!-- Header -->
-    <header class="header">
-      <div class="header-content container">
-        <div class="logo-container">
-          <div class="logo-icon"><span class="material-icons-round">volunteer_activism</span></div>
-          <div class="logo-text">
-            <div data-i18n="logoText" class="main-logo-text">Cooperativa Provivienda</div>
-            <div data-i18n="logoSubtext" class="sub-logo-text">Mi Esperanza</div>
-          </div>
-        </div>
-        <div class="header-controls">
-          <button class="icon-btn" onclick="toggleLargeText()" title="Aumentar texto"
-            aria-label="Aumentar tamaño de texto">
-            <span class="material-icons-round">text_fields</span>
-          </button>
-        </div>
-      </div>
-      <p class="tagline text-center" data-i18n="tagline">Construyendo hogares, juntos.</p>
-    </header>
-
-    <!-- Stats Section -->
-    <div class="container" id="statsSection" style="display: none;">
-      <div class="card mb-2">
-        <h3 class="text-center mb-2">Resumen de la Cooperativa</h3>
-        <div id="statsContent" class="text-center">
-          <p>Cargando estadísticas...</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Navigation Menu -->
-    <div class="container">
-      <div class="nav-menu">
-        <button class="btn btn-primary btn-block btn-lg btn-menu" onclick="navigateTo('registro.html')">
-          <span class="material-icons-round">how_to_reg</span>
-          <span data-i18n="registerBtn">Registrarse como nuevo socio</span>
-        </button>
-
-        <button class="btn btn-secondary btn-block btn-lg btn-menu" onclick="navigateTo('admin.html')">
-          <span class="material-icons-round">admin_panel_settings</span>
-          <span data-i18n="adminBtn">Acceder como administrador</span>
-        </button>
-
-        <button class="btn btn-primary btn-block btn-lg btn-menu" onclick="navigateTo('chat.html')">
-          <span class="material-icons-round">forum</span>
-          <span data-i18n="chatBtn">Chat comunitario</span>
-        </button>
-
-        <button class="btn btn-outline btn-block btn-lg btn-menu" onclick="navigateTo('balance.html')">
-          <span class="material-icons-round">account_balance</span>
-          <span data-i18n="balanceBtn">Ver Balance de la Cooperativa</span>
-        </button>
-
-        <button class="btn btn-outline btn-block btn-lg btn-menu" onclick="showQRModal()">
-          <span class="material-icons-round">qr_code_2</span>
-          <span data-i18n="shareBtn">Compartir App (QR)</span>
-        </button>
-      </div>
-
-      <!-- Change Language Button -->
-      <div class="text-center mt-3">
-        <button class="btn btn-text" onclick="showLanguageSelector()">
-          <span class="material-icons-round">translate</span> <span data-i18n="changeLanguage">Cambiar idioma</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Database Demo Section -->
-    <div class="container" style="margin-top: 2rem;">
-      <div class="card">
-        <h3 class="card-title">🧪 Pruebas de Base de Datos (JSON + localStorage)</h3>
-        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-          <button class="btn btn-primary" onclick="testAddSocio()">➕ Agregar Socio</button>
-          <button class="btn btn-secondary" onclick="testListSocios()">📋 Mostrar Socios</button>
-          <button class="btn btn-outline" onclick="testEditSocio()">✏️ Editar Socio</button>
-          <button class="btn btn-danger" onclick="testDeleteSocio()">🗑️ Borrar Socio</button>
-          <button class="btn btn-outline" onclick="testShowFullDB()">📊 Ver DB Completa</button>
-          <button class="btn btn-outline" onclick="testClearSocios()">🧹 Limpiar Socios</button>
-        </div>
-        <div id="dbOutput" style="background: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; padding: 1rem; font-family: monospace; font-size: 0.9em; max-height: 400px; overflow-y: auto; white-space: pre-wrap; display: none;"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- QR Code Modal -->
-  <div id="qrModal" class="hidden modal-overlay">
-    <div class="container-sm" style="margin-top: var(--spacing-lg);">
-      <div class="card relative">
-        <button class="icon-btn-light"
-          style="position: absolute; right: 10px; top: 10px; background: #ddd; color: #333;" onclick="closeQRModal()">
-          <span class="material-icons-round">close</span>
-        </button>
-        <h3 class="text-center mb-1">Compartir App</h3>
-
-        <div class="qr-container">
-          <img id="qrImage" src="" alt="QR Code" class="qr-image" />
-          <p class="qr-help">Escanea este código para abrir la app en otro dispositivo</p>
-        </div>
-
-        <!-- Warning for local usage -->
-        <div id="localWarning" class="alert alert-warning hidden" style="font-size: 0.9em;">
-          <strong>⚠️ Importante:</strong> Parece que estás ejecutando la app localmente. Para que este código QR
-          funcione en otros móviles, primero debes <strong>publicar la app en internet</strong> (ej. Netlify, Vercel).
-          <br><br>
-          Si ya tienes una URL pública, escríbela abajo.
-        </div>
-
-        <div class="form-group mb-0">
-          <label class="form-label text-center">Enlace de la App</label>
-          <div class="flex flex-gap">
-            <input type="text" id="qrUrlInput" class="form-input text-center" onchange="generateQR()">
-            <button class="btn btn-primary" onclick="generateQR()" title="Actualizar QR">
-              <span class="material-icons-round">refresh</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script src="js/i18n.js"></script>
-  <script type="module" src="js/main.js"></script>
-  <script src="js/api.js"></script>
-  
-  <!-- Database Demo Section -->
-  <div class="container" style="margin-top: 2rem;">
-    <div class="card">
-      <h3 class="card-title">🧪 Pruebas de Base de Datos (JSON + localStorage)</h3>
-      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-        <button class="btn btn-primary" onclick="testAddSocio()">➕ Agregar Socio</button>
-        <button class="btn btn-secondary" onclick="testListSocios()">📋 Mostrar Socios</button>
-        <button class="btn btn-outline" onclick="testEditSocio()">✏️ Editar Socio</button>
-        <button class="btn btn-danger" onclick="testDeleteSocio()">🗑️ Borrar Socio</button>
-        <button class="btn btn-outline" onclick="testShowFullDB()">📊 Ver DB Completa</button>
-        <button class="btn btn-outline" onclick="testClearSocios()">🧹 Limpiar Socios</button>
-      </div>
-      <div id="dbOutput" style="background: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; padding: 1rem; font-family: monospace; font-size: 0.9em; max-height: 400px; overflow-y: auto; white-space: pre-wrap; display: none;"></div>
-    </div>
-  </div>
-
-  <script type="module">
-    import { initializeDatabase } from './js/main.js';
-    
-    // Inicializar base de datos al cargar
-    document.addEventListener('DOMContentLoaded', async () => {
-      await initializeDatabase();
-      updateOutput('✅ Base de datos inicializada. Listo para usar.');
-    });
-
-    // Función auxiliar para actualizar el output
-    function updateOutput(message, data = null) {
-      const outputDiv = document.getElementById('dbOutput');
-      if (outputDiv) {
-        outputDiv.style.display = 'block';
-        if (data) {
-          outputDiv.textContent = message + '\n\n' + JSON.stringify(data, null, 2);
-        } else {
-          outputDiv.textContent = message;
-        }
-        outputDiv.scrollTop = outputDiv.scrollHeight;
-      }
-      console.log(message, data || '');
-    }
-
-    // Test: Agregar socio
-    window.testAddSocio = async function() {
-      try {
-        const nuevoSocio = {
-          nombre: 'Test',
-          apellido: 'Usuario',
-          email: 'test@example.com',
-          telefono: '123456789',
-          ciudad: 'Bogotá',
-          estado: 'activo'
-        };
-        
-        const socio = window.db.addItem('socios', nuevoSocio);
-        updateOutput('✅ Socio agregado exitosamente:', socio);
-      } catch (error) {
-        updateOutput('❌ Error al agregar socio: ' + error.message);
-      }
-    };
-
-    // Test: Listar socios
-    window.testListSocios = function() {
-      try {
-        const socios = window.db.getAll('socios');
-        updateOutput(`📋 Total de socios: ${socios.length}`, socios);
-      } catch (error) {
-        updateOutput('❌ Error al listar socios: ' + error.message);
-      }
-    };
-
-    // Test: Editar socio
-    window.testEditSocio = function() {
-      try {
-        const socios = window.db.getAll('socios');
-        if (socios.length === 0) {
-          updateOutput('⚠️ No hay socios para editar. Agrega uno primero.');
-          return;
-        }
-        
-        const primerSocio = socios[0];
-        const actualizado = window.db.updateItem('socios', primerSocio.id, {
-          nombre: 'Editado',
-          apellido: 'Modificado',
-          email: 'editado@example.com'
-        });
-        
-        if (actualizado) {
-          updateOutput('✅ Socio actualizado:', actualizado);
-        } else {
-          updateOutput('⚠️ Socio no encontrado');
-        }
-      } catch (error) {
-        updateOutput('❌ Error al editar socio: ' + error.message);
-      }
-    };
-
-    // Test: Borrar socio
-    window.testDeleteSocio = function() {
-      try {
-        const socios = window.db.getAll('socios');
-        if (socios.length === 0) {
-          updateOutput('⚠️ No hay socios para borrar.');
-          return;
-        }
-        
-        const ultimoSocio = socios[socios.length - 1];
-        const eliminado = window.db.deleteItem('socios', ultimoSocio.id);
-        
-        if (eliminado) {
-          updateOutput(`✅ Socio con ID ${ultimoSocio.id} eliminado exitosamente.`);
-        } else {
-          updateOutput('⚠️ Socio no encontrado');
-        }
-      } catch (error) {
-        updateOutput('❌ Error al borrar socio: ' + error.message);
-      }
-    };
-
-    // Test: Mostrar DB completa
-    window.testShowFullDB = function() {
-      try {
-        const fullDB = window.db.getFullDB();
-        updateOutput('📊 Base de datos completa:', fullDB);
-      } catch (error) {
-        updateOutput('❌ Error al obtener DB completa: ' + error.message);
-      }
-    };
-
-    // Test: Limpiar socios
-    window.testClearSocios = function() {
-      try {
-        if (confirm('¿Estás seguro de limpiar todos los socios?')) {
-          const limpiado = window.db.clearCollection('socios');
-          if (limpiado) {
-            updateOutput('✅ Colección "socios" limpiada exitosamente.');
-          } else {
-            updateOutput('⚠️ No se pudo limpiar la colección');
-          }
-        }
-      } catch (error) {
-        updateOutput('❌ Error al limpiar socios: ' + error.message);
-      }
-    };
-  </script>
-  <script>
-    // Load and display stats
-    async function loadStats() {
-      try {
-        const result = await statsAPI.obtener();
-        if (result.ok && result.data) {
-          const stats = result.data;
-          const statsSection = document.getElementById('statsSection');
-          const statsContent = document.getElementById('statsContent');
-          
-          statsContent.innerHTML = `
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1rem;">
-              <div>
-                <div style="font-size: 2em; font-weight: bold; color: var(--color-primary);">${stats.miembrosTotales || 0}</div>
-                <div>Miembros Totales</div>
-              </div>
-              <div>
-                <div style="font-size: 2em; font-weight: bold; color: var(--color-primary);">${stats.miembrosActivos || 0}</div>
-                <div>Miembros Activos</div>
-              </div>
-              <div>
-                <div style="font-size: 2em; font-weight: bold; color: var(--color-primary);">${stats.mensajesChat || 0}</div>
-                <div>Mensajes en Chat</div>
-              </div>
-              <div>
-                <div style="font-size: 2em; font-weight: bold; color: var(--color-primary);">€${(stats.saldoGlobal || 0).toFixed(2)}</div>
-                <div>Saldo Global</div>
-              </div>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="navbar-title">
+                <span class="material-icons-round">volunteer_activism</span>
+                Cooperativa ProVivienda
             </div>
-          `;
-          statsSection.style.display = 'block';
-        }
-      } catch (error) {
-        console.error('Error cargando stats:', error);
-      }
-    }
-    
-    // Load stats when main content is shown
-    document.addEventListener('DOMContentLoaded', function() {
-      if (document.getElementById('mainContent') && !document.getElementById('mainContent').classList.contains('hidden')) {
-        loadStats();
-      }
-    });
-  </script>
-  <script>
-    // Check if language is already selected
-    function initializePage() {
-      const currentLang = i18n.getStoredLanguage();
+        </div>
+    </nav>
 
-      // Check large text preference
-      if (localStorage.getItem('largeText') === 'true') {
-        document.body.classList.add('large-text-mode');
-      }
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Card: Gestión de Socios -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Gestión de Socios</h2>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    <span class="material-icons-round">add</span>
+                    Agregar Socio
+                </button>
+            </div>
 
-      if (!currentLang) {
-        // Show language selector first
-        showScreen('languageSelector');
-      } else if (!isMemberAuthenticated()) {
-        // Show access code screen if not authenticated
-        i18n.setLanguage(currentLang); // Ensure lang is set
-        showScreen('accessScreen');
-        i18n.translatePage();
-      } else {
-        // Show main content
-        showScreen('mainContent');
-        i18n.translatePage();
-      }
-    }
+            <!-- Tabla de Socios -->
+            <div class="table-container">
+                <table id="sociosTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sociosTableBody">
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div class="empty-state-icon">📋</div>
+                                <p>No hay socios registrados</p>
+                                <p style="font-size: 0.875rem; margin-top: 0.5rem;">Haz clic en "Agregar Socio" para comenzar</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-    function showScreen(screenId) {
-      ['languageSelector', 'accessScreen', 'mainContent'].forEach(id => {
-        const el = document.getElementById(id);
-        if (id === screenId) el.classList.remove('hidden');
-        else el.classList.add('hidden');
-      });
-    }
+    <!-- Modal: Agregar/Editar Socio -->
+    <div id="socioModal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Agregar Socio</h3>
+                <button class="btn-close" onclick="closeModal()">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
 
-    function selectLanguage(lang) {
-      i18n.setLanguage(lang);
+            <form id="socioForm" onsubmit="handleSubmitForm(event)">
+                <div class="form-group">
+                    <label class="form-label" for="nombre">Nombre *</label>
+                    <input type="text" id="nombre" class="form-input" required>
+                </div>
 
-      if (!isMemberAuthenticated()) {
-        showScreen('accessScreen');
-      } else {
-        showScreen('mainContent');
-      }
-      i18n.translatePage();
-    }
+                <div class="form-group">
+                    <label class="form-label" for="apellido">Apellido *</label>
+                    <input type="text" id="apellido" class="form-input" required>
+                </div>
 
-    function showLanguageSelector() {
-      showScreen('languageSelector');
-      i18n.translatePage();
-    }
+                <div class="form-group">
+                    <label class="form-label" for="email">Email *</label>
+                    <input type="email" id="email" class="form-input" required>
+                </div>
 
-    function toggleLargeText() {
-      document.body.classList.toggle('large-text-mode');
-      localStorage.setItem('largeText', document.body.classList.contains('large-text-mode'));
-    }
+                <div class="form-group">
+                    <label class="form-label" for="telefono">Teléfono *</label>
+                    <input type="tel" id="telefono" class="form-input" required>
+                </div>
 
-    function handleAccess(event) {
-      event.preventDefault();
-      const code = document.getElementById('accessCodeInput').value.trim();
+                <div class="form-group">
+                    <label class="form-label" for="estado">Estado *</label>
+                    <select id="estado" class="form-select" required>
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                    </select>
+                </div>
 
-      if (checkMemberPassword(code)) {
-        setMemberSession();
-        showScreen('mainContent');
-        i18n.translatePage();
-      } else {
-        alert(i18n.t('accessError') || 'Código incorrecto');
-      }
-    }
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', initializePage);
-  </script>
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Cooperativa ProVivienda - Versión 1.0.0</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="js/main.js"></script>
 </body>
-
 </html>

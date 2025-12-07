@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Cooperativa Provivienda</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Firebase SDKs (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <!-- Firebase Logic -->
+    <script src="js/firebase.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content container">
+            <div class="logo-container">
+                <div class="logo-icon"><span class="material-icons-round">volunteer_activism</span></div>
+                <div class="logo-text">
+                    <div data-i18n="logoText" class="main-logo-text">Cooperativa Provivienda</div>
+                    <div data-i18n="logoSubtext" class="sub-logo-text">Mi Esperanza</div>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button class="icon-btn-light" onclick="navigateTo('index.html')" title="Volver">
+                    <span class="material-icons-round">arrow_back</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-sm">
+        <!-- Welcome Message -->
+        <div class="card mb-2">
+            <div class="flex flex-gap align-center text-center-mobile flex-column-mobile">
+                <span class="material-icons-round" style="font-size: 3em; color: var(--color-primary);">handshake</span>
+                <p class="mb-0" style="font-size: 1.1em; line-height: 1.6;" data-i18n="welcomeMessage">
+                    Bienvenido. Estás a punto de registrarte en la Cooperativa Provivienda 'Mi Esperanza', un proyecto
+                    comunitario para apoyarnos mutuamente en temas de vivienda.
+                </p>
+            </div>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title text-center" data-i18n="registrationTitle">Registro de Nuevo Socio</h2>
+            </div>
+
+            <form id="registrationForm">
+                <!-- Personal Information -->
+                <h3 data-i18n="personalInfo">Información Personal</h3>
+
+                <div class="form-group">
+                    <label class="form-label required" data-i18n="name">Nombre</label>
+                    <input type="text" id="name" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required" data-i18n="lastName">Apellidos</label>
+                    <input type="text" id="lastName" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required" data-i18n="city">Ciudad donde vive</label>
+                    <input type="text" id="city" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required" data-i18n="country">País de nacimiento</label>
+                    <input type="text" id="country" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required" data-i18n="phone">Teléfono</label>
+                    <input type="tel" id="phone" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required" data-i18n="email">Correo electrónico</label>
+                    <input type="email" id="email" class="form-input" required>
+                </div>
+
+                <!-- Employment and Housing -->
+                <h3 data-i18n="employmentInfo" class="mt-3">Situación Laboral y Vivienda</h3>
+
+                <div class="form-group">
+                    <label class="form-label required" data-i18n="employmentStatus">Situación laboral</label>
+                    <select id="employmentStatus" class="form-select" required>
+                        <option value="">--</option>
+                        <option value="fixed" data-i18n="employment_fixed">Empleo fijo</option>
+                        <option value="informal" data-i18n="employment_informal">Empleo informal</option>
+                        <option value="unemployed" data-i18n="employment_unemployed">Desempleado/a</option>
+                        <option value="retired" data-i18n="employment_retired">Jubilado/a</option>
+                        <option value="other" data-i18n="employment_other">Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required" data-i18n="housingType">Tipo de vivienda actual</label>
+                    <select id="housingType" class="form-select" required>
+                        <option value="">--</option>
+                        <option value="rent" data-i18n="housing_rent">Alquiler</option>
+                        <option value="family" data-i18n="housing_family">Vivienda familiar</option>
+                        <option value="inadequate" data-i18n="housing_inadequate">Vivienda propia inadecuada</option>
+                        <option value="none" data-i18n="housing_none">Sin vivienda</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required" data-i18n="urgencyLevel">Nivel de urgencia habitacional</label>
+                    <input type="range" id="urgencyLevel" class="form-range" min="1" max="5" value="3" required>
+                    <div class="text-center mt-1"
+                        style="font-size: 1.5em; font-weight: 700; color: var(--color-primary);">
+                        <span id="urgencyValue">3</span> / 5
+                    </div>
+                    <small class="form-help text-center" data-i18n="urgencyHelp">1 = Baja urgencia, 5 = Urgencia
+                        máxima</small>
+                </div>
+
+                <!-- Household Information -->
+                <h3 data-i18n="householdInfo" class="mt-3">Composición del Hogar</h3>
+
+                <div class="form-group">
+                    <label class="form-label required" data-i18n="householdMembers">Número de personas en el
+                        hogar</label>
+                    <input type="number" id="householdCount" class="form-input" min="1" value="1" required>
+                    <small class="form-help" data-i18n="householdMembersHelp">Incluyéndote a ti</small>
+                </div>
+
+                <div id="householdMembersContainer"></div>
+
+                <!-- Additional Information -->
+                <h3 data-i18n="additionalInfo" class="mt-3">Información Adicional (Opcional)</h3>
+
+                <div class="form-group">
+                    <textarea id="additionalInfo" class="form-textarea"
+                        data-i18n-placeholder="additionalInfoPlaceholder"></textarea>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex flex-gap mt-3">
+                    <button type="button" class="btn btn-outline" onclick="navigateTo('index.html')">
+                        <span data-i18n="cancelBtn">Cancelar</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        <span class="material-icons-round">check_circle</span> <span
+                            data-i18n="submitBtn">Registrar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/i18n.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/registro.js"></script>
+</body>
+
+</html>

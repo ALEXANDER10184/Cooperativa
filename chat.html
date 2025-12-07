@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Comunitario - Cooperativa Provivienda</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Firebase SDKs (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <!-- Firebase Logic -->
+    <script src="js/firebase.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content container">
+            <div class="logo-container">
+                <div class="logo-icon"><span class="material-icons-round">volunteer_activism</span></div>
+                <div class="logo-text">
+                    <div data-i18n="logoText" class="main-logo-text">Cooperativa Provivienda</div>
+                    <div data-i18n="logoSubtext" class="sub-logo-text">Mi Esperanza</div>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button class="icon-btn-light" onclick="navigateTo('index.html')" title="Volver">
+                    <span class="material-icons-round">arrow_back</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title text-center" data-i18n="chatTitle">Chat Comunitario</h2>
+            </div>
+
+            <!-- Chat Container -->
+            <div class="chat-container">
+                <!-- Messages -->
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Populated by JavaScript -->
+                </div>
+
+                <!-- Input Form -->
+                <form id="chatForm" class="chat-form">
+                    <div class="form-group mb-1">
+                        <label class="form-label-hidden" for="userName">Tu nombre</label>
+                        <input type="text" id="userName" class="form-input" data-i18n-placeholder="yourName"
+                            placeholder="Tu nombre" required>
+                    </div>
+                    <div class="chat-input-container">
+                        <label class="form-label-hidden" for="userMessage">Tu mensaje</label>
+                        <input type="text" id="userMessage" class="form-input" data-i18n-placeholder="yourMessage"
+                            placeholder="Tu mensaje" required autocomplete="off">
+                        <button type="submit" class="btn btn-primary send-btn">
+                            <span class="material-icons-round">send</span>
+                            <span class="sr-only" data-i18n="sendBtn">Enviar</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Back Button -->
+            <div class="mt-2 text-center">
+                <button class="btn btn-outline" onclick="navigateTo('index.html')">
+                    <span class="material-icons-round">arrow_back</span>
+                    <span data-i18n="backBtn">Volver</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/i18n.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/chat.js"></script>
+</body>
+
+</html>

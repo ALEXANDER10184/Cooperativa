@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cooperativa Provivienda "Mi Esperanza"</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Firebase SDKs (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <!-- Firebase Logic -->
+  <script src="js/firebase.js"></script>
+</head>
+
+<body>
+  <!-- Language Selector (shown first time or when changing language) -->
+  <div id="languageSelector" class="hidden">
+    <div class="container-sm">
+      <div class="logo-area text-center mb-3">
+        <div class="logo-icon-large"><span class="material-icons-round"
+            style="font-size: 4rem; color: var(--color-primary);">volunteer_activism</span></div>
+      </div>
+      <div class="card">
+        <h1 class="text-center" data-i18n="selectLanguage">Selecciona tu idioma</h1>
+        <div class="language-selector">
+          <button class="language-btn" onclick="selectLanguage('es')">
+            <span class="lang-flag">🇪🇸</span><br><span data-i18n="spanish">Español</span>
+          </button>
+          <button class="language-btn" onclick="selectLanguage('en')">
+            <span class="lang-flag">🇬🇧</span><br><span data-i18n="english">English</span>
+          </button>
+          <button class="language-btn" onclick="selectLanguage('fr')">
+            <span class="lang-flag">🇫🇷</span><br><span data-i18n="french">Français</span>
+          </button>
+          <button class="language-btn" onclick="selectLanguage('ro')">
+            <span class="lang-flag">🇷🇴</span><br><span data-i18n="romanian">Română</span>
+          </button>
+          <button class="language-btn" onclick="selectLanguage('ar')">
+            <span class="lang-flag">🇸🇦</span><br><span data-i18n="arabic">العربية</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Access Code Screen (shown after language if not authenticated) -->
+  <div id="accessScreen" class="hidden">
+    <div class="container-sm">
+      <div class="card mb-2">
+        <div class="text-center mb-2">
+          <span class="material-icons-round" style="font-size: 3em; color: var(--color-primary);">lock</span>
+        </div>
+        <h2 class="text-center" data-i18n="accessTitle">Acceso a Socios</h2>
+        <p class="text-center" data-i18n="accessSubtitle">Introduce el código de la cooperativa para entrar.</p>
+
+        <form id="accessForm" onsubmit="handleAccess(event)">
+          <div class="form-group">
+            <input type="password" id="accessCodeInput" class="form-input text-center"
+              style="font-size: 1.5em; letter-spacing: 2px;" placeholder="****" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">
+            <span class="material-icons-round">login</span> <span data-i18n="enterBtn">Entrar</span>
+          </button>
+        </form>
+        <p class="text-center mt-2 text-sm text-secondary" style="font-size: 0.9em; opacity: 0.7;">
+          <span data-i18n="accessHelp">El código predeterminado es:</span> <strong>esperanza</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content (shown after language selection AND access code) -->
+  <div id="mainContent" class="hidden">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content container">
+        <div class="logo-container">
+          <div class="logo-icon"><span class="material-icons-round">volunteer_activism</span></div>
+          <div class="logo-text">
+            <div data-i18n="logoText" class="main-logo-text">Cooperativa Provivienda</div>
+            <div data-i18n="logoSubtext" class="sub-logo-text">Mi Esperanza</div>
+          </div>
+        </div>
+        <div class="header-controls">
+          <button class="icon-btn" onclick="toggleLargeText()" title="Aumentar texto"
+            aria-label="Aumentar tamaño de texto">
+            <span class="material-icons-round">text_fields</span>
+          </button>
+        </div>
+      </div>
+      <p class="tagline text-center" data-i18n="tagline">Construyendo hogares, juntos.</p>
+    </header>
+
+    <!-- Navigation Menu -->
+    <div class="container">
+      <div class="nav-menu">
+        <button class="btn btn-primary btn-block btn-lg btn-menu" onclick="navigateTo('registro.html')">
+          <span class="material-icons-round">how_to_reg</span>
+          <span data-i18n="registerBtn">Registrarse como nuevo socio</span>
+        </button>
+
+        <button class="btn btn-secondary btn-block btn-lg btn-menu" onclick="navigateTo('admin.html')">
+          <span class="material-icons-round">admin_panel_settings</span>
+          <span data-i18n="adminBtn">Acceder como administrador</span>
+        </button>
+
+        <button class="btn btn-primary btn-block btn-lg btn-menu" onclick="navigateTo('chat.html')">
+          <span class="material-icons-round">forum</span>
+          <span data-i18n="chatBtn">Chat comunitario</span>
+        </button>
+
+        <button class="btn btn-outline btn-block btn-lg btn-menu" onclick="navigateTo('balance.html')">
+          <span class="material-icons-round">account_balance</span>
+          <span data-i18n="balanceBtn">Ver Balance de la Cooperativa</span>
+        </button>
+
+        <button class="btn btn-outline btn-block btn-lg btn-menu" onclick="showQRModal()">
+          <span class="material-icons-round">qr_code_2</span>
+          <span data-i18n="shareBtn">Compartir App (QR)</span>
+        </button>
+      </div>
+
+      <!-- Change Language Button -->
+      <div class="text-center mt-3">
+        <button class="btn btn-text" onclick="showLanguageSelector()">
+          <span class="material-icons-round">translate</span> <span data-i18n="changeLanguage">Cambiar idioma</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code Modal -->
+  <div id="qrModal" class="hidden modal-overlay">
+    <div class="container-sm" style="margin-top: var(--spacing-lg);">
+      <div class="card relative">
+        <button class="icon-btn-light"
+          style="position: absolute; right: 10px; top: 10px; background: #ddd; color: #333;" onclick="closeQRModal()">
+          <span class="material-icons-round">close</span>
+        </button>
+        <h3 class="text-center mb-1">Compartir App</h3>
+
+        <div class="qr-container">
+          <img id="qrImage" src="" alt="QR Code" class="qr-image" />
+          <p class="qr-help">Escanea este código para abrir la app en otro dispositivo</p>
+        </div>
+
+        <!-- Warning for local usage -->
+        <div id="localWarning" class="alert alert-warning hidden" style="font-size: 0.9em;">
+          <strong>⚠️ Importante:</strong> Parece que estás ejecutando la app localmente. Para que este código QR
+          funcione en otros móviles, primero debes <strong>publicar la app en internet</strong> (ej. Netlify, Vercel).
+          <br><br>
+          Si ya tienes una URL pública, escríbela abajo.
+        </div>
+
+        <div class="form-group mb-0">
+          <label class="form-label text-center">Enlace de la App</label>
+          <div class="flex flex-gap">
+            <input type="text" id="qrUrlInput" class="form-input text-center" onchange="generateQR()">
+            <button class="btn btn-primary" onclick="generateQR()" title="Actualizar QR">
+              <span class="material-icons-round">refresh</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Check if language is already selected
+    function initializePage() {
+      const currentLang = i18n.getStoredLanguage();
+
+      // Check large text preference
+      if (localStorage.getItem('largeText') === 'true') {
+        document.body.classList.add('large-text-mode');
+      }
+
+      if (!currentLang) {
+        // Show language selector first
+        showScreen('languageSelector');
+      } else if (!isMemberAuthenticated()) {
+        // Show access code screen if not authenticated
+        i18n.setLanguage(currentLang); // Ensure lang is set
+        showScreen('accessScreen');
+        i18n.translatePage();
+      } else {
+        // Show main content
+        showScreen('mainContent');
+        i18n.translatePage();
+      }
+    }
+
+    function showScreen(screenId) {
+      ['languageSelector', 'accessScreen', 'mainContent'].forEach(id => {
+        const el = document.getElementById(id);
+        if (id === screenId) el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      });
+    }
+
+    function selectLanguage(lang) {
+      i18n.setLanguage(lang);
+
+      if (!isMemberAuthenticated()) {
+        showScreen('accessScreen');
+      } else {
+        showScreen('mainContent');
+      }
+      i18n.translatePage();
+    }
+
+    function showLanguageSelector() {
+      showScreen('languageSelector');
+      i18n.translatePage();
+    }
+
+    function toggleLargeText() {
+      document.body.classList.toggle('large-text-mode');
+      localStorage.setItem('largeText', document.body.classList.contains('large-text-mode'));
+    }
+
+    function handleAccess(event) {
+      event.preventDefault();
+      const code = document.getElementById('accessCodeInput').value.trim();
+
+      if (checkMemberPassword(code)) {
+        setMemberSession();
+        showScreen('mainContent');
+        i18n.translatePage();
+      } else {
+        alert(i18n.t('accessError') || 'Código incorrecto');
+      }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', initializePage);
+  </script>
+</body>
+
+</html>

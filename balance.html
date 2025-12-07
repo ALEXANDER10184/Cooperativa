@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balance - Cooperativa Provivienda</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Firebase SDKs (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <!-- Firebase Logic -->
+    <script src="js/firebase.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content container">
+            <div class="logo-container">
+                <div class="logo-icon"><span class="material-icons-round">volunteer_activism</span></div>
+                <div class="logo-text">
+                    <div data-i18n="logoText" class="main-logo-text">Cooperativa Provivienda</div>
+                    <div data-i18n="logoSubtext" class="sub-logo-text">Mi Esperanza</div>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button class="icon-btn-light" onclick="navigateTo('index.html')" title="Volver">
+                    <span class="material-icons-round">arrow_back</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title text-center" data-i18n="balancePageTitle">Balance de la Cooperativa</h2>
+            </div>
+
+            <!-- Transparency Message -->
+            <div class="alert alert-info flex flex-gap align-center">
+                <span class="material-icons-round" style="font-size: 2em;">info</span>
+                <p data-i18n="transparencyMessage" class="mb-0">
+                    La contabilidad de nuestra cooperativa es transparente para todos los miembros. Aquí puedes ver el
+                    resumen financiero actualizado.
+                </p>
+            </div>
+
+            <!-- Balance Cards -->
+            <div class="stats-grid mt-2">
+                <div class="stat-card income">
+                    <div class="stat-icon"><span class="material-icons-round">trending_up</span></div>
+                    <div class="stat-label" data-i18n="totalIncome">Ingresos Totales</div>
+                    <div class="stat-value" id="totalIncomeDisplay">0.00 €</div>
+                </div>
+
+                <div class="stat-card expense">
+                    <div class="stat-icon"><span class="material-icons-round">trending_down</span></div>
+                    <div class="stat-label" data-i18n="totalExpenses">Gastos Totales</div>
+                    <div class="stat-value" id="totalExpensesDisplay">0.00 €</div>
+                </div>
+
+                <div class="stat-card balance">
+                    <div class="stat-icon"><span class="material-icons-round">account_balance_wallet</span></div>
+                    <div class="stat-label" data-i18n="currentBalance">Balance Actual</div>
+                    <div class="stat-value" id="currentBalanceDisplay">0.00 €</div>
+                </div>
+            </div>
+
+            <!-- Admin Note -->
+            <div class="alert alert-warning mt-2 flex flex-gap align-center">
+                <span class="material-icons-round">lock</span>
+                <p data-i18n="detailsAdminOnly" class="mb-0">
+                    Los detalles completos están disponibles solo para administradores.
+                </p>
+            </div>
+
+            <!-- Back Button -->
+            <div class="mt-2 text-center">
+                <button class="btn btn-outline" onclick="navigateTo('index.html')">
+                    <span class="material-icons-round">arrow_back</span>
+                    <span data-i18n="backBtn">Volver</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/i18n.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Translate page
+            i18n.translatePage();
+
+            // Calculate and display balance
+            const balance = calculateBalance();
+
+            document.getElementById('totalIncomeDisplay').textContent = formatCurrency(balance.totalIncome);
+            document.getElementById('totalExpensesDisplay').textContent = formatCurrency(balance.totalExpenses);
+            document.getElementById('currentBalanceDisplay').textContent = formatCurrency(balance.balance);
+        });
+    </script>
+</body>
+
+</html>

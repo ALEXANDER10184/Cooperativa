@@ -12,6 +12,31 @@ import {
     getItemsByField
 } from './db.js';
 
+// Importar funciones del panel de administración
+import {
+    switchMainTab,
+    switchAdminTab,
+    renderGastosTable,
+    renderIngresosTable,
+    renderPagosTable,
+    openAddGastoModal,
+    openEditGastoModal,
+    closeGastoModal,
+    handleSubmitGasto,
+    handleDeleteGasto,
+    openAddIngresoModal,
+    openEditIngresoModal,
+    closeIngresoModal,
+    handleSubmitIngreso,
+    handleDeleteIngreso,
+    loadSociosSelector,
+    openAddPagoModal,
+    openEditPagoModal,
+    closePagoModal,
+    handleSubmitPago,
+    handleDeletePago
+} from './admin-panel.js';
+
 // Estado global
 let currentEditId = null;
 let currentEditGastoId = null;
@@ -502,11 +527,18 @@ function showNotification(message, type = 'info') {
 // EXPORT FUNCTIONS TO GLOBAL SCOPE
 // ============================================
 
+// Exportar funciones al scope global
 window.openAddModal = openAddModal;
 window.openEditModal = openEditModal;
 window.closeModal = closeModal;
 window.handleDeleteSocio = handleDeleteSocio;
 window.handleSubmitForm = handleSubmitForm;
+window.switchMainTab = switchMainTab;
+window.switchAdminTab = switchAdminTab;
+window.renderPagosTable = renderPagosTable;
+window.closeGastoModal = closeGastoModal;
+window.closeIngresoModal = closeIngresoModal;
+window.closePagoModal = closePagoModal;
 
 // ============================================
 // INITIALIZE ON LOAD

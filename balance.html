@@ -98,17 +98,35 @@
     <script src="js/i18n.js"></script>
     <script src="js/main.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async function () {
             // Translate page
             i18n.translatePage();
 
-            // Calculate and display balance
-            const balance = calculateBalance();
-
+            // Load and display balance
+            await loadBalance();
+            
+            // Listen for real-time updates
+            listenData('balance', async (data) => {
+                if (data) {
+                    document.getElementById('totalIncomeDisplay').textContent = formatCurrency(data.ingresosTotales || 0);
+                    document.getElementById('totalExpensesDisplay').textContent = formatCurrency(data.gastosTotales || 0);
+                    document.getElementById('currentBalanceDisplay').textContent = formatCurrency(data.balanceActual || 0);
+                } else {
+                    // Fallback: calculate from ingresos and gastos
+                    const balance = await calculateBalance();
+                    document.getElementById('totalIncomeDisplay').textContent = formatCurrency(balance.totalIncome);
+                    document.getElementById('totalExpensesDisplay').textContent = formatCurrency(balance.totalExpenses);
+                    document.getElementById('currentBalanceDisplay').textContent = formatCurrency(balance.balance);
+                }
+            });
+        });
+        
+        async function loadBalance() {
+            const balance = await calculateBalance();
             document.getElementById('totalIncomeDisplay').textContent = formatCurrency(balance.totalIncome);
             document.getElementById('totalExpensesDisplay').textContent = formatCurrency(balance.totalExpenses);
             document.getElementById('currentBalanceDisplay').textContent = formatCurrency(balance.balance);
-        });
+        }
     </script>
 </body>
 

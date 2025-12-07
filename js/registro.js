@@ -227,13 +227,28 @@ async function handleSubmit(event) {
             throw new Error('Faltan campos requeridos');
         }
 
-        // Send to API
-        console.log('Enviando registro:', payload);
-        const result = await registroAPI.crear(payload);
+        // Try Firebase first, then API as fallback
+        let success = false;
+        let memberId = null;
         
-        if (result.ok && result.data.ok) {
+        if (typeof saveMember === 'function') {
+            // Use Firebase
+            payload.id = generateId();
+            success = await saveMember(payload);
+            memberId = payload.id;
+        } else if (typeof registroAPI !== 'undefined' && registroAPI.crear) {
+            // Fallback to API
+            console.log('Enviando registro:', payload);
+            const result = await registroAPI.crear(payload);
+            success = result.ok && result.data.ok;
+            memberId = result.data?.id;
+        } else {
+            throw new Error('No hay conexión disponible');
+        }
+        
+        if (success) {
             // Success
-            alert('Registro completado ✔️\nID: ' + result.data.id);
+            alert('Registro completado ✔️' + (memberId ? '\nID: ' + memberId : ''));
             showAlert('Registro completado con éxito ✔️', 'success');
             document.getElementById('registrationForm').reset();
             
@@ -242,7 +257,7 @@ async function handleSubmit(event) {
                 navigateTo('index.html');
             }, 2000);
         } else {
-            throw new Error(result.data?.error || 'Error al registrar');
+            throw new Error('Error al registrar');
         }
 
     } catch (error) {

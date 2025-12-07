@@ -260,143 +260,283 @@ function isMemberAuthenticated() {
 }
 
 // ============================================
-// MEMBER MANAGEMENT
+// MEMBER MANAGEMENT (Firebase)
 // ============================================
 
-function getAllMembers() {
-    return getFromStorage(STORAGE_KEYS.MEMBERS, []);
-}
-
-function getMemberById(id) {
-    const members = getAllMembers();
-    return members.find(member => member.id === id);
-}
-
-function saveMember(memberData) {
-    const members = getAllMembers();
-
-    // Add metadata
-    memberData.id = memberData.id || generateId();
-    memberData.registrationDate = memberData.registrationDate || new Date().toISOString();
-    memberData.function = memberData.function || '';
-    memberData.payments = memberData.payments || {
-        january: false,
-        february: false,
-        march: false,
-        april: false,
-        may: false,
-        june: false,
-        july: false,
-        august: false,
-        september: false,
-        october: false,
-        november: false,
-        december: false
-    };
-
-    members.push(memberData);
-    return saveToStorage(STORAGE_KEYS.MEMBERS, members);
-}
-
-function updateMember(id, updates) {
-    const members = getAllMembers();
-    const index = members.findIndex(member => member.id === id);
-
-    if (index === -1) return false;
-
-    members[index] = { ...members[index], ...updates };
-    return saveToStorage(STORAGE_KEYS.MEMBERS, members);
-}
-
-function deleteMember(id) {
-    const members = getAllMembers();
-    const filtered = members.filter(member => member.id !== id);
-    return saveToStorage(STORAGE_KEYS.MEMBERS, filtered);
-}
-
-// ============================================
-// FINANCIAL MANAGEMENT
-// ============================================
-
-function getAllIncome() {
-    return getFromStorage(STORAGE_KEYS.INCOME, []);
-}
-
-function saveIncome(incomeData) {
-    const incomes = getAllIncome();
-    incomeData.id = incomeData.id || generateId();
-    incomeData.timestamp = incomeData.timestamp || new Date().toISOString();
-    incomes.push(incomeData);
-    return saveToStorage(STORAGE_KEYS.INCOME, incomes);
-}
-
-function getAllExpenses() {
-    return getFromStorage(STORAGE_KEYS.EXPENSES, []);
-}
-
-function saveExpense(expenseData) {
-    const expenses = getAllExpenses();
-    expenseData.id = expenseData.id || generateId();
-    expenseData.timestamp = expenseData.timestamp || new Date().toISOString();
-    expenses.push(expenseData);
-    return saveToStorage(STORAGE_KEYS.EXPENSES, expenses);
-}
-
-function calculateBalance() {
-    const incomes = getAllIncome();
-    const expenses = getAllExpenses();
-
-    const totalIncome = incomes.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
-    const totalExpenses = expenses.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
-    const balance = totalIncome - totalExpenses;
-
-    return {
-        totalIncome,
-        totalExpenses,
-        balance
-    };
-}
-
-function deleteIncome(id) {
-    const incomes = getAllIncome();
-    const filtered = incomes.filter(item => item.id !== id);
-    return saveToStorage(STORAGE_KEYS.INCOME, filtered);
-}
-
-function deleteExpense(id) {
-    const expenses = getAllExpenses();
-    const filtered = expenses.filter(item => item.id !== id);
-    return saveToStorage(STORAGE_KEYS.EXPENSES, filtered);
-}
-
-// ============================================
-// CHAT MANAGEMENT
-// ============================================
-
-function getAllMessages() {
-    return getFromStorage(STORAGE_KEYS.CHAT_MESSAGES, []);
-}
-
-function saveMessage(messageData) {
-    let messages = getAllMessages();
-
-    messageData.id = messageData.id || generateId();
-    messageData.timestamp = messageData.timestamp || new Date().toISOString();
-
-    messages.push(messageData);
-
-    // Keep only last MAX_CHAT_MESSAGES
-    if (messages.length > MAX_CHAT_MESSAGES) {
-        messages = messages.slice(-MAX_CHAT_MESSAGES);
+async function getAllMembers() {
+    try {
+        const data = await readDataOnce('socios');
+        if (!data) return [];
+        return Object.values(data);
+    } catch (error) {
+        console.error('Error getting members:', error);
+        return [];
     }
-
-    return saveToStorage(STORAGE_KEYS.CHAT_MESSAGES, messages);
 }
 
-function deleteMessage(id) {
-    const messages = getAllMessages();
-    const filtered = messages.filter(msg => msg.id !== id);
-    return saveToStorage(STORAGE_KEYS.CHAT_MESSAGES, filtered);
+async function getMemberById(id) {
+    try {
+        const data = await readDataOnce(`socios/${id}`);
+        return data;
+    } catch (error) {
+        console.error('Error getting member:', error);
+        return null;
+    }
+}
+
+async function saveMember(memberData) {
+    try {
+        memberData.id = memberData.id || generateId();
+        memberData.registrationDate = memberData.registrationDate || new Date().toISOString();
+        memberData.function = memberData.function || '';
+        memberData.payments = memberData.payments || {
+            january: false,
+            february: false,
+            march: false,
+            april: false,
+            may: false,
+            june: false,
+            july: false,
+            august: false,
+            september: false,
+            october: false,
+            november: false,
+            december: false
+        };
+        
+        const result = await saveData(`socios/${memberData.id}`, memberData);
+        if (result.success && typeof showAlert === 'function') {
+            showAlert('Socio registrado correctamente', 'success', 2000);
+        }
+        return result.success;
+    } catch (error) {
+        console.error('Error saving member:', error);
+        return false;
+    }
+}
+
+async function updateMember(id, updates) {
+    try {
+        const result = await updateData(`socios/${id}`, updates);
+        if (result.success && typeof showAlert === 'function') {
+            showAlert('Datos actualizados', 'success', 2000);
+        }
+        return result.success;
+    } catch (error) {
+        console.error('Error updating member:', error);
+        return false;
+    }
+}
+
+async function deleteMember(id) {
+    try {
+        const result = await deleteData(`socios/${id}`);
+        return result.success;
+    } catch (error) {
+        console.error('Error deleting member:', error);
+        return false;
+    }
+}
+
+// ============================================
+// FINANCIAL MANAGEMENT (Firebase)
+// ============================================
+
+async function getAllIncome() {
+    try {
+        const data = await readDataOnce('ingresos');
+        if (!data) return [];
+        return Object.values(data);
+    } catch (error) {
+        console.error('Error getting income:', error);
+        return [];
+    }
+}
+
+async function saveIncome(incomeData) {
+    try {
+        incomeData.id = incomeData.id || generateId();
+        incomeData.timestamp = incomeData.timestamp || new Date().toISOString();
+        const result = await pushData('ingresos', incomeData);
+        if (result.success) {
+            await updateBalance();
+            if (typeof showAlert === 'function') {
+                showAlert('Ingreso guardado correctamente', 'success', 2000);
+            }
+        }
+        return result.success;
+    } catch (error) {
+        console.error('Error saving income:', error);
+        return false;
+    }
+}
+
+async function getAllExpenses() {
+    try {
+        const data = await readDataOnce('gastos');
+        if (!data) return [];
+        return Object.values(data);
+    } catch (error) {
+        console.error('Error getting expenses:', error);
+        return [];
+    }
+}
+
+async function saveExpense(expenseData) {
+    try {
+        expenseData.id = expenseData.id || generateId();
+        expenseData.timestamp = expenseData.timestamp || new Date().toISOString();
+        const result = await pushData('gastos', expenseData);
+        if (result.success) {
+            await updateBalance();
+            if (typeof showAlert === 'function') {
+                showAlert('Gasto guardado correctamente', 'success', 2000);
+            }
+        }
+        return result.success;
+    } catch (error) {
+        console.error('Error saving expense:', error);
+        return false;
+    }
+}
+
+async function calculateBalance() {
+    try {
+        const balanceData = await readDataOnce('balance');
+        if (balanceData) {
+            return {
+                totalIncome: balanceData.ingresosTotales || 0,
+                totalExpenses: balanceData.gastosTotales || 0,
+                balance: balanceData.balanceActual || 0
+            };
+        }
+        
+        // Fallback: calculate from ingresos and gastos
+        const incomes = await getAllIncome();
+        const expenses = await getAllExpenses();
+        
+        const totalIncome = incomes.reduce((sum, item) => sum + parseFloat(item.monto || item.amount || 0), 0);
+        const totalExpenses = expenses.reduce((sum, item) => sum + parseFloat(item.monto || item.amount || 0), 0);
+        const balance = totalIncome - totalExpenses;
+        
+        // Save calculated balance
+        await saveData('balance', {
+            ingresosTotales: totalIncome,
+            gastosTotales: totalExpenses,
+            balanceActual: balance,
+            ultimaActualizacion: Date.now()
+        });
+        
+        return { totalIncome, totalExpenses, balance };
+    } catch (error) {
+        console.error('Error calculating balance:', error);
+        return { totalIncome: 0, totalExpenses: 0, balance: 0 };
+    }
+}
+
+async function updateBalance() {
+    try {
+        const incomes = await getAllIncome();
+        const expenses = await getAllExpenses();
+        
+        const totalIncome = incomes.reduce((sum, item) => sum + parseFloat(item.monto || item.amount || 0), 0);
+        const totalExpenses = expenses.reduce((sum, item) => sum + parseFloat(item.monto || item.amount || 0), 0);
+        const balance = totalIncome - totalExpenses;
+        
+        await saveData('balance', {
+            ingresosTotales: totalIncome,
+            gastosTotales: totalExpenses,
+            balanceActual: balance,
+            ultimaActualizacion: Date.now()
+        });
+    } catch (error) {
+        console.error('Error updating balance:', error);
+    }
+}
+
+async function deleteIncome(id) {
+    try {
+        const result = await deleteData(`ingresos/${id}`);
+        if (result.success) {
+            await updateBalance();
+        }
+        return result.success;
+    } catch (error) {
+        console.error('Error deleting income:', error);
+        return false;
+    }
+}
+
+async function deleteExpense(id) {
+    try {
+        const result = await deleteData(`gastos/${id}`);
+        if (result.success) {
+            await updateBalance();
+        }
+        return result.success;
+    } catch (error) {
+        console.error('Error deleting expense:', error);
+        return false;
+    }
+}
+
+// ============================================
+// CHAT MANAGEMENT (Firebase)
+// ============================================
+
+async function getAllMessages() {
+    try {
+        const data = await readDataOnce('chat');
+        if (!data) return [];
+        const messages = Object.values(data);
+        // Sort by timestamp and keep last MAX_CHAT_MESSAGES
+        messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+        return messages.slice(-MAX_CHAT_MESSAGES);
+    } catch (error) {
+        console.error('Error getting messages:', error);
+        return [];
+    }
+}
+
+async function saveMessage(messageData) {
+    try {
+        messageData.id = messageData.id || generateId();
+        messageData.timestamp = messageData.timestamp || Date.now();
+        
+        const result = await pushData('chat', {
+            nombre: messageData.nombre || messageData.sender || 'Anónimo',
+            mensaje: messageData.mensaje || messageData.text || '',
+            timestamp: messageData.timestamp
+        });
+        
+        // Clean old messages (keep last MAX_CHAT_MESSAGES)
+        if (result.success) {
+            const messages = await getAllMessages();
+            if (messages.length > MAX_CHAT_MESSAGES) {
+                const toDelete = messages.slice(0, messages.length - MAX_CHAT_MESSAGES);
+                for (const msg of toDelete) {
+                    if (msg.id) {
+                        await deleteData(`chat/${msg.id}`);
+                    }
+                }
+            }
+        }
+        
+        return result.success;
+    } catch (error) {
+        console.error('Error saving message:', error);
+        return false;
+    }
+}
+
+async function deleteMessage(id) {
+    try {
+        const result = await deleteData(`chat/${id}`);
+        return result.success;
+    } catch (error) {
+        console.error('Error deleting message:', error);
+        return false;
+    }
 }
 
 // ============================================

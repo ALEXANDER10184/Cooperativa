@@ -134,75 +134,140 @@ async function loadStats() {
     }
 }
 
+let unsubscribeMembers = null;
+
 async function loadMembers() {
-    try {
-        const result = await registroAPI.listar();
-        if (result.ok && result.data) {
-            const members = result.data;
-            const content = document.getElementById('membersList');
-            
-            if (members.length === 0) {
+    const content = document.getElementById('membersList');
+    
+    // Try Firebase first
+    if (typeof listenData === 'function') {
+        // Unsubscribe previous listener if exists
+        if (unsubscribeMembers) {
+            unsubscribeMembers();
+        }
+        
+        unsubscribeMembers = listenData('socios', (data) => {
+            if (!data) {
                 content.innerHTML = '<p>No hay miembros registrados</p>';
                 return;
             }
             
-            let html = '<table class="table" style="width: 100%; border-collapse: collapse;"><thead><tr><th>Nombre</th><th>Email</th><th>Ciudad</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
-            
-            members.forEach(member => {
-                html += `
-                    <tr>
-                        <td>${escapeHtml(member.nombre || '')} ${escapeHtml(member.apellido || '')}</td>
-                        <td>${escapeHtml(member.email || '')}</td>
-                        <td>${escapeHtml(member.ciudad || '')}</td>
-                        <td><span class="badge ${member.estado === 'activo' ? 'badge-success' : 'badge-secondary'}">${member.estado || 'activo'}</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline" onclick="viewMember('${member.id}')">Ver</button>
-                            ${member.estado === 'activo' ? `<button class="btn btn-sm btn-danger" onclick="deactivateMember('${member.id}')">Desactivar</button>` : ''}
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            html += '</tbody></table>';
-            content.innerHTML = html;
+            const members = Object.values(data);
+            renderMembersTable(members, content);
+        });
+    } else {
+        // Fallback to API
+        try {
+            const result = await registroAPI.listar();
+            if (result.ok && result.data) {
+                renderMembersTable(result.data, content);
+            } else {
+                // Try Firebase getAllMembers
+                if (typeof getAllMembers === 'function') {
+                    const members = await getAllMembers();
+                    renderMembersTable(members, content);
+                } else {
+                    content.innerHTML = '<p>No hay miembros registrados</p>';
+                }
+            }
+        } catch (error) {
+            console.error('Error cargando miembros:', error);
+            content.innerHTML = '<p class="text-danger">Error cargando miembros</p>';
         }
-    } catch (error) {
-        console.error('Error cargando miembros:', error);
-        document.getElementById('membersList').innerHTML = '<p class="text-danger">Error cargando miembros</p>';
     }
 }
 
+function renderMembersTable(members, content) {
+    if (members.length === 0) {
+        content.innerHTML = '<p>No hay miembros registrados</p>';
+        return;
+    }
+    
+    let html = '<table class="table" style="width: 100%; border-collapse: collapse;"><thead><tr><th>Nombre</th><th>Email</th><th>Ciudad</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
+    
+    members.forEach(member => {
+        html += `
+            <tr>
+                <td>${escapeHtml(member.nombre || '')} ${escapeHtml(member.apellido || '')}</td>
+                <td>${escapeHtml(member.email || '')}</td>
+                <td>${escapeHtml(member.ciudad || '')}</td>
+                <td><span class="badge ${member.estado === 'activo' ? 'badge-success' : 'badge-secondary'}">${member.estado || 'activo'}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline" onclick="viewMember('${member.id}')">Ver</button>
+                    ${member.estado === 'activo' ? `<button class="btn btn-sm btn-danger" onclick="deactivateMember('${member.id}')">Desactivar</button>` : ''}
+                </td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    content.innerHTML = html;
+}
+
+let unsubscribeAdminChat = null;
+
 async function loadChatMessages() {
-    try {
-        const result = await chatAPI.listar();
-        if (result.ok && result.data) {
-            const messages = result.data;
-            const content = document.getElementById('adminChatMessages');
-            
-            if (messages.length === 0) {
+    const content = document.getElementById('adminChatMessages');
+    
+    // Try Firebase first
+    if (typeof listenData === 'function') {
+        // Unsubscribe previous listener if exists
+        if (unsubscribeAdminChat) {
+            unsubscribeAdminChat();
+        }
+        
+        unsubscribeAdminChat = listenData('chat', (data) => {
+            if (!data) {
                 content.innerHTML = '<p>No hay mensajes</p>';
                 return;
             }
             
-            let html = '';
-            messages.forEach(msg => {
-                const time = new Date(msg.timestamp).toLocaleString('es-ES');
-                html += `
-                    <div style="border-bottom: 1px solid #eee; padding: 0.5rem 0;">
-                        <strong>${escapeHtml(msg.nombre || 'Anónimo')}</strong>
-                        <span style="color: #666; font-size: 0.9em;"> - ${time}</span>
-                        <p style="margin: 0.5rem 0 0 0;">${escapeHtml(msg.mensaje || '')}</p>
-                    </div>
-                `;
-            });
-            
-            content.innerHTML = html;
-            content.scrollTop = content.scrollHeight;
+            const messages = Object.values(data);
+            messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+            renderChatMessages(messages, content);
+        });
+    } else {
+        // Fallback to API
+        try {
+            const result = await chatAPI.listar();
+            if (result.ok && result.data) {
+                renderChatMessages(result.data, content);
+            } else if (typeof getAllMessages === 'function') {
+                const messages = await getAllMessages();
+                renderChatMessages(messages, content);
+            } else {
+                content.innerHTML = '<p>No hay mensajes</p>';
+            }
+        } catch (error) {
+            console.error('Error cargando chat:', error);
+            content.innerHTML = '<p class="text-danger">Error cargando mensajes</p>';
         }
-    } catch (error) {
-        console.error('Error cargando chat:', error);
-        document.getElementById('adminChatMessages').innerHTML = '<p class="text-danger">Error cargando mensajes</p>';
     }
+}
+
+function renderChatMessages(messages, content) {
+    if (messages.length === 0) {
+        content.innerHTML = '<p>No hay mensajes</p>';
+        return;
+    }
+    
+    let html = '';
+    messages.forEach(msg => {
+        const nombre = msg.nombre || msg.sender || 'Anónimo';
+        const mensaje = msg.mensaje || msg.text || '';
+        const timestamp = msg.timestamp ? new Date(msg.timestamp) : new Date();
+        const time = timestamp.toLocaleString('es-ES');
+        html += `
+            <div style="border-bottom: 1px solid #eee; padding: 0.5rem 0;">
+                <strong>${escapeHtml(nombre)}</strong>
+                <span style="color: #666; font-size: 0.9em;"> - ${time}</span>
+                <p style="margin: 0.5rem 0 0 0;">${escapeHtml(mensaje)}</p>
+            </div>
+        `;
+    });
+    
+    content.innerHTML = html;
+    content.scrollTop = content.scrollHeight;
 }
 
 async function clearChat() {
@@ -211,12 +276,27 @@ async function clearChat() {
     }
     
     try {
-        const result = await chatAPI.limpiar();
-        if (result.ok && result.data.cleared) {
-            alert('Chat limpiado exitosamente');
-            loadChatMessages();
+        // Try Firebase first
+        if (typeof readDataOnce === 'function') {
+            const chatData = await readDataOnce('chat');
+            if (chatData) {
+                const promises = Object.keys(chatData).map(key => deleteData(`chat/${key}`));
+                await Promise.all(promises);
+                alert('Chat limpiado exitosamente');
+                return;
+            }
+        }
+        
+        // Fallback to API
+        if (typeof chatAPI !== 'undefined' && chatAPI.limpiar) {
+            const result = await chatAPI.limpiar();
+            if (result.ok && result.data.cleared) {
+                alert('Chat limpiado exitosamente');
+            } else {
+                alert('Error: ' + (result.data?.error || 'No autorizado'));
+            }
         } else {
-            alert('Error: ' + (result.data?.error || 'No autorizado'));
+            alert('Error: No hay conexión disponible');
         }
     } catch (error) {
         console.error('Error limpiando chat:', error);
@@ -224,27 +304,65 @@ async function clearChat() {
     }
 }
 
+let unsubscribeBalance = null;
+
 async function loadBalance() {
-    try {
-        const result = await balanceAPI.global.obtener();
-        if (result.ok && result.data) {
-            const balance = result.data;
-            const content = document.getElementById('balanceGlobalContent');
-            
-            content.innerHTML = `
-                <div style="text-align: center; padding: 2rem;">
-                    <div style="font-size: 3em; font-weight: bold; color: var(--color-primary);">
-                        €${(balance.saldo || 0).toFixed(2)}
-                    </div>
-                    <p>Saldo Global</p>
-                    ${balance.ultimaActualizacion ? `<p style="color: #666; font-size: 0.9em;">Última actualización: ${new Date(balance.ultimaActualizacion).toLocaleString('es-ES')}</p>` : ''}
-                </div>
-            `;
+    const content = document.getElementById('balanceGlobalContent');
+    
+    // Try Firebase first
+    if (typeof listenData === 'function') {
+        // Unsubscribe previous listener if exists
+        if (unsubscribeBalance) {
+            unsubscribeBalance();
         }
-    } catch (error) {
-        console.error('Error cargando balance:', error);
-        document.getElementById('balanceGlobalContent').innerHTML = '<p class="text-danger">Error cargando balance</p>';
+        
+        unsubscribeBalance = listenData('balance', (data) => {
+            if (data) {
+                renderBalance(data, content);
+            } else {
+                // Fallback: calculate
+                calculateBalance().then(balance => {
+                    renderBalance({
+                        balanceActual: balance.balance,
+                        ingresosTotales: balance.totalIncome,
+                        gastosTotales: balance.totalExpenses,
+                        ultimaActualizacion: Date.now()
+                    }, content);
+                });
+            }
+        });
+    } else {
+        // Fallback to API
+        try {
+            const result = await balanceAPI.global.obtener();
+            if (result.ok && result.data) {
+                renderBalance(result.data, content);
+            } else if (typeof calculateBalance === 'function') {
+                const balance = await calculateBalance();
+                renderBalance({
+                    balanceActual: balance.balance,
+                    ingresosTotales: balance.totalIncome,
+                    gastosTotales: balance.totalExpenses,
+                    ultimaActualizacion: Date.now()
+                }, content);
+            }
+        } catch (error) {
+            console.error('Error cargando balance:', error);
+            content.innerHTML = '<p class="text-danger">Error cargando balance</p>';
+        }
     }
+}
+
+function renderBalance(balance, content) {
+    content.innerHTML = `
+        <div style="text-align: center; padding: 2rem;">
+            <div style="font-size: 3em; font-weight: bold; color: var(--color-primary);">
+                €${(balance.balanceActual || balance.saldo || 0).toFixed(2)}
+            </div>
+            <p>Saldo Global</p>
+            ${balance.ultimaActualizacion ? `<p style="color: #666; font-size: 0.9em;">Última actualización: ${new Date(balance.ultimaActualizacion).toLocaleString('es-ES')}</p>` : ''}
+        </div>
+    `;
 }
 
 async function handleMovimiento(event) {
@@ -260,13 +378,41 @@ async function handleMovimiento(event) {
     }
     
     try {
-        const result = await balanceAPI.global.movimiento(tipo, monto, concepto, 'admin');
-        if (result.ok && result.data.ok) {
-            alert(`Movimiento registrado. Nuevo saldo: €${result.data.nuevoSaldo.toFixed(2)}`);
-            document.getElementById('movimientoForm').reset();
-            loadBalance();
+        // Try Firebase first
+        if (typeof saveIncome === 'function' && typeof saveExpense === 'function') {
+            const movimientoData = {
+                monto: monto,
+                concepto: concepto,
+                fecha: new Date().toISOString(),
+                registradoPor: 'admin'
+            };
+            
+            let success = false;
+            if (tipo === 'ingreso') {
+                success = await saveIncome(movimientoData);
+            } else {
+                success = await saveExpense(movimientoData);
+            }
+            
+            if (success) {
+                const balance = await calculateBalance();
+                alert(`Movimiento registrado. Nuevo saldo: €${balance.balance.toFixed(2)}`);
+                document.getElementById('movimientoForm').reset();
+            } else {
+                alert('Error al registrar movimiento');
+            }
+        } else if (typeof balanceAPI !== 'undefined' && balanceAPI.global.movimiento) {
+            // Fallback to API
+            const result = await balanceAPI.global.movimiento(tipo, monto, concepto, 'admin');
+            if (result.ok && result.data.ok) {
+                alert(`Movimiento registrado. Nuevo saldo: €${result.data.nuevoSaldo.toFixed(2)}`);
+                document.getElementById('movimientoForm').reset();
+                loadBalance();
+            } else {
+                alert('Error: ' + (result.data?.error || 'Error al registrar movimiento'));
+            }
         } else {
-            alert('Error: ' + (result.data?.error || 'Error al registrar movimiento'));
+            alert('Error: No hay conexión disponible');
         }
     } catch (error) {
         console.error('Error registrando movimiento:', error);
@@ -332,10 +478,22 @@ async function clearEventos() {
 
 async function viewMember(id) {
     try {
-        const result = await registroAPI.obtener(id);
-        if (result.ok && result.data) {
-            const member = result.data;
-            alert(`Miembro: ${member.nombre} ${member.apellido}\nEmail: ${member.email}\nTeléfono: ${member.telefono}\nCiudad: ${member.ciudad}\nAporte: €${(member.aporteMensual || 0).toFixed(2)}`);
+        // Try Firebase first
+        if (typeof getMemberById === 'function') {
+            const member = await getMemberById(id);
+            if (member) {
+                alert(`Miembro: ${member.nombre} ${member.apellido}\nEmail: ${member.email}\nTeléfono: ${member.telefono}\nCiudad: ${member.ciudad}\nAporte: €${(member.aporteMensual || 0).toFixed(2)}`);
+                return;
+            }
+        }
+        
+        // Fallback to API
+        if (typeof registroAPI !== 'undefined' && registroAPI.obtener) {
+            const result = await registroAPI.obtener(id);
+            if (result.ok && result.data) {
+                const member = result.data;
+                alert(`Miembro: ${member.nombre} ${member.apellido}\nEmail: ${member.email}\nTeléfono: ${member.telefono}\nCiudad: ${member.ciudad}\nAporte: €${(member.aporteMensual || 0).toFixed(2)}`);
+            }
         }
     } catch (error) {
         alert('Error al obtener datos del miembro');
@@ -348,12 +506,25 @@ async function deactivateMember(id) {
     }
     
     try {
-        const result = await registroAPI.eliminar(id);
-        if (result.ok && result.data.ok) {
-            alert('Miembro desactivado');
-            loadMembers();
+        // Try Firebase first
+        if (typeof updateMember === 'function') {
+            const success = await updateMember(id, { estado: 'inactivo' });
+            if (success) {
+                alert('Miembro desactivado');
+                return;
+            }
+        }
+        
+        // Fallback to API
+        if (typeof registroAPI !== 'undefined' && registroAPI.eliminar) {
+            const result = await registroAPI.eliminar(id);
+            if (result.ok && result.data.ok) {
+                alert('Miembro desactivado');
+            } else {
+                alert('Error al desactivar miembro');
+            }
         } else {
-            alert('Error al desactivar miembro');
+            alert('Error: No hay conexión disponible');
         }
     } catch (error) {
         console.error('Error desactivando miembro:', error);

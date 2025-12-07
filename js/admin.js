@@ -271,6 +271,12 @@ function renderChatMessages(messages, content) {
 }
 
 async function clearChat() {
+    // Validate admin
+    if (typeof isAdmin === 'function' && !isAdmin()) {
+        alert('Solo administradores pueden limpiar el chat');
+        return;
+    }
+    
     if (!confirm('¿Estás seguro de limpiar todos los mensajes del chat?')) {
         return;
     }
@@ -280,7 +286,8 @@ async function clearChat() {
         if (typeof readDataOnce === 'function') {
             const chatData = await readDataOnce('chat');
             if (chatData) {
-                const promises = Object.keys(chatData).map(key => deleteData(`chat/${key}`));
+                const deleteFn = typeof deleteDataSecure === 'function' ? deleteDataSecure : deleteData;
+                const promises = Object.keys(chatData).map(key => deleteFn(`chat/${key}`, true));
                 await Promise.all(promises);
                 alert('Chat limpiado exitosamente');
                 return;
@@ -368,6 +375,12 @@ function renderBalance(balance, content) {
 async function handleMovimiento(event) {
     event.preventDefault();
     
+    // Validate admin
+    if (typeof isAdmin === 'function' && !isAdmin()) {
+        alert('Solo administradores pueden registrar movimientos');
+        return;
+    }
+    
     const tipo = document.getElementById('movimientoTipo').value;
     const monto = parseFloat(document.getElementById('movimientoMonto').value);
     const concepto = document.getElementById('movimientoConcepto').value.trim();
@@ -375,6 +388,20 @@ async function handleMovimiento(event) {
     if (!monto || monto <= 0 || !concepto) {
         alert('Por favor completa todos los campos correctamente');
         return;
+    }
+    
+    // Validate data
+    if (typeof validateData === 'function') {
+        const movimientoData = {
+            monto: monto,
+            concepto: concepto,
+            fecha: new Date().toISOString(),
+            registradoPor: 'admin'
+        };
+        if (!validateData(movimientoData)) {
+            alert('Datos inválidos. Verifica que todos los campos estén completos.');
+            return;
+        }
     }
     
     try {
@@ -501,6 +528,12 @@ async function viewMember(id) {
 }
 
 async function deactivateMember(id) {
+    // Validate admin
+    if (typeof isAdmin === 'function' && !isAdmin()) {
+        alert('Solo administradores pueden desactivar miembros');
+        return;
+    }
+    
     if (!confirm('¿Estás seguro de desactivar este miembro?')) {
         return;
     }

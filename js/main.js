@@ -317,7 +317,18 @@ async function saveMember(memberData) {
 
 async function updateMember(id, updates) {
     try {
-        const result = await updateData(`socios/${id}`, updates);
+        // Validate admin
+        if (typeof isAdmin === 'function' && !isAdmin()) {
+            if (typeof showAlert === 'function') {
+                showAlert('Solo administradores pueden editar socios', 'error', 3000);
+            }
+            return false;
+        }
+        
+        // Use secure function if available
+        const updateFn = typeof updateDataSecure === 'function' ? updateDataSecure : updateData;
+        const result = await updateFn(`socios/${id}`, updates, true);
+        
         if (result.success && typeof showAlert === 'function') {
             showAlert('Datos actualizados', 'success', 2000);
         }
@@ -330,7 +341,17 @@ async function updateMember(id, updates) {
 
 async function deleteMember(id) {
     try {
-        const result = await deleteData(`socios/${id}`);
+        // Validate admin
+        if (typeof isAdmin === 'function' && !isAdmin()) {
+            if (typeof showAlert === 'function') {
+                showAlert('Solo administradores pueden eliminar socios', 'error', 3000);
+            }
+            return false;
+        }
+        
+        // Use secure function if available
+        const deleteFn = typeof deleteDataSecure === 'function' ? deleteDataSecure : deleteData;
+        const result = await deleteFn(`socios/${id}`, true);
         return result.success;
     } catch (error) {
         console.error('Error deleting member:', error);
@@ -355,9 +376,22 @@ async function getAllIncome() {
 
 async function saveIncome(incomeData) {
     try {
+        // Validate admin
+        if (typeof isAdmin === 'function' && !isAdmin()) {
+            if (typeof showAlert === 'function') {
+                showAlert('Solo administradores pueden agregar ingresos', 'error', 3000);
+            }
+            return false;
+        }
+        
         incomeData.id = incomeData.id || generateId();
-        incomeData.timestamp = incomeData.timestamp || new Date().toISOString();
-        const result = await pushData('ingresos', incomeData);
+        incomeData.fecha = incomeData.fecha || new Date().toISOString();
+        incomeData.timestamp = incomeData.timestamp || Date.now();
+        
+        // Use secure function if available
+        const pushFn = typeof pushDataSecure === 'function' ? pushDataSecure : pushData;
+        const result = await pushFn('ingresos', incomeData, true);
+        
         if (result.success) {
             await updateBalance();
             if (typeof showAlert === 'function') {
@@ -384,9 +418,22 @@ async function getAllExpenses() {
 
 async function saveExpense(expenseData) {
     try {
+        // Validate admin
+        if (typeof isAdmin === 'function' && !isAdmin()) {
+            if (typeof showAlert === 'function') {
+                showAlert('Solo administradores pueden agregar gastos', 'error', 3000);
+            }
+            return false;
+        }
+        
         expenseData.id = expenseData.id || generateId();
-        expenseData.timestamp = expenseData.timestamp || new Date().toISOString();
-        const result = await pushData('gastos', expenseData);
+        expenseData.fecha = expenseData.fecha || new Date().toISOString();
+        expenseData.timestamp = expenseData.timestamp || Date.now();
+        
+        // Use secure function if available
+        const pushFn = typeof pushDataSecure === 'function' ? pushDataSecure : pushData;
+        const result = await pushFn('gastos', expenseData, true);
+        
         if (result.success) {
             await updateBalance();
             if (typeof showAlert === 'function') {
@@ -436,6 +483,11 @@ async function calculateBalance() {
 
 async function updateBalance() {
     try {
+        // Validate admin
+        if (typeof isAdmin === 'function' && !isAdmin()) {
+            return false;
+        }
+        
         const incomes = await getAllIncome();
         const expenses = await getAllExpenses();
         
@@ -443,12 +495,16 @@ async function updateBalance() {
         const totalExpenses = expenses.reduce((sum, item) => sum + parseFloat(item.monto || item.amount || 0), 0);
         const balance = totalIncome - totalExpenses;
         
-        await saveData('balance', {
+        const balanceData = {
             ingresosTotales: totalIncome,
             gastosTotales: totalExpenses,
             balanceActual: balance,
             ultimaActualizacion: Date.now()
-        });
+        };
+        
+        // Use secure function if available
+        const saveFn = typeof saveDataSecure === 'function' ? saveDataSecure : saveData;
+        await saveFn('balance', balanceData, true);
     } catch (error) {
         console.error('Error updating balance:', error);
     }
@@ -456,7 +512,18 @@ async function updateBalance() {
 
 async function deleteIncome(id) {
     try {
-        const result = await deleteData(`ingresos/${id}`);
+        // Validate admin
+        if (typeof isAdmin === 'function' && !isAdmin()) {
+            if (typeof showAlert === 'function') {
+                showAlert('Solo administradores pueden eliminar ingresos', 'error', 3000);
+            }
+            return false;
+        }
+        
+        // Use secure function if available
+        const deleteFn = typeof deleteDataSecure === 'function' ? deleteDataSecure : deleteData;
+        const result = await deleteFn(`ingresos/${id}`, true);
+        
         if (result.success) {
             await updateBalance();
         }
@@ -469,7 +536,18 @@ async function deleteIncome(id) {
 
 async function deleteExpense(id) {
     try {
-        const result = await deleteData(`gastos/${id}`);
+        // Validate admin
+        if (typeof isAdmin === 'function' && !isAdmin()) {
+            if (typeof showAlert === 'function') {
+                showAlert('Solo administradores pueden eliminar gastos', 'error', 3000);
+            }
+            return false;
+        }
+        
+        // Use secure function if available
+        const deleteFn = typeof deleteDataSecure === 'function' ? deleteDataSecure : deleteData;
+        const result = await deleteFn(`gastos/${id}`, true);
+        
         if (result.success) {
             await updateBalance();
         }

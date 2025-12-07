@@ -1,0 +1,48 @@
+{
+  "rules": {
+    "socios": {
+      "$socioId": {
+        ".read": true,
+        ".write": "!data.exists() || (newData.hasChild('adminToken') && newData.child('adminToken').val() == 'esperanza2025')",
+        ".validate": "newData.hasChildren(['nombre', 'apellido', 'email']) && newData.child('nombre').isString() && newData.child('nombre').val().length > 0 && newData.child('apellido').isString() && newData.child('apellido').val().length > 0 && newData.child('email').isString() && newData.child('email').val().length > 0 && (!newData.hasChild('adminToken') || newData.child('adminToken').val() == 'esperanza2025')"
+      },
+      ".read": true,
+      ".write": false
+    },
+    "chat": {
+      "$messageId": {
+        ".read": true,
+        ".write": "!data.exists() || (newData.hasChild('adminToken') && newData.child('adminToken').val() == 'esperanza2025')",
+        ".validate": "newData.hasChildren(['nombre', 'mensaje', 'timestamp']) && newData.child('nombre').isString() && newData.child('nombre').val().length > 0 && newData.child('nombre').val().length <= 50 && newData.child('mensaje').isString() && newData.child('mensaje').val().length > 0 && newData.child('mensaje').val().length <= 500 && newData.child('timestamp').isNumber() && newData.child('timestamp').val() > 0 && (!newData.hasChild('adminToken') || newData.child('adminToken').val() == 'esperanza2025')"
+      },
+      ".read": true,
+      ".write": true
+    },
+    "ingresos": {
+      "$ingresoId": {
+        ".read": true,
+        ".write": "newData.hasChild('adminToken') && newData.child('adminToken').val() == 'esperanza2025'",
+        ".validate": "newData.hasChildren(['monto', 'concepto', 'fecha', 'adminToken']) && newData.child('monto').isNumber() && newData.child('monto').val() > 0 && newData.child('concepto').isString() && newData.child('concepto').val().length > 0 && newData.child('fecha').isString() && newData.child('adminToken').val() == 'esperanza2025'"
+      },
+      ".read": true,
+      ".write": false
+    },
+    "gastos": {
+      "$gastoId": {
+        ".read": true,
+        ".write": "newData.hasChild('adminToken') && newData.child('adminToken').val() == 'esperanza2025'",
+        ".validate": "newData.hasChildren(['monto', 'concepto', 'fecha', 'adminToken']) && newData.child('monto').isNumber() && newData.child('monto').val() > 0 && newData.child('concepto').isString() && newData.child('concepto').val().length > 0 && newData.child('fecha').isString() && newData.child('adminToken').val() == 'esperanza2025'"
+      },
+      ".read": true,
+      ".write": false
+    },
+    "balance": {
+      ".read": true,
+      ".write": "newData.hasChild('adminToken') && newData.child('adminToken').val() == 'esperanza2025'",
+      ".validate": "newData.hasChildren(['ingresosTotales', 'gastosTotales', 'balanceActual', 'ultimaActualizacion', 'adminToken']) && newData.child('ingresosTotales').isNumber() && newData.child('gastosTotales').isNumber() && newData.child('balanceActual').isNumber() && newData.child('ultimaActualizacion').isNumber() && newData.child('ultimaActualizacion').val() > 0 && newData.child('adminToken').val() == 'esperanza2025'"
+    },
+    ".read": false,
+    ".write": false
+  }
+}
+

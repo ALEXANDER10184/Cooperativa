@@ -1,147 +1,126 @@
 // ============================================
-// CHAT LOGIC
-// Cooperativa Provivienda "Mi Esperanza"
+// CHAT LOGIC - API INTEGRATION
 // ============================================
 
-let isAdmin = false;
+let pollingInterval = null;
 
-document.addEventListener('DOMContentLoaded', function () {
-  // Translate page
-  i18n.translatePage();
-
-  // Check if admin
-  isAdmin = isAdminAuthenticated();
-
-  // Load and display messages
-  renderMessages();
-
-  // Form submission
-  const form = document.getElementById('chatForm');
-  form.addEventListener('submit', handleSendMessage);
-
-  // Load saved username
-  const savedName = localStorage.getItem('cooperativa_chat_username');
-  if (savedName) {
-    document.getElementById('userName').value = savedName;
-  }
-
-  // Auto-scroll to bottom
-  scrollToBottom();
+document.addEventListener('DOMContentLoaded', function() {
+    i18n.translatePage();
+    
+    // Load messages on page load
+    loadMessages();
+    
+    // Start polling every 3 seconds
+    pollingInterval = setInterval(loadMessages, 3000);
+    
+    // Handle form submission
+    const chatForm = document.getElementById('chatForm');
+    if (chatForm) {
+        chatForm.addEventListener('submit', handleSendMessage);
+    }
 });
 
-// ============================================
-// RENDER MESSAGES
-// ============================================
+// Load messages from API
+async function loadMessages() {
+    try {
+        const result = await chatAPI.listar();
+        if (result.ok && result.data) {
+            displayMessages(result.data);
+        }
+    } catch (error) {
+        console.error('Error cargando mensajes:', error);
+    }
+}
 
-// Subscribe to Firebase Messages
-function subscribeToMessages() {
-  listenData('chat', (data) => {
-    chatMessages.innerHTML = ''; // Clear existing messages
-    const messages = data ? Object.values(data) : [];
-
-    // Sort by timestamp
-    messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-
+// Display messages in the chat container
+function displayMessages(messages) {
+    const container = document.getElementById('chatMessages');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (messages.length === 0) {
+        container.innerHTML = '<p class="text-center text-secondary">No hay mensajes aún. ¡Sé el primero en escribir!</p>';
+        return;
+    }
+    
     messages.forEach(msg => {
-      renderMessage(msg);
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-message';
+        
+        const timestamp = new Date(msg.timestamp);
+        const timeStr = timestamp.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        
+        messageDiv.innerHTML = `
+            <div class="chat-message-header">
+                <strong>${escapeHtml(msg.nombre || 'Anónimo')}</strong>
+                <span class="chat-time">${timeStr}</span>
+            </div>
+            <div class="chat-message-body">${escapeHtml(msg.mensaje || '')}</div>
+        `;
+        
+        container.appendChild(messageDiv);
     });
-
-    scrollToBottom();
-  });
+    
+    // Scroll to bottom
+    container.scrollTop = container.scrollHeight;
 }
 
-function renderMessage(msg) {
-  // checkAdminSession() is assumed to be a global helper from main.js
-  const isAdminSession = checkAdminSession();
-  const timeStr = formatDate(new Date(msg.timestamp)); // formatDate is assumed to be a global helper
-
-  const msgDiv = document.createElement('div');
-
-  msgDiv.className = `chat-message ${msg.isAdmin ? 'admin-message' : ''}`;
-
-  if (msg.isAdmin) msgDiv.style.borderLeft = "4px solid var(--color-primary)";
-
-  msgDiv.innerHTML = `
-      <div class="chat-message-header">
-        <span class="chat-message-name">${escapeHtml(msg.sender)} ${msg.isAdmin ? '👑' : ''}</span>
-        <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-            <span class="chat-message-time">${timeStr}</span>
-            ${isAdminSession ? `
-              <button class="btn btn-danger btn-sm" onclick="deleteMessageConfirm('${msg.id}')" style="padding: 0.1rem 0.3rem; display: flex; align-items: center; justify-content: center;">
-                <span class="material-icons-round" style="font-size: 1.2em;">close</span>
-              </button>
-            ` : ''}
-        </div>
-      </div>
-      <div class="chat-message-body">${escapeHtml(msg.text)}</div>
-    `;
-
-  chatMessages.appendChild(msgDiv);
+// Handle send message
+async function handleSendMessage(event) {
+    event.preventDefault();
+    
+    const nombreInput = document.getElementById('userName');
+    const mensajeInput = document.getElementById('userMessage');
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    
+    const nombre = nombreInput.value.trim();
+    const mensaje = mensajeInput.value.trim();
+    
+    if (!nombre || !mensaje) {
+        alert('Por favor completa nombre y mensaje');
+        return;
+    }
+    
+    // Disable button
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="material-icons-round spinner">sync</span>';
+    }
+    
+    try {
+        const result = await chatAPI.enviar(nombre, mensaje);
+        
+        if (result.ok && result.data.ok) {
+            // Clear message input
+            mensajeInput.value = '';
+            // Reload messages
+            await loadMessages();
+        } else {
+            alert('Error al enviar mensaje ❌');
+        }
+    } catch (error) {
+        console.error('Error enviando mensaje:', error);
+        alert('Error de red ❌');
+    } finally {
+        // Re-enable button
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span class="material-icons-round">send</span><span class="sr-only">Enviar</span>';
+        }
+    }
 }
 
-// ============================================
-// SEND MESSAGE
-// ============================================
-
-// Send Message
-chatForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const sender = userNameInput.value.trim();
-  const text = userMessageInput.value.trim();
-
-  if (!sender || !text) {
-    return; // Do nothing if name or message is empty
-  }
-
-  // Save username for next time
-  localStorage.setItem('cooperativa_chat_username', sender);
-
-  const isAdminSession = checkAdminSession(); // Check admin status at the time of sending
-
-  const newMessage = {
-    sender: sender,
-    text: text,
-    timestamp: new Date().toISOString(),
-    isAdmin: isAdminSession
-  };
-
-  // Firebase Push
-  pushData('chat', newMessage) // pushData is assumed to be a global helper
-    .then(() => {
-      userMessageInput.value = ''; // Clear message input
-      // Name kept for convenience
-    })
-    .catch(err => showAlert('Error al enviar mensaje', 'error')); // showAlert is assumed to be a global helper
-});
-
-// ============================================
-// DELETE MESSAGE
-// ============================================
-
-function deleteMessageConfirm(id) {
-  if (confirm(i18n.t('confirmDelete'))) { // i18n.t is assumed to be a global helper
-    // Firebase Remove
-    // Note: 'chat' is a list, we need to find the key. 
-    // In our structure, id IS the key if we saved it correctly. 
-    // Let's ensure pushData saves the key as 'id'. Yes, our helper does that.
-    deleteData(`chat/${id}`) // deleteData is assumed to be a global helper
-      .then(() => showAlert('Mensaje eliminado', 'success'))
-      .catch(err => showAlert('Error al eliminar', 'error'));
-  }
-}
-
-// ============================================
-// HELPERS
-// ============================================
-
-function scrollToBottom() {
-  // chatMessages is already defined globally
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
+// Escape HTML to prevent XSS
 function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', function() {
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+    }
+});

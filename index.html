@@ -100,6 +100,16 @@
       <p class="tagline text-center" data-i18n="tagline">Construyendo hogares, juntos.</p>
     </header>
 
+    <!-- Stats Section -->
+    <div class="container" id="statsSection" style="display: none;">
+      <div class="card mb-2">
+        <h3 class="text-center mb-2">Resumen de la Cooperativa</h3>
+        <div id="statsContent" class="text-center">
+          <p>Cargando estadísticas...</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Navigation Menu -->
     <div class="container">
       <div class="nav-menu">
@@ -177,6 +187,51 @@
   <!-- Scripts -->
   <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    // Load and display stats
+    async function loadStats() {
+      try {
+        const result = await statsAPI.obtener();
+        if (result.ok && result.data) {
+          const stats = result.data;
+          const statsSection = document.getElementById('statsSection');
+          const statsContent = document.getElementById('statsContent');
+          
+          statsContent.innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1rem;">
+              <div>
+                <div style="font-size: 2em; font-weight: bold; color: var(--color-primary);">${stats.miembrosTotales || 0}</div>
+                <div>Miembros Totales</div>
+              </div>
+              <div>
+                <div style="font-size: 2em; font-weight: bold; color: var(--color-primary);">${stats.miembrosActivos || 0}</div>
+                <div>Miembros Activos</div>
+              </div>
+              <div>
+                <div style="font-size: 2em; font-weight: bold; color: var(--color-primary);">${stats.mensajesChat || 0}</div>
+                <div>Mensajes en Chat</div>
+              </div>
+              <div>
+                <div style="font-size: 2em; font-weight: bold; color: var(--color-primary);">€${(stats.saldoGlobal || 0).toFixed(2)}</div>
+                <div>Saldo Global</div>
+              </div>
+            </div>
+          `;
+          statsSection.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Error cargando stats:', error);
+      }
+    }
+    
+    // Load stats when main content is shown
+    document.addEventListener('DOMContentLoaded', function() {
+      if (document.getElementById('mainContent') && !document.getElementById('mainContent').classList.contains('hidden')) {
+        loadStats();
+      }
+    });
+  </script>
   <script>
     // Check if language is already selected
     function initializePage() {

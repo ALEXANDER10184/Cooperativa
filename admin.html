@@ -5,52 +5,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Administrativo - Cooperativa Provivienda</title>
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-
-    <!-- Firebase SDKs (Compat) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-    <!-- Firebase Logic -->
-    <script src="js/firebase.js"></script>
 </head>
 
 <body>
     <!-- Login Screen -->
     <div id="loginScreen">
         <header class="header">
-            <div class="logo">
-                <div data-i18n="logoText">Cooperativa Provivienda</div>
-                <div data-i18n="logoSubtext" style="font-size: 0.7em; margin-top: 0.2em;">Mi Esperanza</div>
+            <div class="header-content container">
+                <div class="logo-container">
+                    <div class="logo-icon"><span class="material-icons-round">volunteer_activism</span></div>
+                    <div class="logo-text">
+                        <div class="main-logo-text">Cooperativa Provivienda</div>
+                        <div class="sub-logo-text">Mi Esperanza</div>
+                    </div>
+                </div>
             </div>
         </header>
 
         <div class="container-sm">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title" data-i18n="adminTitle">Panel Administrativo</h2>
+                    <h2 class="card-title text-center">Panel Administrativo</h2>
                 </div>
 
                 <form id="loginForm">
                     <div class="form-group">
-                        <label class="form-label required" data-i18n="adminPassword">Contraseña de administrador</label>
+                        <label class="form-label required">Contraseña de administrador</label>
                         <input type="password" id="adminPasswordInput" class="form-input" required autofocus>
                     </div>
 
                     <div class="flex flex-gap">
                         <button type="button" class="btn btn-outline" onclick="navigateTo('index.html')">
-                            <span data-i18n="cancelBtn">Cancelar</span>
+                            Cancelar
                         </button>
                         <button type="submit" class="btn btn-primary" style="flex: 1;">
-                            <span class="material-icons-round"
-                                style="font-size: 1.2em; vertical-align: bottom;">login</span>
-                            <span data-i18n="loginBtn">Ingresar</span>
+                            <span class="material-icons-round">login</span> Ingresar
                         </button>
                     </div>
                 </form>
@@ -61,213 +55,125 @@
     <!-- Admin Panel (shown after login) -->
     <div id="adminPanel" class="hidden">
         <header class="header">
-            <div class="header-content container-lg flex-between">
-                <div class="logo">
-                    <div data-i18n="logoText">Cooperativa Provivienda</div>
-                    <div data-i18n="logoSubtext" style="font-size: 0.7em; margin-top: 0.2em;">Mi Esperanza</div>
+            <div class="header-content container">
+                <div class="logo-container">
+                    <div class="logo-icon"><span class="material-icons-round">volunteer_activism</span></div>
+                    <div class="logo-text">
+                        <div class="main-logo-text">Panel Administrativo</div>
+                        <div class="sub-logo-text">Cooperativa Provivienda</div>
+                    </div>
                 </div>
-                <div style="margin-top: 0;">
-                    <button class="btn btn-outline-light" onclick="logout()">
-                        <span class="material-icons-round">logout</span> <span data-i18n="logoutBtn">Cerrar
-                            sesión</span>
+                <div class="header-controls">
+                    <button class="icon-btn-light" onclick="navigateTo('index.html')" title="Volver">
+                        <span class="material-icons-round">arrow_back</span>
                     </button>
                 </div>
             </div>
         </header>
 
-        <div class="container-lg">
+        <div class="container">
             <!-- Tab Navigation -->
             <div class="card mb-2">
-                <div class="flex-wrap-gap">
-                    <button class="btn btn-primary" onclick="showTab('members')" id="tabMembers">
-                        <span class="material-icons-round">people</span> <span data-i18n="memberManagement">Gestión de
-                            Cooperativistas</span>
+                <div class="flex flex-wrap flex-gap">
+                    <button class="btn btn-primary" onclick="showTab('resumen')" id="tabResumen">
+                        <span class="material-icons-round">dashboard</span> Resumen
                     </button>
-                    <button class="btn btn-outline" onclick="showTab('financial')" id="tabFinancial">
-                        <span class="material-icons-round">dashboard</span> <span data-i18n="financialDashboard">Panel
-                            de Mando Financiero</span>
+                    <button class="btn btn-outline" onclick="showTab('miembros')" id="tabMiembros">
+                        <span class="material-icons-round">people</span> Miembros
+                    </button>
+                    <button class="btn btn-outline" onclick="showTab('chat')" id="tabChat">
+                        <span class="material-icons-round">forum</span> Chat
+                    </button>
+                    <button class="btn btn-outline" onclick="showTab('balance')" id="tabBalance">
+                        <span class="material-icons-round">account_balance</span> Balance
+                    </button>
+                    <button class="btn btn-outline" onclick="showTab('eventos')" id="tabEventos">
+                        <span class="material-icons-round">history</span> Eventos
                     </button>
                 </div>
             </div>
 
-            <!-- Members Tab -->
-            <div id="membersTab">
-                <!-- Search and Filters -->
+            <!-- Resumen Tab -->
+            <div id="resumenTab" class="tab-content">
                 <div class="card">
-                    <div class="grid-filters">
-                        <input type="text" id="searchInput" class="form-input" data-i18n-placeholder="searchPlaceholder"
-                            placeholder="Buscar por nombre...">
-
-                        <select id="cityFilter" class="form-select">
-                            <option value="" data-i18n="filterByCity">Filtrar por ciudad</option>
-                        </select>
-
-                        <button class="btn btn-outline" onclick="toggleUrgencyFilter()" id="urgencyFilterBtn">
-                            <span data-i18n="filterByUrgency">Urgencia ≥ 4</span>
-                        </button>
-
-                        <button class="btn btn-outline" onclick="togglePaymentFilter()" id="paymentFilterBtn">
-                            <span data-i18n="filterByPayment">Pagos pendientes</span>
-                        </button>
-
-                        <button class="btn btn-secondary" onclick="clearFilters()">
-                            <span data-i18n="clearFilters">Limpiar filtros</span>
-                        </button>
-
-                        <button class="btn btn-primary" onclick="exportMembers()">
-                            <span class="material-icons-round">file_download</span> <span data-i18n="exportCSV">Exportar
-                                CSV</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Members Table -->
-                <div class="card">
-                    <div class="table-container">
-                        <table class="table" id="membersTable">
-                            <thead>
-                                <tr>
-                                    <th onclick="sortTable('name')" data-i18n="nameHeader">Nombre</th>
-                                    <th onclick="sortTable('city')" data-i18n="cityHeader">Ciudad</th>
-                                    <th onclick="sortTable('urgencyLevel')" data-i18n="urgencyHeader">Urgencia</th>
-                                    <th data-i18n="functionHeader">Función</th>
-                                    <th data-i18n="paymentsHeader">Pagos</th>
-                                    <th data-i18n="actionsHeader">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="membersTableBody">
-                                <!-- Populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="noMembersMessage" class="text-center hidden" style="padding: var(--spacing-lg);">
-                        <p data-i18n="noData">No hay datos disponibles</p>
+                    <h3 class="card-title">Resumen del Sistema</h3>
+                    <div id="statsContent">
+                        <p>Cargando estadísticas...</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Financial Tab -->
-            <div id="financialTab" class="hidden">
-                <!-- Balance Overview -->
-                <div class="stats-grid">
-                    <div class="stat-card income">
-                        <div class="stat-icon"><span class="material-icons-round">trending_up</span></div>
-                        <div class="stat-label" data-i18n="totalIncome">Ingresos Totales</div>
-                        <div class="stat-value" id="totalIncomeDisplay">0.00 €</div>
-                    </div>
-                    <div class="stat-card expense">
-                        <div class="stat-icon"><span class="material-icons-round">trending_down</span></div>
-                        <div class="stat-label" data-i18n="totalExpenses">Gastos Totales</div>
-                        <div class="stat-value" id="totalExpensesDisplay">0.00 €</div>
-                    </div>
-                    <div class="stat-card balance">
-                        <div class="stat-icon"><span class="material-icons-round">account_balance_wallet</span></div>
-                        <div class="stat-label" data-i18n="currentBalance">Balance Actual</div>
-                        <div class="stat-value" id="currentBalanceDisplay">0.00 €</div>
-                    </div>
-                </div>
-
-                <!-- Income and Expense Forms -->
-                <div class="grid-forms">
-                    <!-- Income Form -->
-                    <div class="card">
-                        <h3 data-i18n="addIncome">Agregar Ingreso</h3>
-                        <form id="incomeForm" onsubmit="handleAddTransaction(event, 'income')">
-                            <div class="form-group">
-                                <label class="form-label" data-i18n="amount">Monto</label>
-                                <input type="number" name="amount" id="incomeAmount" class="form-input" min="0"
-                                    step="0.01" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" data-i18n="source">Fuente</label>
-                                <select name="source" id="incomeSource" class="form-select" required>
-                                    <option value="membership" data-i18n="source_membership">Cuota de Socio</option>
-                                    <option value="donation" data-i18n="source_donation">Donación</option>
-                                    <option value="event" data-i18n="source_event">Evento Comunitario</option>
-                                    <option value="other" data-i18n="source_other">Otro</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" data-i18n="date">Fecha</label>
-                                <input type="date" name="date" id="incomeDate" class="form-input" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" data-i18n="description">Descripción (Opcional)</label>
-                                <input type="text" name="description" id="incomeDescription" class="form-input">
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">
-                                <span class="material-icons-round">add_circle</span> <span data-i18n="addIncome">Agregar
-                                    Ingreso</span>
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Expense Form -->
-                    <div class="card">
-                        <h3 data-i18n="addExpense">Agregar Gasto</h3>
-                        <form id="expenseForm" onsubmit="handleAddTransaction(event, 'expense')">
-                            <div class="form-group">
-                                <label class="form-label" data-i18n="amount">Monto</label>
-                                <input type="number" name="amount" id="expenseAmount" class="form-input" min="0"
-                                    step="0.01" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" data-i18n="category">Categoría</label>
-                                <select name="category" id="expenseCategory" class="form-select" required>
-                                    <option value="maintenance" data-i18n="category_maintenance">Mantenimiento</option>
-                                    <option value="utilities" data-i18n="category_utilities">Servicios Básicos</option>
-                                    <option value="supplies" data-i18n="category_supplies">Suministros</option>
-                                    <option value="legal" data-i18n="category_legal">Legal/Administrativo</option>
-                                    <option value="other" data-i18n="category_other">Otro</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" data-i18n="date">Fecha</label>
-                                <input type="date" name="date" id="expenseDate" class="form-input" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" data-i18n="description">Descripción (Opcional)</label>
-                                <input type="text" name="description" id="expenseDescription" class="form-input">
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">
-                                <span class="material-icons-round">remove_circle</span> <span
-                                    data-i18n="addExpense">Agregar Gasto</span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Transaction History -->
+            <!-- Miembros Tab -->
+            <div id="miembrosTab" class="tab-content hidden">
                 <div class="card">
-                    <h3 data-i18n="balanceTitle">Historial de Transacciones</h3>
-                    <div class="table-container">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th data-i18n="date">Fecha</th>
-                                    <th>Tipo</th>
-                                    <th data-i18n="category">Categoría/Fuente</th>
-                                    <th data-i18n="amount">Monto</th>
-                                    <th data-i18n="description">Descripción</th>
-                                    <th data-i18n="actionsHeader">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="transactionsTableBody">
-                                <!-- Populated by JavaScript -->
-                            </tbody>
-                        </table>
+                    <h3 class="card-title">Lista de Miembros</h3>
+                    <div id="membersList">
+                        <p>Cargando miembros...</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Edit Member Modal (simple overlay) -->
-    <div id="editModal" class="hidden modal-overlay">
-        <div class="container-sm" style="margin-top: var(--spacing-lg);">
-            <div class="card">
-                <h3>Editar Cooperativista</h3>
-                <div id="editModalContent"></div>
+            <!-- Chat Tab -->
+            <div id="chatTab" class="tab-content hidden">
+                <div class="card">
+                    <div class="flex flex-between align-center mb-2">
+                        <h3 class="card-title mb-0">Mensajes del Chat</h3>
+                        <button class="btn btn-danger" onclick="clearChat()">
+                            <span class="material-icons-round">delete</span> Limpiar Chat
+                        </button>
+                    </div>
+                    <div id="adminChatMessages" style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 1rem; border-radius: 4px;">
+                        <p>Cargando mensajes...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Balance Tab -->
+            <div id="balanceTab" class="tab-content hidden">
+                <div class="card mb-2">
+                    <h3 class="card-title">Balance Global</h3>
+                    <div id="balanceGlobalContent">
+                        <p>Cargando balance...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Registrar Movimiento</h3>
+                    <form id="movimientoForm">
+                        <div class="form-group">
+                            <label class="form-label required">Tipo</label>
+                            <select id="movimientoTipo" class="form-select" required>
+                                <option value="ingreso">Ingreso</option>
+                                <option value="gasto">Gasto</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Monto (€)</label>
+                            <input type="number" id="movimientoMonto" class="form-input" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Concepto</label>
+                            <input type="text" id="movimientoConcepto" class="form-input" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="material-icons-round">add</span> Registrar Movimiento
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Eventos Tab -->
+            <div id="eventosTab" class="tab-content hidden">
+                <div class="card">
+                    <div class="flex flex-between align-center mb-2">
+                        <h3 class="card-title mb-0">Log de Eventos</h3>
+                        <button class="btn btn-danger" onclick="clearEventos()">
+                            <span class="material-icons-round">delete</span> Limpiar Eventos
+                        </button>
+                    </div>
+                    <div id="eventosList" style="max-height: 400px; overflow-y: auto;">
+                        <p>Cargando eventos...</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -275,6 +181,7 @@
     <!-- Scripts -->
     <script src="js/i18n.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/admin.js"></script>
 </body>
 

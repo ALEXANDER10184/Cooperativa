@@ -210,42 +210,30 @@ async function handleSubmit(event) {
     submitBtn.innerHTML = '<span class="material-icons-round spinner">sync</span> Enviando...';
 
     try {
-        // Prepare payload for Cloudflare Worker (exact format required)
-        const workerPayload = {
+        // Prepare payload for API
+        const payload = {
             nombre: document.getElementById('nombre').value.trim(),
             apellido: document.getElementById('apellido').value.trim(),
-            edad: document.getElementById('edad').value.trim(),
-            info: document.getElementById('info').value.trim() || '',
-            timestamp: Date.now()
+            email: document.getElementById('email').value.trim(),
+            telefono: document.getElementById('phone').value.trim(),
+            ciudad: document.getElementById('city').value.trim(),
+            aporteMensual: parseFloat(document.getElementById('aporteMensual').value) || 0,
+            timestamp: Date.now(),
+            estado: 'activo'
         };
 
-        // Validate payload has required fields
-        if (!workerPayload.nombre || !workerPayload.apellido || !workerPayload.edad) {
+        // Validate required fields
+        if (!payload.nombre || !payload.apellido || !payload.email || !payload.telefono) {
             throw new Error('Faltan campos requeridos');
         }
 
-        // Send to Cloudflare Worker
-        console.log('Enviando datos al Worker:', workerPayload);
+        // Send to API
+        console.log('Enviando registro:', payload);
+        const result = await registroAPI.crear(payload);
         
-        const response = await fetch('https://rough-lake-0310.cacero1018.workers.dev/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(workerPayload)
-        });
-
-        // Check if response is ok
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        // Parse response
-        const data = await response.json();
-        console.log('Respuesta del Worker:', data);
-
-        // Check if Worker returned ok: true
-        if (data.ok === true) {
-            // Success - show alert and reset form
-            alert('Registro completado ✔️');
+        if (result.ok && result.data.ok) {
+            // Success
+            alert('Registro completado ✔️\nID: ' + result.data.id);
             showAlert('Registro completado con éxito ✔️', 'success');
             document.getElementById('registrationForm').reset();
             
@@ -254,12 +242,12 @@ async function handleSubmit(event) {
                 navigateTo('index.html');
             }, 2000);
         } else {
-            throw new Error('Worker no devolvió ok: true');
+            throw new Error(result.data?.error || 'Error al registrar');
         }
 
     } catch (error) {
         // Error handling
-        console.error('Error al enviar al Worker:', error);
+        console.error('Error al enviar registro:', error);
         alert('Error al registrar ❌\n' + error.message);
         showAlert('Error al registrar. Verifique su conexión. ❌', 'error');
         

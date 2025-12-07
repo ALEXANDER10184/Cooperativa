@@ -190,94 +190,94 @@ function validateForm() {
 async function handleSubmit(event) {
     event.preventDefault();
 
-    // Get submit button and save original state
-    const submitBtn = document.getElementById('btnEnviar');
-    if (!submitBtn) {
+    // Get submit button
+    const btnEnviar = document.getElementById('btnEnviar');
+    if (!btnEnviar) {
         console.error('Botón btnEnviar no encontrado');
         return;
     }
-
-    const originalText = submitBtn.innerHTML;
-    const originalDisabled = submitBtn.disabled;
 
     // Validate form
     if (!validateForm()) {
         return;
     }
 
-    // Disable button and show loading state
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="material-icons-round spinner">sync</span> Enviando...';
+    // Get form values
+    const nombre = document.getElementById('nombre').value.trim();
+    const apellido = document.getElementById('apellido').value.trim();
+    const edad = document.getElementById('edad').value.trim();
+    const info = document.getElementById('info').value.trim() || '';
+    
+    // Validate required fields
+    if (!nombre || !apellido || !edad) {
+        alert('Por favor completa todos los campos requeridos');
+        return;
+    }
 
-    try {
-        // Prepare payload for API
-        const payload = {
-            nombre: document.getElementById('nombre').value.trim(),
-            apellido: document.getElementById('apellido').value.trim(),
-            email: document.getElementById('email').value.trim(),
-            telefono: document.getElementById('phone').value.trim(),
-            ciudad: document.getElementById('city').value.trim(),
-            aporteMensual: parseFloat(document.getElementById('aporteMensual').value) || 0,
-            timestamp: Date.now(),
-            estado: 'activo'
-        };
+    // Update button state
+    btnEnviar.innerHTML = "Enviando...";
+    btnEnviar.disabled = true;
 
-        // Validate required fields
-        if (!payload.nombre || !payload.apellido || !payload.email || !payload.telefono) {
-            throw new Error('Faltan campos requeridos');
-        }
+    // Get addSocio function (try window first, then direct)
+    const addSocioFunc = window.addSocio || addSocio;
+    
+    if (typeof addSocioFunc !== 'function') {
+        console.error('addSocio no está disponible');
+        btnEnviar.innerHTML = "Error";
+        btnEnviar.disabled = false;
+        alert('Error: No hay conexión disponible');
+        return;
+    }
 
-        // Try Firebase first, then API as fallback
-        let success = false;
-        let memberId = null;
-        
-        // Try addSocio first (new Firebase function)
-        if (typeof window.addSocio === 'function') {
-            memberId = generateId();
-            const result = await window.addSocio(memberId, payload);
-            success = result.success;
-        } else if (typeof addSocio === 'function') {
-            memberId = generateId();
-            const result = await addSocio(memberId, payload);
-            success = result.success;
-        } else if (typeof saveMember === 'function') {
-            // Use Firebase saveMember
-            payload.id = generateId();
-            success = await saveMember(payload);
-            memberId = payload.id;
-        } else if (typeof registroAPI !== 'undefined' && registroAPI.crear) {
-            // Fallback to API
-            console.log('Enviando registro:', payload);
-            const result = await registroAPI.crear(payload);
-            success = result.ok && result.data.ok;
-            memberId = result.data?.id;
-        } else {
-            throw new Error('No hay conexión disponible');
-        }
-        
-        if (success) {
-            // Success
-            alert('Registro completado ✔️' + (memberId ? '\nID: ' + memberId : ''));
-            showAlert('Registro completado con éxito ✔️', 'success');
-            document.getElementById('registrationForm').reset();
+    // Prepare data
+    const socioData = {
+        nombre: nombre,
+        apellido: apellido,
+        edad: edad,
+        info: info,
+        timestamp: Date.now(),
+        estado: 'activo'
+    };
+
+    // Save to Firebase
+    addSocioFunc(Date.now().toString(), socioData)
+        .then(() => {
+            btnEnviar.innerHTML = "Enviado ✔️";
+            btnEnviar.disabled = false;
+            
+            // Clear form
+            const form = document.getElementById('registrationForm');
+            if (form) {
+                form.reset();
+            }
+            
+            // Show success message
+            if (typeof showAlert === 'function') {
+                showAlert('Registro completado con éxito ✔️', 'success');
+            } else {
+                alert('Registro completado ✔️');
+            }
             
             // Navigate after short delay
             setTimeout(() => {
-                navigateTo('index.html');
+                if (typeof navigateTo === 'function') {
+                    navigateTo('index.html');
+                } else {
+                    window.location.href = 'index.html';
+                }
             }, 2000);
-        } else {
-            throw new Error('Error al registrar');
-        }
-
-    } catch (error) {
-        // Error handling
-        console.error('Error al enviar registro:', error);
-        alert('Error al registrar ❌\n' + error.message);
-        showAlert('Error al registrar. Verifique su conexión. ❌', 'error');
-        
-        // Restore button state
-        submitBtn.disabled = originalDisabled;
-        submitBtn.innerHTML = originalText;
-    }
+        })
+        .catch((err) => {
+            console.error("Error al guardar socio:", err);
+            btnEnviar.innerHTML = "Error";
+            btnEnviar.disabled = false;
+            
+            // Show error message
+            if (typeof showAlert === 'function') {
+                showAlert('Error al registrar. Verifique su conexión. ❌', 'error');
+            } else {
+                alert('Error al registrar ❌\n' + (err.message || 'Error de conexión'));
+            }
+        });
 }
 

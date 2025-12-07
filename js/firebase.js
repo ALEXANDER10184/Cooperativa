@@ -191,15 +191,8 @@ export function getSocios(callback) {
  * @param {object} data - Socio data
  * @returns {Promise} Promise that resolves when data is saved
  */
-export async function addSocio(id, data) {
-    try {
-        await set(ref(db, "socios/" + id), data);
-        console.log(`Socio added with id: ${id}`);
-        return { success: true };
-    } catch (error) {
-        console.error("Error adding socio:", error);
-        return { success: false, error: error.message };
-    }
+export function addSocio(id, data) {
+    return set(ref(db, "socios/" + id), data);
 }
 
 /**

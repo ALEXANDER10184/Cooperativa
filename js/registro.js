@@ -232,7 +232,11 @@ async function handleSubmit(event) {
         let memberId = null;
         
         // Try addSocio first (new Firebase function)
-        if (typeof addSocio === 'function') {
+        if (typeof window.addSocio === 'function') {
+            memberId = generateId();
+            const result = await window.addSocio(memberId, payload);
+            success = result.success;
+        } else if (typeof addSocio === 'function') {
             memberId = generateId();
             const result = await addSocio(memberId, payload);
             success = result.success;

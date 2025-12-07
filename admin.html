@@ -38,7 +38,7 @@
                 <form id="loginForm">
                     <div class="form-group">
                         <label class="form-label required">Contraseña de administrador</label>
-                        <input type="password" id="adminPasswordInput" class="form-input" required autofocus>
+                        <input type="password" id="adminPassword" class="form-input" required autofocus>
                     </div>
 
                     <div class="text-center mb-2">
@@ -72,6 +72,9 @@
                     </div>
                 </div>
                 <div class="header-controls">
+                    <button class="icon-btn-light" onclick="logout()" title="Cerrar sesión">
+                        <span class="material-icons-round">logout</span>
+                    </button>
                     <button class="icon-btn-light" onclick="navigateTo('index.html')" title="Volver">
                         <span class="material-icons-round">arrow_back</span>
                     </button>
@@ -263,6 +266,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="js/i18n.js"></script>
     <script src="js/main.js"></script>
     <script src="js/api.js"></script>

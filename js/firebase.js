@@ -28,6 +28,9 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
 
+// Export ref and onValue for other modules if needed
+export { ref, onValue };
+
 // Connection state monitoring
 let isOnline = navigator.onLine;
 let connectionListeners = [];

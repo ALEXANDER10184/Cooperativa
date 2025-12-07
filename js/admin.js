@@ -4,7 +4,7 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     // Check if already authenticated (check both methods for compatibility)
-    const adminAuth = localStorage.getItem("adminAuth") === "1";
+    const adminAuth = localStorage.getItem("adminAuth") === "true" || localStorage.getItem("adminAuth") === "1";
     const isAuth = isAdminAuthenticated();
     
     if (adminAuth || isAuth) {
@@ -12,17 +12,17 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         showLoginScreen();
     }
-    
+
     // Login form handler
-    const loginForm = document.getElementById('loginForm');
+  const loginForm = document.getElementById('loginForm');
     if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
+  loginForm.addEventListener('submit', handleLogin);
     }
     
     // Recovery form handler
     const recoveryForm = document.getElementById('recoveryForm');
     if (recoveryForm) {
-        recoveryForm.addEventListener('submit', handleRecovery);
+        recoveryForm.addEventListener('submit', handleRecoveryEmail);
     }
     
     // Change password form handler
@@ -45,7 +45,7 @@ function showLoginScreen() {
 
 function showAdminPanel() {
     // Verify admin auth before showing panel
-    const adminAuth = localStorage.getItem("adminAuth") === "1";
+    const adminAuth = localStorage.getItem("adminAuth") === "true" || localStorage.getItem("adminAuth") === "1";
     const isAuth = isAdminAuthenticated();
     
     if (!adminAuth && !isAuth) {
@@ -61,7 +61,7 @@ function showAdminPanel() {
 
 async function handleLogin(event) {
     event.preventDefault();
-    const passwordInput = document.getElementById('adminPasswordInput') || document.getElementById('clave');
+    const passwordInput = document.getElementById('adminPassword') || document.getElementById('adminPasswordInput');
     if (!passwordInput) {
         console.error('Campo de contraseña no encontrado');
         return;
@@ -76,34 +76,26 @@ async function handleLogin(event) {
     
     try {
         // Get admin token from Firebase using getAdminToken()
-        // getAdminToken is available globally via firebase-global.js
-        let tokenReal;
-        if (typeof window.getAdminToken === 'function') {
-            tokenReal = await window.getAdminToken();
-        } else if (typeof getAdminToken === 'function') {
-            tokenReal = await getAdminToken();
-        } else {
-            // Fallback: read from config
-            const configData = await readDataOnce('config');
-            tokenReal = configData?.adminToken || null;
-        }
+        const token = await window.getAdminToken();
         
-        if (!tokenReal) {
+        if (!token) {
             alert("⚠ Error: No se pudo obtener el token de administrador.");
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
             return;
         }
         
-        if (password === tokenReal) {
-            localStorage.setItem("adminAuth", "1");
-            setAdminSession();
-            showAdminPanel();
-            passwordInput.value = '';
-        } else {
+        if (password !== token) {
+            // Show modal "Clave incorrecta"
             showIncorrectPasswordModal();
             passwordInput.value = '';
             passwordInput.focus();
+        } else {
+            // Correct password
+            localStorage.setItem("adminAuth", "true");
+    setAdminSession();
+    showAdminPanel();
+            passwordInput.value = '';
         }
     } catch (error) {
         console.error('Error verificando clave:', error);
@@ -111,14 +103,18 @@ async function handleLogin(event) {
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
-    }
+  }
 }
 
 function logout() {
-    clearAdminSession();
+  clearAdminSession();
     localStorage.removeItem("adminAuth");
+    localStorage.setItem("adminAuth", "false");
     showLoginScreen();
 }
+
+// Make logout available globally
+window.logout = logout;
 
 function showTab(tabName) {
     // Hide all tabs
@@ -267,11 +263,11 @@ async function loadMembers() {
 }
 
 function renderMembersTable(members, content) {
-    if (members.length === 0) {
+  if (members.length === 0) {
         content.innerHTML = '<p>No hay miembros registrados</p>';
-        return;
-    }
-    
+    return;
+  }
+
     let html = '<table class="table" style="width: 100%; border-collapse: collapse;"><thead><tr><th>Nombre</th><th>Email</th><th>Ciudad</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
     
     members.forEach(member => {
@@ -284,8 +280,8 @@ function renderMembersTable(members, content) {
                 <td>
                     <button class="btn btn-sm btn-outline" onclick="viewMember('${member.id}')">Ver</button>
                     ${member.estado === 'activo' ? `<button class="btn btn-sm btn-danger" onclick="deactivateMember('${member.id}')">Desactivar</button>` : ''}
-                </td>
-            </tr>
+      </td>
+    </tr>
         `;
     });
     
@@ -324,7 +320,7 @@ async function loadChatMessages() {
             } else if (typeof getAllMessages === 'function') {
                 const messages = await getAllMessages();
                 renderChatMessages(messages, content);
-            } else {
+  } else {
                 content.innerHTML = '<p>No hay mensajes</p>';
             }
         } catch (error) {
@@ -457,8 +453,8 @@ function renderBalance(balance, content) {
             </div>
             <p>Saldo Global</p>
             ${balance.ultimaActualizacion ? `<p style="color: #666; font-size: 0.9em;">Última actualización: ${new Date(balance.ultimaActualizacion).toLocaleString('es-ES')}</p>` : ''}
-        </div>
-    `;
+    </div>
+  `;
 }
 
 async function handleMovimiento(event) {
@@ -557,11 +553,11 @@ async function loadEventos() {
                             <div>
                                 <strong>${escapeHtml(evento.tipo || 'evento')}</strong>
                                 <span style="color: #666; font-size: 0.9em;"> - ${escapeHtml(evento.origen || 'sistema')}</span>
-                            </div>
+      </div>
                             <span style="color: #666; font-size: 0.85em;">${time}</span>
-                        </div>
+      </div>
                         <p style="margin: 0.5rem 0 0 0; color: #555;">${escapeHtml(evento.descripcion || '')}</p>
-                    </div>
+      </div>
                 `;
             });
             html += '</div>';
@@ -633,9 +629,9 @@ async function deactivateMember(id) {
     }
     
     if (!confirm('¿Estás seguro de desactivar este miembro?')) {
-        return;
-    }
-    
+    return;
+  }
+
     try {
         // Try updateSocio first (new Firebase function)
         if (typeof updateSocio === 'function') {
@@ -718,7 +714,36 @@ function closeRecoveryModal() {
 }
 
 // Handle recovery form
-async function handleRecovery(event) {
+// Show recovery modal
+function showRecoveryModal() {
+    const modal = document.getElementById('recoveryModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        const emailInput = document.getElementById('recoveryEmailInput');
+        if (emailInput) {
+            emailInput.focus();
+        }
+    }
+}
+
+// Close recovery modal
+function closeRecoveryModal() {
+    const modal = document.getElementById('recoveryModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        const form = document.getElementById('recoveryForm');
+        if (form) {
+            form.reset();
+        }
+    }
+}
+
+// Make functions available globally
+window.showRecoveryModal = showRecoveryModal;
+window.closeRecoveryModal = closeRecoveryModal;
+
+// Handle recovery email with EmailJS
+async function handleRecoveryEmail(event) {
     event.preventDefault();
     const email = document.getElementById('recoveryEmailInput').value.trim();
     const submitBtn = event.target.querySelector('button[type="submit"]');
@@ -733,36 +758,75 @@ async function handleRecovery(event) {
     submitBtn.innerHTML = '<span class="material-icons-round spinner">sync</span> Enviando...';
     
     try {
-        // Get current admin token from Firebase using getAdminToken()
-        let adminToken;
-        if (typeof getAdminToken === 'function') {
-            adminToken = await getAdminToken();
-        } else {
-            const configData = await readDataOnce('config');
-            adminToken = configData?.adminToken || 'esperanza2025';
-        }
+        // Get admin token from Firebase
+        const token = await window.getAdminToken();
         
-        if (!adminToken) {
+        if (!token) {
             alert('Error: No se pudo obtener el token de administrador.');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
             return;
         }
         
-        // Send recovery email
-        const success = await sendRecoveryEmail(email, adminToken);
-        
-        if (success) {
-            alert('Clave enviada al correo registrado');
-            closeRecoveryModal();
+        // Check if EmailJS is loaded
+        if (typeof emailjs === 'undefined') {
+            // Load EmailJS if not available
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+            script.onload = async () => {
+                await sendEmailWithEmailJS(email, token, submitBtn, originalText);
+            };
+            script.onerror = () => {
+                alert('Error al cargar EmailJS. Por favor, verifica tu conexión.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            };
+            document.head.appendChild(script);
         } else {
-            alert('Error al enviar el correo. Por favor, contacta al administrador.');
+            await sendEmailWithEmailJS(email, token, submitBtn, originalText);
         }
     } catch (error) {
         console.error('Error en recuperación:', error);
         alert('Error al procesar la solicitud');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
+}
+
+// Send email using EmailJS
+async function sendEmailWithEmailJS(email, adminKey, submitBtn, originalText) {
+    try {
+        // Initialize EmailJS (you need to set your public key)
+        // emailjs.init("YOUR_PUBLIC_KEY"); // Uncomment and set your public key
+        
+        // Send email using EmailJS
+        // Replace SERVICE_ID and TEMPLATE_ID with your actual values
+        const result = await emailjs.send("service_default", "template_default", {
+            to_email: email,
+            admin_key: adminKey,
+            from_name: "Cooperativa Provivienda",
+            subject: "Recuperación de Clave de Administrador"
+        });
+        
+        if (result.status === 200) {
+            // Show success modal
+            alert('✅ Correo enviado correctamente. Revisa tu bandeja de entrada.');
+            closeRecoveryModal();
+        } else {
+            throw new Error('Error al enviar correo');
+        }
+    } catch (error) {
+        console.error('Error enviando correo:', error);
+        alert('Error al enviar el correo. Por favor, contacta al administrador o verifica la configuración de EmailJS.');
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
     }
+}
+
+// Alias for compatibility
+async function handleRecovery(event) {
+    return handleRecoveryEmail(event);
 }
 
 // Send recovery email (prepared for EmailJS)
@@ -796,7 +860,7 @@ async function sendRecoveryEmail(email, clave) {
 
 // Handle change password form
 async function handleChangePassword(event) {
-    event.preventDefault();
+  event.preventDefault();
     
     const currentPassword = document.getElementById('currentPasswordInput').value;
     const newPassword = document.getElementById('newPasswordInput').value;

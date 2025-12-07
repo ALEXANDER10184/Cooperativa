@@ -1,10 +1,8 @@
 {
   "rules": {
-    ".read": false,
-    ".write": false,
     "config": {
       ".read": true,
-      ".write": false
+      ".write": true
     },
     "socios": {
       ".read": true,

@@ -187,15 +187,12 @@ window.readDataOnce = readDataOnce;
 window.isFirebaseConnected = isFirebaseConnected;
 window.onConnectionChange = onConnectionChange;
 
-// Get current admin token
-async function getAdminToken() {
-    try {
-        const configData = await readDataOnce('config');
-        return configData?.adminToken || ADMIN_TOKEN;
-    } catch (error) {
-        return ADMIN_TOKEN;
-    }
-}
+// Export CRUD functions globally
+window.getAdminToken = getAdminToken;
+window.getSocios = getSocios;
+window.addSocio = addSocio;
+window.updateSocio = updateSocio;
+window.deleteSocio = deleteSocio;
 
 // Export secure functions
 window.saveDataSecure = saveDataSecure;
@@ -204,5 +201,4 @@ window.updateDataSecure = updateDataSecure;
 window.deleteDataSecure = deleteDataSecure;
 window.isAdmin = isAdmin;
 window.validateData = validateData;
-window.getAdminToken = getAdminToken;
 

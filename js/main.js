@@ -8,11 +8,16 @@ import {
     getItem,
     addItem, 
     updateItem, 
-    deleteItem
+    deleteItem,
+    getItemsByField
 } from './db.js';
 
 // Estado global
 let currentEditId = null;
+let currentEditGastoId = null;
+let currentEditIngresoId = null;
+let currentEditPagoId = null;
+let currentSocioIdForPagos = null;
 
 // Referencias a elementos del DOM (se inicializan después de que el DOM cargue)
 let socioModal, modalTitle, socioForm, nombre, apellido, email, telefono, estado, submitSocioBtn, cancelModalBtn, closeModalBtn;
@@ -36,8 +41,11 @@ async function initUI() {
         // Configurar listeners
         setupEventListeners();
         
-        // Renderizar tabla de socios
+        // Renderizar tablas iniciales
         renderSociosTable();
+        renderGastosTable();
+        renderIngresosTable();
+        loadSociosSelector();
     } catch (error) {
         console.error('❌ Error al inicializar aplicación:', error);
         alert('Error al cargar la aplicación. Por favor, recarga la página.');
@@ -100,12 +108,50 @@ function setupEventListeners() {
         console.error('❌ No se encontró el botón con ID "cancelModalBtn"');
     }
 
-    // Listener para formulario
+    // Listener para formulario de socios
     if (socioForm) {
         socioForm.addEventListener('submit', handleSubmitForm);
         console.log('✅ Listener agregado a formulario "socioForm"');
     } else {
         console.error('❌ No se encontró el formulario con ID "socioForm"');
+    }
+
+    // Listeners para botones de administración
+    const addGastoBtn = document.getElementById('addGastoBtn');
+    if (addGastoBtn) {
+        addGastoBtn.addEventListener('click', openAddGastoModal);
+        console.log('✅ Listener agregado a botón "Agregar Gasto"');
+    }
+
+    const addIngresoBtn = document.getElementById('addIngresoBtn');
+    if (addIngresoBtn) {
+        addIngresoBtn.addEventListener('click', openAddIngresoModal);
+        console.log('✅ Listener agregado a botón "Agregar Ingreso"');
+    }
+
+    const addPagoBtn = document.getElementById('addPagoBtn');
+    if (addPagoBtn) {
+        addPagoBtn.addEventListener('click', openAddPagoModal);
+        console.log('✅ Listener agregado a botón "Registrar Pago"');
+    }
+
+    // Listeners para formularios de administración
+    const gastoForm = document.getElementById('gastoForm');
+    if (gastoForm) {
+        gastoForm.addEventListener('submit', handleSubmitGasto);
+        console.log('✅ Listener agregado a formulario "gastoForm"');
+    }
+
+    const ingresoForm = document.getElementById('ingresoForm');
+    if (ingresoForm) {
+        ingresoForm.addEventListener('submit', handleSubmitIngreso);
+        console.log('✅ Listener agregado a formulario "ingresoForm"');
+    }
+
+    const pagoForm = document.getElementById('pagoForm');
+    if (pagoForm) {
+        pagoForm.addEventListener('submit', handleSubmitPago);
+        console.log('✅ Listener agregado a formulario "pagoForm"');
     }
 }
 

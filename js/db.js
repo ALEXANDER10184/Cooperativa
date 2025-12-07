@@ -272,6 +272,23 @@ export function clearCollection(collection) {
 }
 
 /**
+ * Obtiene items filtrados por un campo específico
+ * @param {string} collection - Nombre de la colección
+ * @param {string} field - Nombre del campo a filtrar
+ * @param {any} value - Valor a buscar
+ * @returns {Array} Array de items que coinciden
+ */
+export function getItemsByField(collection, field, value) {
+    try {
+        const items = getAll(collection);
+        return items.filter(item => item[field] === value);
+    } catch (error) {
+        console.error(`❌ Error al obtener items por campo "${field}" de "${collection}":`, error);
+        throw error;
+    }
+}
+
+/**
  * Obtiene el estado completo de la base de datos
  * @returns {Object} Base de datos completa
  */

@@ -50,6 +50,76 @@
             gap: 0.5rem;
         }
 
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: transparent;
+            color: #6b7280;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            color: #2563eb;
+        }
+
+        .tab-btn.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+
+        .tab-content-section {
+            display: none;
+        }
+
+        .tab-content-section.active {
+            display: block;
+        }
+
+        .sub-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .sub-tab-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: #f3f4f6;
+            color: #374151;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .sub-tab-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .sub-tab-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .sub-tab-content {
+            display: none;
+        }
+
+        .sub-tab-content.active {
+            display: block;
+        }
+
         .main-container {
             max-width: 1200px;
             margin: 2rem auto;
@@ -379,43 +449,176 @@
 
     <!-- Main Container -->
     <div class="main-container">
-        <!-- Card: Gestión de Socios -->
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Gestión de Socios</h2>
-                <button class="btn btn-primary" id="addSocioBtn">
-                    <span class="material-icons-round">add</span>
-                    Agregar Socio
-          </button>
-  </div>
-
-            <!-- Tabla de Socios -->
-            <div class="table-container">
-                <table id="sociosTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Email</th>
-                            <th>Teléfono</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sociosTableBody">
-                        <tr>
-                            <td colspan="7" class="empty-state">
-                                <div class="empty-state-icon">📋</div>
-                                <p>No hay socios registrados</p>
-                                <p style="font-size: 0.875rem; margin-top: 0.5rem;">Haz clic en "Agregar Socio" para comenzar</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-          </div>
+        <!-- Tabs de Navegación Principal -->
+        <div class="tabs">
+            <button class="tab-btn active" id="tabSocios" onclick="switchMainTab('socios')">
+                <span class="material-icons-round">people</span> Socios
+            </button>
+            <button class="tab-btn" id="tabAdministracion" onclick="switchMainTab('administracion')">
+                <span class="material-icons-round">admin_panel_settings</span> Administración
+            </button>
         </div>
-      </div>
+
+        <!-- Tab: Socios -->
+        <div id="sociosSection" class="tab-content-section active">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Gestión de Socios</h2>
+                    <button class="btn btn-primary" id="addSocioBtn">
+                        <span class="material-icons-round">add</span>
+                        Agregar Socio
+                    </button>
+                </div>
+
+                <!-- Tabla de Socios -->
+                <div class="table-container">
+                    <table id="sociosTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sociosTableBody">
+                            <tr>
+                                <td colspan="7" class="empty-state">
+                                    <div class="empty-state-icon">📋</div>
+                                    <p>No hay socios registrados</p>
+                                    <p style="font-size: 0.875rem; margin-top: 0.5rem;">Haz clic en "Agregar Socio" para comenzar</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Administración -->
+        <div id="administracionSection" class="tab-content-section">
+            <!-- Sub-tabs de Administración -->
+            <div class="sub-tabs">
+                <button class="sub-tab-btn active" id="subTabGastos" onclick="switchAdminTab('gastos')">
+                    <span class="material-icons-round">trending_down</span> Gastos
+                </button>
+                <button class="sub-tab-btn" id="subTabIngresos" onclick="switchAdminTab('ingresos')">
+                    <span class="material-icons-round">trending_up</span> Ingresos
+                </button>
+                <button class="sub-tab-btn" id="subTabPagos" onclick="switchAdminTab('pagos')">
+                    <span class="material-icons-round">payment</span> Pagos de Socios
+                </button>
+            </div>
+
+            <!-- Sub-tab: Gastos -->
+            <div id="gastosTab" class="sub-tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Gestión de Gastos</h2>
+                        <button class="btn btn-primary" id="addGastoBtn">
+                            <span class="material-icons-round">add</span>
+                            Agregar Gasto
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table id="gastosTable">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Concepto</th>
+                                    <th>Monto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gastosTableBody">
+                                <tr>
+                                    <td colspan="4" class="empty-state">
+                                        <div class="empty-state-icon">💰</div>
+                                        <p>No hay gastos registrados</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub-tab: Ingresos -->
+            <div id="ingresosTab" class="sub-tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Gestión de Ingresos</h2>
+                        <button class="btn btn-primary" id="addIngresoBtn">
+                            <span class="material-icons-round">add</span>
+                            Agregar Ingreso
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table id="ingresosTable">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Concepto</th>
+                                    <th>Monto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ingresosTableBody">
+                                <tr>
+                                    <td colspan="4" class="empty-state">
+                                        <div class="empty-state-icon">💵</div>
+                                        <p>No hay ingresos registrados</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub-tab: Pagos de Socios -->
+            <div id="pagosTab" class="sub-tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Pagos de Socios</h2>
+                        <button class="btn btn-primary" id="addPagoBtn">
+                            <span class="material-icons-round">add</span>
+                            Registrar Pago
+                        </button>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label class="form-label">Seleccionar Socio</label>
+                        <select id="socioSelector" class="form-select" onchange="renderPagosTable()">
+                            <option value="">-- Seleccione un socio --</option>
+                        </select>
+                    </div>
+                    <div class="table-container">
+                        <table id="pagosTable">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Monto</th>
+                                    <th>Concepto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pagosTableBody">
+                                <tr>
+                                    <td colspan="4" class="empty-state">
+                                        <div class="empty-state-icon">💳</div>
+                                        <p>Seleccione un socio para ver sus pagos</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal: Agregar/Editar Socio -->
     <div id="socioModal" class="modal hidden">

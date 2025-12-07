@@ -1,6 +1,9 @@
 {
   "socios": [],
   "registros": [],
-  "configuraciones": {}
+  "configuraciones": {},
+  "gastos": [],
+  "ingresos": [],
+  "pagos": []
 }
 

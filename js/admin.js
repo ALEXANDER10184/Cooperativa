@@ -797,19 +797,25 @@ async function handleRecoveryEmail(event) {
 async function sendEmailWithEmailJS(email, adminKey, submitBtn, originalText) {
     try {
         // Initialize EmailJS (you need to set your public key)
-        // emailjs.init("YOUR_PUBLIC_KEY"); // Uncomment and set your public key
+        // Uncomment and set your public key from EmailJS dashboard
+        // emailjs.init("YOUR_PUBLIC_KEY");
         
         // Send email using EmailJS
-        // Replace SERVICE_ID and TEMPLATE_ID with your actual values
-        const result = await emailjs.send("service_default", "template_default", {
+        // Replace SERVICE_ID and TEMPLATE_ID with your actual values from EmailJS dashboard
+        // You can get these from: https://dashboard.emailjs.com/
+        const SERVICE_ID = "service_default"; // Replace with your service ID
+        const TEMPLATE_ID = "template_default"; // Replace with your template ID
+        
+        const result = await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
             to_email: email,
             admin_key: adminKey,
             from_name: "Cooperativa Provivienda",
-            subject: "Recuperación de Clave de Administrador"
+            subject: "Recuperación de Clave de Administrador",
+            message: `Tu clave de administrador es: ${adminKey}`
         });
         
-        if (result.status === 200) {
-            // Show success modal
+        if (result.status === 200 || result.text === 'OK') {
+            // Show success message
             alert('✅ Correo enviado correctamente. Revisa tu bandeja de entrada.');
             closeRecoveryModal();
         } else {
@@ -817,7 +823,7 @@ async function sendEmailWithEmailJS(email, adminKey, submitBtn, originalText) {
         }
     } catch (error) {
         console.error('Error enviando correo:', error);
-        alert('Error al enviar el correo. Por favor, contacta al administrador o verifica la configuración de EmailJS.');
+        alert('Error al enviar el correo. Por favor, contacta al administrador o verifica la configuración de EmailJS.\n\nNota: Debes configurar SERVICE_ID y TEMPLATE_ID en admin.js');
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;

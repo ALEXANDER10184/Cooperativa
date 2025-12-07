@@ -12,6 +12,69 @@ import {
 } from './db.js';
 
 // ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+/**
+ * Escapa HTML para prevenir XSS
+ */
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+/**
+ * Muestra una notificación temporal
+ */
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : '#2563eb'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 3000;
+        animation: slideIn 0.3s ease;
+    `;
+    notification.textContent = message;
+
+    if (!document.getElementById('notificationStyle')) {
+        const style = document.createElement('style');
+        style.id = 'notificationStyle';
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.animation = 'slideIn 0.3s ease reverse';
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// ============================================
 // TAB NAVIGATION
 // ============================================
 

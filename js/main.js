@@ -68,9 +68,15 @@ async function initUI() {
         
         // Renderizar tablas iniciales
         renderSociosTable();
-        renderGastosTable();
-        renderIngresosTable();
-        loadSociosSelector();
+        
+        // Renderizar tablas de administración (se cargarán cuando se abra el tab)
+        try {
+            renderGastosTable();
+            renderIngresosTable();
+            loadSociosSelector();
+        } catch (error) {
+            console.warn('⚠️ Tablas de administración no disponibles aún:', error);
+        }
     } catch (error) {
         console.error('❌ Error al inicializar aplicación:', error);
         alert('Error al cargar la aplicación. Por favor, recarga la página.');

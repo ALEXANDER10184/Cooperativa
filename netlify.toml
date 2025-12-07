@@ -1,0 +1,10 @@
+[build]
+  # No hay comando de build necesario para esta app estática
+  command = "echo 'No build needed'"
+  publish = "."
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+

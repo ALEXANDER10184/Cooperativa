@@ -185,6 +185,30 @@ function setupEventListeners() {
         pagoForm.addEventListener('submit', handleSubmitPago);
         console.log('✅ Listener agregado a formulario "pagoForm"');
     }
+
+    // Listeners para tabs principales
+    const tabSocios = document.getElementById('tabSocios');
+    const tabAdmin = document.getElementById('tabAdmin');
+    
+    if (tabSocios) {
+        tabSocios.addEventListener('click', () => {
+            console.log('🔵 Click en tab Socios');
+            switchTab('socios');
+        });
+        console.log('✅ Listener agregado a botón "tabSocios"');
+    } else {
+        console.error('❌ No se encontró el botón con ID "tabSocios"');
+    }
+
+    if (tabAdmin) {
+        tabAdmin.addEventListener('click', () => {
+            console.log('🔵 Click en tab Administración');
+            switchTab('admin');
+        });
+        console.log('✅ Listener agregado a botón "tabAdmin"');
+    } else {
+        console.error('❌ No se encontró el botón con ID "tabAdmin"');
+    }
 }
 
 // ============================================

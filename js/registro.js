@@ -229,18 +229,13 @@ async function handleSubmit(event) {
         return;
     }
 
-    // Prepare data
-    const socioData = {
-        nombre: nombre,
-        apellido: apellido,
-        edad: edad,
-        info: info,
-        timestamp: Date.now(),
-        estado: 'activo'
-    };
-
-    // Save to Firebase
-    addSocioFunc(Date.now().toString(), socioData)
+    // Save to Firebase with simplified data structure
+    addSocioFunc(Date.now().toString(), {
+        nombre,
+        apellido,
+        edad,
+        info
+    })
         .then(() => {
             btnEnviar.innerHTML = "Enviado ✔️";
             btnEnviar.disabled = false;

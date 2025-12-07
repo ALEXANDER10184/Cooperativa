@@ -4,6 +4,132 @@
 // ============================================
 
 // ============================================
+// DATABASE MODULE IMPORTS
+// ============================================
+
+import { 
+    initDB, 
+    getAll, 
+    getItem, 
+    addItem, 
+    updateItem, 
+    deleteItem, 
+    clearCollection,
+    getFullDB
+} from './db.js';
+
+// Hacer funciones disponibles globalmente para uso en HTML
+window.db = {
+    init: initDB,
+    getAll: getAll,
+    getItem: getItem,
+    addItem: addItem,
+    updateItem: updateItem,
+    deleteItem: deleteItem,
+    clearCollection: clearCollection,
+    getFullDB: getFullDB
+};
+
+// ============================================
+// DATABASE DEMO FUNCTIONS
+// ============================================
+
+/**
+ * Inicializa la base de datos al cargar la página
+ */
+export async function initializeDatabase() {
+    try {
+        await initDB();
+        console.log('✅ Base de datos inicializada');
+        return true;
+    } catch (error) {
+        console.error('❌ Error al inicializar base de datos:', error);
+        return false;
+    }
+}
+
+/**
+ * Ejemplo: Agregar un socio
+ */
+export async function demoAddSocio() {
+    try {
+        const nuevoSocio = {
+            nombre: 'Juan',
+            apellido: 'Pérez',
+            email: 'juan@example.com',
+            telefono: '123456789',
+            ciudad: 'Bogotá',
+            estado: 'activo'
+        };
+        
+        const socioAgregado = addItem('socios', nuevoSocio);
+        console.log('✅ Socio agregado:', socioAgregado);
+        return socioAgregado;
+    } catch (error) {
+        console.error('❌ Error al agregar socio:', error);
+        throw error;
+    }
+}
+
+/**
+ * Ejemplo: Listar todos los socios
+ */
+export function demoListSocios() {
+    try {
+        const socios = getAll('socios');
+        console.log(`📋 Total de socios: ${socios.length}`);
+        console.table(socios);
+        return socios;
+    } catch (error) {
+        console.error('❌ Error al listar socios:', error);
+        throw error;
+    }
+}
+
+/**
+ * Ejemplo: Editar un socio
+ */
+export function demoEditSocio(socioId, nuevosDatos) {
+    try {
+        const socioActualizado = updateItem('socios', socioId, nuevosDatos);
+        if (socioActualizado) {
+            console.log('✅ Socio actualizado:', socioActualizado);
+        } else {
+            console.warn('⚠️ Socio no encontrado');
+        }
+        return socioActualizado;
+    } catch (error) {
+        console.error('❌ Error al editar socio:', error);
+        throw error;
+    }
+}
+
+/**
+ * Ejemplo: Borrar un socio
+ */
+export function demoDeleteSocio(socioId) {
+    try {
+        const eliminado = deleteItem('socios', socioId);
+        if (eliminado) {
+            console.log(`✅ Socio con ID ${socioId} eliminado`);
+        } else {
+            console.warn(`⚠️ Socio con ID ${socioId} no encontrado`);
+        }
+        return eliminado;
+    } catch (error) {
+        console.error('❌ Error al borrar socio:', error);
+        throw error;
+    }
+}
+
+// Hacer funciones demo disponibles globalmente
+window.demoAddSocio = demoAddSocio;
+window.demoListSocios = demoListSocios;
+window.demoEditSocio = demoEditSocio;
+window.demoDeleteSocio = demoDeleteSocio;
+window.initializeDatabase = initializeDatabase;
+
+// ============================================
 // CONSTANTS
 // ============================================
 

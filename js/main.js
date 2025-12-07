@@ -26,11 +26,28 @@ async function initUI() {
         await initDB();
         console.log('✅ Base de datos inicializada');
         
+        // Configurar listeners
+        setupEventListeners();
+        
         // Renderizar tabla de socios
         renderSociosTable();
     } catch (error) {
         console.error('❌ Error al inicializar aplicación:', error);
         alert('Error al cargar la aplicación. Por favor, recarga la página.');
+    }
+}
+
+/**
+ * Configura los event listeners
+ */
+function setupEventListeners() {
+    // Listener para botón "Agregar Socio"
+    const addSocioBtn = document.getElementById('addSocioBtn');
+    if (addSocioBtn) {
+        addSocioBtn.addEventListener('click', openAddModal);
+        console.log('✅ Listener agregado a botón "Agregar Socio"');
+    } else {
+        console.error('❌ No se encontró el botón con ID "addSocioBtn"');
     }
 }
 
@@ -121,14 +138,24 @@ function renderSociosTable() {
  * Abre el modal para agregar un nuevo socio
  */
 function openAddModal() {
+    console.log('🔵 openAddModal() llamado');
     currentEditId = null;
-    const modal = document.getElementById('socioModal');
+    const modal = document.getElementById('modal');
     const modalTitle = document.getElementById('modalTitle');
     const form = document.getElementById('socioForm');
     const submitBtn = document.getElementById('submitBtn');
 
-    if (!modal || !modalTitle || !form || !submitBtn) {
-        console.error('❌ Elementos del modal no encontrados');
+    if (!modal) {
+        console.error('❌ Modal con ID "modal" no encontrado');
+        return;
+    }
+
+    if (!modalTitle || !form || !submitBtn) {
+        console.error('❌ Elementos del modal no encontrados:', {
+            modalTitle: !!modalTitle,
+            form: !!form,
+            submitBtn: !!submitBtn
+        });
         return;
     }
 
@@ -140,6 +167,7 @@ function openAddModal() {
 
     // Mostrar modal
     modal.classList.remove('hidden');
+    console.log('✅ Modal abierto correctamente');
 }
 
 /**
@@ -156,7 +184,7 @@ function openEditModal(id) {
             return;
         }
 
-        const modal = document.getElementById('socioModal');
+        const modal = document.getElementById('modal');
         const modalTitle = document.getElementById('modalTitle');
         const form = document.getElementById('socioForm');
         const submitBtn = document.getElementById('submitBtn');
@@ -189,10 +217,13 @@ function openEditModal(id) {
  * Cierra el modal
  */
 function closeModal() {
-    const modal = document.getElementById('socioModal');
+    const modal = document.getElementById('modal');
     if (modal) {
         modal.classList.add('hidden');
         currentEditId = null;
+        console.log('✅ Modal cerrado');
+    } else {
+        console.error('❌ Modal con ID "modal" no encontrado');
     }
 }
 
@@ -380,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Cerrar modal al hacer clic fuera de él
 document.addEventListener('click', (event) => {
-    const modal = document.getElementById('socioModal');
+    const modal = document.getElementById('modal');
     if (modal && !modal.classList.contains('hidden')) {
         const modalContent = modal.querySelector('.modal');
         if (modalContent && !modalContent.contains(event.target)) {

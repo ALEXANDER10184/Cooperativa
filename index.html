@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cooperativa ProVivienda - Gestión de Socios</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
     <style>
         * {
             margin: 0;
@@ -375,7 +375,7 @@
             <div class="navbar-title">
                 <span class="material-icons-round">volunteer_activism</span>
                 Cooperativa ProVivienda
-            </div>
+      </div>
         </div>
     </nav>
 
@@ -385,11 +385,11 @@
         <div class="card">
             <div class="card-header">
                 <h2 class="card-title">Gestión de Socios</h2>
-                <button class="btn btn-primary" onclick="openAddModal()">
+                <button class="btn btn-primary" id="addSocioBtn">
                     <span class="material-icons-round">add</span>
                     Agregar Socio
-                </button>
-            </div>
+          </button>
+  </div>
 
             <!-- Tabla de Socios -->
             <div class="table-container">
@@ -415,40 +415,40 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
+          </div>
         </div>
-    </div>
+      </div>
 
     <!-- Modal: Agregar/Editar Socio -->
-    <div id="socioModal" class="modal-overlay hidden">
+    <div id="modal" class="modal-overlay hidden">
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title" id="modalTitle">Agregar Socio</h3>
                 <button class="btn-close" onclick="closeModal()">
                     <span class="material-icons-round">close</span>
-                </button>
-            </div>
+        </button>
+      </div>
 
             <form id="socioForm" onsubmit="handleSubmitForm(event)">
                 <div class="form-group">
                     <label class="form-label" for="nombre">Nombre *</label>
                     <input type="text" id="nombre" class="form-input" required>
-                </div>
+      </div>
 
                 <div class="form-group">
                     <label class="form-label" for="apellido">Apellido *</label>
                     <input type="text" id="apellido" class="form-input" required>
-                </div>
+    </div>
 
                 <div class="form-group">
                     <label class="form-label" for="email">Email *</label>
                     <input type="email" id="email" class="form-input" required>
-                </div>
+  </div>
 
                 <div class="form-group">
                     <label class="form-label" for="telefono">Teléfono *</label>
                     <input type="tel" id="telefono" class="form-input" required>
-                </div>
+        </div>
 
                 <div class="form-group">
                     <label class="form-label" for="estado">Estado *</label>
@@ -456,14 +456,14 @@
                         <option value="activo">Activo</option>
                         <option value="inactivo">Inactivo</option>
                     </select>
-                </div>
+        </div>
 
                 <div class="form-actions">
                     <button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button>
                     <button type="submit" class="btn btn-primary" id="submitBtn">Guardar</button>
-                </div>
+          </div>
             </form>
-        </div>
+      </div>
     </div>
 
     <!-- Footer -->
@@ -471,7 +471,7 @@
         <p>Cooperativa ProVivienda - Versión 1.0.0</p>
     </footer>
 
-    <!-- Scripts -->
+  <!-- Scripts -->
     <script type="module" src="js/main.js"></script>
 </body>
 </html>

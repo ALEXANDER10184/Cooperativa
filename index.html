@@ -822,23 +822,141 @@
     <script src="js/admin-panel.js"></script>
     <script src="js/main.js"></script>
     
-    <!-- Script de verificación final -->
+    <!-- Script de verificación final y reconexión forzada -->
     <script>
-        // Verificar que todo esté cargado
+        // Función para reconectar todos los botones
+        function reconectarBotones() {
+            console.log('🔧 Reconectando botones...');
+            
+            // Botón Agregar Socio
+            const addSocioBtn = document.getElementById('addSocioBtn');
+            if (addSocioBtn) {
+                // Remover listeners anteriores
+                addSocioBtn.onclick = null;
+                const newBtn = addSocioBtn.cloneNode(true);
+                addSocioBtn.parentNode.replaceChild(newBtn, addSocioBtn);
+                
+                // Agregar nuevo listener
+                document.getElementById('addSocioBtn').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🔵 Click detectado en Agregar Socio');
+                    if (typeof window.openAddModal === 'function') {
+                        window.openAddModal();
+                    } else {
+                        alert('Función no disponible. Por favor recarga la página.');
+                    }
+                });
+                console.log('✅ Botón Agregar Socio reconectado');
+            }
+            
+            // Botón Agregar Gasto
+            const addGastoBtn = document.getElementById('addGastoBtn');
+            if (addGastoBtn) {
+                addGastoBtn.onclick = null;
+                addGastoBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🔵 Click detectado en Agregar Gasto');
+                    if (typeof window.openAddGastoModal === 'function') {
+                        window.openAddGastoModal();
+                    } else {
+                        alert('Función no disponible. Por favor recarga la página.');
+                    }
+                });
+                console.log('✅ Botón Agregar Gasto reconectado');
+            }
+            
+            // Botón Agregar Ingreso
+            const addIngresoBtn = document.getElementById('addIngresoBtn');
+            if (addIngresoBtn) {
+                addIngresoBtn.onclick = null;
+                addIngresoBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🔵 Click detectado en Agregar Ingreso');
+                    if (typeof window.openAddIngresoModal === 'function') {
+                        window.openAddIngresoModal();
+                    } else {
+                        alert('Función no disponible. Por favor recarga la página.');
+                    }
+                });
+                console.log('✅ Botón Agregar Ingreso reconectado');
+            }
+            
+            // Botón Registrar Pago
+            const addPagoBtn = document.getElementById('addPagoBtn');
+            if (addPagoBtn) {
+                addPagoBtn.onclick = null;
+                addPagoBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🔵 Click detectado en Registrar Pago');
+                    if (typeof window.openAddPagoModal === 'function') {
+                        window.openAddPagoModal();
+                    } else {
+                        alert('Función no disponible. Por favor recarga la página.');
+                    }
+                });
+                console.log('✅ Botón Registrar Pago reconectado');
+            }
+            
+            // Botones de tabs
+            const tabSocios = document.getElementById('tabSocios');
+            if (tabSocios) {
+                tabSocios.onclick = null;
+                tabSocios.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (typeof window.switchTab === 'function') {
+                        window.switchTab('socios');
+                    }
+                });
+            }
+            
+            const tabAdmin = document.getElementById('tabAdmin');
+            if (tabAdmin) {
+                tabAdmin.onclick = null;
+                tabAdmin.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (typeof window.switchTab === 'function') {
+                        window.switchTab('admin');
+                    }
+                });
+            }
+        }
+        
+        // Ejecutar cuando la página cargue completamente
         window.addEventListener('load', function() {
             console.log('📄 Página completamente cargada');
-            console.log('🔍 Verificando elementos del DOM...');
             
-            const elements = ['addSocioBtn', 'addGastoBtn', 'addIngresoBtn', 'addPagoBtn'];
-            elements.forEach(function(id) {
-                const el = document.getElementById(id);
-                if (el) {
-                    console.log('✅ Elemento ' + id + ' encontrado');
-                } else {
-                    console.error('❌ Elemento ' + id + ' NO encontrado');
-                }
-            });
+            // Esperar un poco para que todos los scripts carguen
+            setTimeout(function() {
+                console.log('🔍 Verificando funciones disponibles...');
+                const functions = [
+                    'openAddModal', 
+                    'openAddGastoModal', 
+                    'openAddIngresoModal', 
+                    'openAddPagoModal',
+                    'switchTab',
+                    'switchAdminTab'
+                ];
+                
+                functions.forEach(function(fnName) {
+                    if (typeof window[fnName] === 'function') {
+                        console.log('✅ ' + fnName + ' está disponible');
+                    } else {
+                        console.error('❌ ' + fnName + ' NO está disponible');
+                    }
+                });
+                
+                // Reconectar botones después de verificar
+                reconectarBotones();
+            }, 500);
         });
+        
+        // También reconectar después de un delay adicional por si acaso
+        setTimeout(reconectarBotones, 1000);
+        setTimeout(reconectarBotones, 2000);
     </script>
 </body>
 </html>

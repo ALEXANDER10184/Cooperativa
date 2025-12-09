@@ -523,23 +523,45 @@
      * Abre el modal para agregar un nuevo socio
      */
     window.openAddModal = function() {
-        if (!socioModal || !modalTitle || !socioForm) {
-            initDOMReferences();
+        console.log('🔵 openAddModal() llamado');
+        
+        try {
+            // Asegurar referencias del DOM
+            if (!socioModal || !modalTitle || !socioForm) {
+                initDOMReferences();
+            }
+            
+            socioModal = document.getElementById('socioModal');
+            modalTitle = document.getElementById('modalTitle');
+            socioForm = document.getElementById('socioForm');
+            nombre = document.getElementById('nombre');
+            apellido = document.getElementById('apellido');
+            email = document.getElementById('email');
+            telefono = document.getElementById('telefono');
+            estado = document.getElementById('estado');
+            submitSocioBtn = document.getElementById('submitSocioBtn');
+            cancelModalBtn = document.getElementById('cancelModalBtn');
+            
             if (!socioModal || !modalTitle || !socioForm) {
                 console.error('❌ Referencias del DOM no inicializadas');
+                alert('Error: No se encontraron los elementos del formulario. Por favor recarga la página.');
                 return;
             }
-        }
 
-        currentEditId = null;
-        socioForm.reset();
-        modalTitle.textContent = 'Agregar Socio';
-        
-        if (submitSocioBtn) {
-            submitSocioBtn.textContent = 'Guardar';
-        }
+            currentEditId = null;
+            socioForm.reset();
+            modalTitle.textContent = 'Agregar Socio';
+            
+            if (submitSocioBtn) {
+                submitSocioBtn.textContent = 'Guardar';
+            }
 
-        socioModal.classList.remove('hidden');
+            socioModal.classList.remove('hidden');
+            console.log('✅ Modal abierto correctamente');
+        } catch (error) {
+            console.error('❌ Error al abrir modal:', error);
+            alert('Error al abrir el formulario: ' + error.message);
+        }
     };
 
     /**

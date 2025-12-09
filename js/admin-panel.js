@@ -84,8 +84,12 @@
     /**
      * Verifica si el usuario está autenticado en administración
      */
-    function isAdminAuthenticated() {
+    window.isAdminAuthenticated = function() {
         return sessionStorage.getItem('adminAuthenticated') === 'true';
+    };
+    
+    function isAdminAuthenticated() {
+        return window.isAdminAuthenticated();
     }
 
     /**
@@ -151,7 +155,10 @@
         const passwordInput = document.getElementById('adminPasswordInput');
         const errorDiv = document.getElementById('adminPasswordError');
         
-        if (!passwordInput) return;
+        if (!passwordInput) {
+            console.error('❌ Input de contraseña no encontrado');
+            return;
+        }
         
         const password = passwordInput.value.trim();
         
@@ -159,14 +166,18 @@
             setAdminAuthenticated();
             window.closeAdminPasswordModal();
             // Ahora sí permitir acceso a administración
-            window.switchTab('admin').catch(e => console.error('Error:', e));
+            if (typeof window.switchTab === 'function') {
+                window.switchTab('admin').catch(e => console.error('Error:', e));
+            }
         } else {
             if (errorDiv) {
                 errorDiv.textContent = 'Contraseña incorrecta. Por favor, intenta nuevamente.';
                 errorDiv.style.display = 'block';
             }
-            passwordInput.value = '';
-            passwordInput.focus();
+            if (passwordInput) {
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
         }
     };
 
@@ -213,9 +224,10 @@
         if (tab === "admin") {
             // Verificar autenticación antes de permitir acceso
             if (!isAdminAuthenticated()) {
-                // Si no está autenticado, mostrar modal de contraseña y no permitir acceso
+                // Si no está autenticado, mostrar modal de contraseña y NO permitir acceso aún
                 window.openAdminPasswordModal();
-                return;
+                // No cambiar los tabs, mantener en Socios
+                return false;
             }
             
             // Si está autenticado, permitir acceso

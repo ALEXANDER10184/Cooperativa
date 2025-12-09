@@ -120,13 +120,6 @@
                         await window.renderGastosTable();
                     } else if (subTabName === 'ingresos' && typeof window.renderIngresosTable === 'function') {
                         await window.renderIngresosTable();
-                    } else if (subTabName === 'pagos') {
-                        if (typeof window.loadSociosSelector === 'function') {
-                            await window.loadSociosSelector();
-                        }
-                        if (typeof window.renderPagosTable === 'function') {
-                            await window.renderPagosTable();
-                        }
                     } else if (subTabName === 'socios' && typeof window.renderAdminSociosTable === 'function') {
                         await window.renderAdminSociosTable();
                     }
@@ -135,11 +128,6 @@
                 const defaultTab = 'gastos';
                 await window.switchAdminTab(defaultTab);
                 }
-                
-                // Siempre cargar selector de socios (necesario para pagos)
-                    if (typeof window.loadSociosSelector === 'function') {
-                        await window.loadSociosSelector();
-                    }
             } catch (error) {
                 console.error("❌ Error al renderizar tablas:", error);
             }
@@ -483,7 +471,7 @@
         }
     };
 
-    window.openAddIngresoModal = function() {
+    window.openAddIngresoModal = async function() {
         currentEditIngresoId = null;
         const modal = document.getElementById('ingresoModal');
         const form = document.getElementById('ingresoForm');
@@ -495,6 +483,40 @@
         }
 
         form.reset();
+        
+        // Cargar selector de socios
+        if (typeof window.loadSociosSelector === 'function') {
+            await window.loadSociosSelector();
+        }
+        
+        // Llenar selector de socios en el modal de ingreso
+        const socios = await window.getAll('socios');
+        const socioSelector = document.getElementById('ingresoSocioId');
+        if (socioSelector) {
+            socioSelector.innerHTML = '<option value="">-- Seleccione un socio --</option>';
+            socios.forEach(socio => {
+                if (socio.estado === 'Activo' || socio.estado === 'activo') {
+                    const option = document.createElement('option');
+                    option.value = socio.id;
+                    option.textContent = `${socio.nombre || ''} ${socio.apellido || ''} - Cuota: €${(socio.cuotaMensual || 0).toFixed(2)}`;
+                    option.setAttribute('data-cuota', socio.cuotaMensual || 0);
+                    socioSelector.appendChild(option);
+                }
+            });
+        }
+        
+        // Ocultar selector de socio por defecto
+        const socioGroup = document.getElementById('ingresoSocioGroup');
+        if (socioGroup) {
+            socioGroup.style.display = 'none';
+        }
+        
+        // Establecer tipo por defecto
+        const tipoInput = document.getElementById('ingresoTipo');
+        if (tipoInput) {
+            tipoInput.value = 'otro';
+        }
+        
         const fechaInput = document.getElementById('ingresoFecha');
         if (fechaInput) {
             const today = new Date().toISOString().split('T')[0];

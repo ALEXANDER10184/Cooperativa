@@ -909,6 +909,22 @@
 
             <form id="ingresoForm">
                 <div class="form-group">
+                    <label class="form-label">Tipo de Ingreso</label>
+                    <select id="ingresoTipo" class="form-select" required onchange="if(typeof window.handleCambioTipoIngreso==='function'){window.handleCambioTipoIngreso();}">
+                        <option value="otro">Otro Ingreso</option>
+                        <option value="aporte_socio">Aporte de Socio</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="ingresoSocioGroup" style="display: none;">
+                    <label class="form-label">Socio</label>
+                    <select id="ingresoSocioId" class="form-select">
+                        <option value="">-- Seleccione un socio --</option>
+                    </select>
+                    <small class="form-help">Al seleccionar un socio, el concepto y monto se llenarán automáticamente con su cuota mensual</small>
+                </div>
+
+                <div class="form-group">
                     <label class="form-label">Fecha</label>
                     <input type="date" id="ingresoFecha" class="form-input" required>
                 </div>

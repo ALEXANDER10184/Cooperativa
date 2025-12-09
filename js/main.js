@@ -171,13 +171,40 @@
             // Inicializar referencias del DOM
             initDOMReferences();
             
-            // Inicializar base de datos
+            // Inicializar base de datos - Asegurar que siempre esté inicializada
             if (typeof window.initDB === 'function') {
                 try {
                     await window.initDB();
                     console.log('✅ Base de datos inicializada');
                 } catch (dbError) {
-                    console.error('⚠️ Error al inicializar DB:', dbError);
+                    console.error('⚠️ Error al inicializar DB desde JSON, usando localStorage:', dbError);
+                    // Asegurar que al menos tengamos una estructura vacía
+                    if (!localStorage.getItem('db')) {
+                        const emptyDB = {
+                            socios: [],
+                            registros: [],
+                            gastos: [],
+                            ingresos: [],
+                            pagos: [],
+                            configuraciones: {}
+                        };
+                        localStorage.setItem('db', JSON.stringify(emptyDB));
+                        console.log('✅ Estructura vacía creada');
+                    }
+                }
+            } else {
+                // Si initDB no está disponible, crear estructura vacía directamente
+                if (!localStorage.getItem('db')) {
+                    const emptyDB = {
+                        socios: [],
+                        registros: [],
+                        gastos: [],
+                        ingresos: [],
+                        pagos: [],
+                        configuraciones: {}
+                    };
+                    localStorage.setItem('db', JSON.stringify(emptyDB));
+                    console.log('✅ Estructura vacía creada (sin initDB)');
                 }
             }
             

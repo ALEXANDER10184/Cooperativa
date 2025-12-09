@@ -24,17 +24,39 @@
 
     /**
      * Obtiene la base de datos actual desde localStorage
+     * Si no existe, crea una estructura vacía automáticamente
      */
     function getDB() {
         try {
             const storedDB = localStorage.getItem(DB_KEY);
             if (!storedDB) {
-                throw new Error('Base de datos no inicializada. Llama a initDB() primero.');
+                // Si no existe, crear estructura vacía automáticamente
+                console.log('⚠️ Base de datos no encontrada, creando estructura vacía...');
+                const emptyDB = {
+                    socios: [],
+                    registros: [],
+                    gastos: [],
+                    ingresos: [],
+                    pagos: [],
+                    configuraciones: {}
+                };
+                saveDB(emptyDB);
+                return emptyDB;
             }
             return JSON.parse(storedDB);
         } catch (error) {
             console.error('❌ Error al obtener DB:', error);
-            throw error;
+            // En caso de error, crear estructura vacía
+            const emptyDB = {
+                socios: [],
+                registros: [],
+                gastos: [],
+                ingresos: [],
+                pagos: [],
+                configuraciones: {}
+            };
+            saveDB(emptyDB);
+            return emptyDB;
         }
     }
 
@@ -93,10 +115,16 @@
 
     /**
      * Obtiene todos los items de una colección
+     * Siempre devuelve un array, incluso si hay errores
      */
     window.getAll = function(collection) {
         try {
             const db = getDB();
+            
+            if (!db) {
+                console.warn('⚠️ Base de datos no disponible, devolviendo array vacío');
+                return [];
+            }
             
             if (!db[collection]) {
                 console.warn(`⚠️ Colección "${collection}" no existe. Creando vacía.`);
@@ -107,6 +135,7 @@
             return db[collection] || [];
         } catch (error) {
             console.error(`❌ Error al obtener items de "${collection}":`, error);
+            // Siempre devolver array vacío en caso de error
             return [];
         }
     };
@@ -129,7 +158,21 @@
      */
     window.addItem = function(collection, item) {
         try {
-            const db = getDB();
+            let db;
+            try {
+                db = getDB();
+            } catch (e) {
+                // Si getDB falla, crear estructura vacía
+                db = {
+                    socios: [],
+                    registros: [],
+                    gastos: [],
+                    ingresos: [],
+                    pagos: [],
+                    configuraciones: {}
+                };
+                saveDB(db);
+            }
             
             // Crear colección si no existe
             if (!db[collection]) {
@@ -156,6 +199,7 @@
             return item;
         } catch (error) {
             console.error(`❌ Error al agregar item a "${collection}":`, error);
+            // Re-lanzar error para que el código llamador pueda manejarlo
             throw error;
         }
     };

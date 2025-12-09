@@ -12,9 +12,6 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-
-    <!-- Firebase Logic (Modular v9+) -->
-    <script type="module" src="js/firebase-global.js"></script>
 </head>
 
 <body>
@@ -24,12 +21,12 @@
             <div class="logo-container">
                 <div class="logo-icon"><span class="material-icons-round">volunteer_activism</span></div>
                 <div class="logo-text">
-                    <div data-i18n="logoText" class="main-logo-text">Cooperativa Provivienda</div>
-                    <div data-i18n="logoSubtext" class="sub-logo-text">Mi Esperanza</div>
+                    <div class="main-logo-text">Cooperativa Provivienda</div>
+                    <div class="sub-logo-text">Mi Esperanza</div>
                 </div>
             </div>
             <div class="header-controls">
-                <button class="icon-btn-light" onclick="navigateTo('index.html')" title="Volver">
+                <button class="icon-btn-light" onclick="window.location.href='index.html'" title="Volver">
                     <span class="material-icons-round">arrow_back</span>
                 </button>
             </div>
@@ -41,7 +38,7 @@
         <div class="card mb-2">
             <div class="flex flex-gap align-center text-center-mobile flex-column-mobile">
                 <span class="material-icons-round" style="font-size: 3em; color: var(--color-primary);">handshake</span>
-                <p class="mb-0" style="font-size: 1.1em; line-height: 1.6;" data-i18n="welcomeMessage">
+                <p class="mb-0" style="font-size: 1.1em; line-height: 1.6;">
                     Bienvenido. Estás a punto de registrarte en la Cooperativa Provivienda 'Mi Esperanza', un proyecto
                     comunitario para apoyarnos mutuamente en temas de vivienda.
                 </p>
@@ -51,118 +48,123 @@
         <!-- Registration Form -->
         <div class="card">
             <div class="card-header">
-                <h2 class="card-title text-center" data-i18n="registrationTitle">Registro de Nuevo Socio</h2>
+                <h2 class="card-title text-center">Registro de Nuevo Socio</h2>
             </div>
 
             <form id="registrationForm">
-                <!-- Personal Information -->
-                <h3 data-i18n="personalInfo">Información Personal</h3>
+                <!-- 1. Identificación básica de todos los integrantes de la familia -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                    1. Identificación de los Integrantes de la Familia
+                </h3>
 
                 <div class="form-group">
-                    <label class="form-label required" data-i18n="name">Nombre</label>
-                    <input type="text" id="nombre" class="form-input" required>
+                    <label class="form-label required">Número de miembros de la familia</label>
+                    <input type="number" id="numMiembros" class="form-input" min="1" value="1" required>
+                    <small class="form-help">Incluyéndote a ti</small>
+                </div>
+
+                <div id="miembrosContainer"></div>
+
+                <!-- 2. Datos de contacto -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                    2. Datos de Contacto
+                </h3>
+
+                <div class="form-group">
+                    <label class="form-label required">Teléfono</label>
+                    <input type="tel" id="telefono" class="form-input" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label required" data-i18n="lastName">Apellidos</label>
-                    <input type="text" id="apellido" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label required">Edad</label>
-                    <input type="number" id="edad" class="form-input" min="0" max="120" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label required" data-i18n="city">Ciudad donde vive</label>
-                    <input type="text" id="city" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label required" data-i18n="country">País de nacimiento</label>
-                    <input type="text" id="country" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label required" data-i18n="phone">Teléfono</label>
-                    <input type="tel" id="phone" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label required" data-i18n="email">Correo electrónico</label>
+                    <label class="form-label required">Correo electrónico</label>
                     <input type="email" id="email" class="form-input" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label required">Aporte Mensual (€)</label>
-                    <input type="number" id="aporteMensual" class="form-input" min="0" step="0.01" value="0" required>
+                    <label class="form-label">Contacto de emergencia (opcional)</label>
+                    <input type="text" id="contactoEmergencia" class="form-input" placeholder="Nombre y teléfono">
+                    <small class="form-help">Nombre completo y número de teléfono de una persona de contacto en caso de emergencia</small>
                 </div>
 
-                <!-- Employment and Housing -->
-                <h3 data-i18n="employmentInfo" class="mt-3">Situación Laboral y Vivienda</h3>
+                <!-- 3. Situación del socio en la cooperativa -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                    3. Situación del Socio en la Cooperativa
+                </h3>
 
                 <div class="form-group">
-                    <label class="form-label required" data-i18n="employmentStatus">Situación laboral</label>
-                    <select id="employmentStatus" class="form-select" required>
-                        <option value="">--</option>
-                        <option value="fixed" data-i18n="employment_fixed">Empleo fijo</option>
-                        <option value="informal" data-i18n="employment_informal">Empleo informal</option>
-                        <option value="unemployed" data-i18n="employment_unemployed">Desempleado/a</option>
-                        <option value="retired" data-i18n="employment_retired">Jubilado/a</option>
-                        <option value="other" data-i18n="employment_other">Otro</option>
+                    <label class="form-label required">Fecha de ingreso</label>
+                    <input type="date" id="fechaIngreso" class="form-input" required>
+                    <small class="form-help">Fecha en que te unes a la cooperativa</small>
+                </div>
+
+                <!-- 4. Aportaciones y obligaciones -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                    4. Aportaciones y Obligaciones
+                </h3>
+
+                <div class="form-group">
+                    <label class="form-label required">Cuota mensual (€)</label>
+                    <input type="number" id="cuotaMensual" class="form-input" min="0" step="0.01" value="5" required>
+                    <small class="form-help">Aporte mensual a la cooperativa (ejemplo: 5 €)</small>
+                </div>
+
+                <!-- 5. Autorizaciones legales -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                    5. Autorizaciones Legales
+                </h3>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: start; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="consentimientoDatos" class="form-checkbox" required>
+                        <span class="form-label">Consentimiento para uso interno de datos</span>
+                    </label>
+                    <small class="form-help">Acepto que mis datos sean utilizados únicamente para fines internos de la cooperativa, cumpliendo con la normativa de protección de datos.</small>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: start; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="aceptacionNormas" class="form-checkbox" required>
+                        <span class="form-label">Aceptación de normas internas y régimen disciplinario</span>
+                    </label>
+                    <small class="form-help">Acepto las normas internas de la cooperativa y el régimen disciplinario establecido.</small>
+                </div>
+
+                <!-- 6. Participación y disponibilidad -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                    6. Participación y Disponibilidad
+                </h3>
+
+                <div class="form-group">
+                    <label class="form-label">Áreas donde desea colaborar</label>
+                    <select id="areasColaboracion" class="form-select" multiple style="min-height: 100px;">
+                        <option value="administracion">Administración</option>
+                        <option value="eventos">Eventos</option>
+                        <option value="apoyo_social">Apoyo Social</option>
+                        <option value="comunicacion">Comunicación</option>
+                        <option value="finanzas">Finanzas</option>
+                        <option value="proyectos">Proyectos</option>
                     </select>
+                    <small class="form-help">Mantén presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples opciones</small>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label required" data-i18n="housingType">Tipo de vivienda actual</label>
-                    <select id="housingType" class="form-select" required>
-                        <option value="">--</option>
-                        <option value="rent" data-i18n="housing_rent">Alquiler</option>
-                        <option value="family" data-i18n="housing_family">Vivienda familiar</option>
-                        <option value="inadequate" data-i18n="housing_inadequate">Vivienda propia inadecuada</option>
-                        <option value="none" data-i18n="housing_none">Sin vivienda</option>
-                    </select>
+                    <label class="form-label">Otras áreas (especificar)</label>
+                    <input type="text" id="otrasAreas" class="form-input" placeholder="Especifica otras áreas donde te gustaría colaborar">
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label required" data-i18n="urgencyLevel">Nivel de urgencia habitacional</label>
-                    <input type="range" id="urgencyLevel" class="form-range" min="1" max="5" value="3" required>
-                    <div class="text-center mt-1"
-                        style="font-size: 1.5em; font-weight: 700; color: var(--color-primary);">
-                        <span id="urgencyValue">3</span> / 5
-                    </div>
-                    <small class="form-help text-center" data-i18n="urgencyHelp">1 = Baja urgencia, 5 = Urgencia
-                        máxima</small>
-                </div>
-
-                <!-- Household Information -->
-                <h3 data-i18n="householdInfo" class="mt-3">Composición del Hogar</h3>
-
-                <div class="form-group">
-                    <label class="form-label required" data-i18n="householdMembers">Número de personas en el
-                        hogar</label>
-                    <input type="number" id="householdCount" class="form-input" min="1" value="1" required>
-                    <small class="form-help" data-i18n="householdMembersHelp">Incluyéndote a ti</small>
-                </div>
-
-                <div id="householdMembersContainer"></div>
-
-                <!-- Additional Information -->
-                <h3 data-i18n="additionalInfo" class="mt-3">Información Adicional (Opcional)</h3>
-
-                <div class="form-group">
-                    <textarea id="info" class="form-textarea"
-                        data-i18n-placeholder="additionalInfoPlaceholder"></textarea>
+                    <label class="form-label required">Disponibilidad aproximada</label>
+                    <input type="number" id="disponibilidadHoras" class="form-input" min="0" step="1" value="0" required>
+                    <small class="form-help">Horas por mes que puedes dedicar a la cooperativa</small>
                 </div>
 
                 <!-- Buttons -->
-                <div class="flex flex-gap mt-3">
-                    <button type="button" class="btn btn-outline" onclick="navigateTo('index.html')">
-                        <span data-i18n="cancelBtn">Cancelar</span>
+                <div class="flex flex-gap mt-3" style="margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" onclick="window.location.href='index.html'">
+                        Cancelar
                     </button>
                     <button type="submit" id="btnEnviar" class="btn btn-primary" style="flex: 1;">
-                        <span class="material-icons-round">check_circle</span> <span
-                            data-i18n="submitBtn">Registrar</span>
+                        <span class="material-icons-round">check_circle</span> Registrar
                     </button>
                 </div>
             </form>
@@ -170,9 +172,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/i18n.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/api.js"></script>
+    <script src="js/db.js"></script>
     <script src="js/registro.js"></script>
 </body>
 

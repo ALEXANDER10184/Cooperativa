@@ -297,6 +297,16 @@
             color: white;
         }
 
+        .btn-icon-view {
+            background: #e0e7ff;
+            color: #6366f1;
+        }
+
+        .btn-icon-view:hover {
+            background: #6366f1;
+            color: white;
+        }
+
         .hidden {
             display: none !important;
         }
@@ -307,6 +317,7 @@
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: 2000;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -576,16 +587,6 @@
                 </div>
             </div>
 
-            <!-- Sub-tab: Gestión de Socios (Admin) -->
-            <div id="sociosTab" class="sub-tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">Gestión de Socios</h2>
-                    <button class="btn btn-primary" id="addSocioBtn" onclick="try{window.openAddModal();}catch(e){alert('Error: '+e.message);}">
-                        <span class="material-icons-round">add</span>
-                        Agregar Socio
-                    </button>
-                    </div>
 
                     <!-- Tabla de Socios Completa (solo en Admin) -->
                     <div class="table-container">
@@ -764,6 +765,19 @@
                     <button type="button" class="btn btn-outline" id="cancelModalBtn">Cancelar</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal: Ver Detalles Completos del Socio -->
+    <div id="socioDetallesModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2 class="modal-title">Detalles del Socio</h2>
+                <button type="button" class="btn-close" onclick="window.closeSocioDetallesModal();">×</button>
+            </div>
+            <div id="socioDetallesContent" style="padding: 1.5rem;">
+                <!-- Contenido se llenará dinámicamente -->
+            </div>
         </div>
     </div>
 

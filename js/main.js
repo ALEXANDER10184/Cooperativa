@@ -656,6 +656,9 @@
                     <td>${estadoBadge}</td>
                     <td>
                         <div class="actions">
+                            <button class="btn-icon btn-icon-view view-btn" data-id="${socio.id}" title="Ver Detalles" style="background: #e0e7ff; color: #6366f1;">
+                                <span class="material-icons-round">visibility</span>
+                            </button>
                             <button class="btn-icon btn-icon-edit edit-btn" data-id="${socio.id}" title="Editar">
                                 <span class="material-icons-round">edit</span>
                             </button>
@@ -666,8 +669,13 @@
                     </td>
                 `;
                 
+                const viewBtn = row.querySelector('.view-btn');
                 const editBtn = row.querySelector('.edit-btn');
                 const deleteBtn = row.querySelector('.delete-btn');
+                
+                if (viewBtn) {
+                    viewBtn.addEventListener('click', () => window.showSocioDetalles(socio.id));
+                }
                 
                 if (editBtn) {
                     editBtn.addEventListener('click', () => window.openEditModal(socio.id));
@@ -683,6 +691,203 @@
             console.log(`✅ Tabla de administración renderizada con ${socios.length} socios`);
         } catch (error) {
             console.error('❌ Error al renderizar tabla de administración:', error);
+        }
+    };
+
+    // ============================================
+    // SOCIO DETALLES MODAL
+    // ============================================
+
+    /**
+     * Muestra los detalles completos de un socio
+     */
+    window.showSocioDetalles = function(socioId) {
+        try {
+            if (typeof window.getItem !== 'function') {
+                alert('Error: función no disponible');
+                return;
+            }
+
+            const socio = window.getItem('socios', socioId);
+            if (!socio) {
+                alert('Socio no encontrado');
+                return;
+            }
+
+            const modal = document.getElementById('socioDetallesModal');
+            const content = document.getElementById('socioDetallesContent');
+            
+            if (!modal || !content) {
+                alert('Error: elementos del modal no encontrados');
+                return;
+            }
+
+            // Formatear fecha
+            function formatDate(dateString) {
+                if (!dateString) return 'No especificada';
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('es-ES', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                } catch {
+                    return dateString;
+                }
+            }
+
+            // Construir HTML con toda la información
+            let html = `
+                <div style="display: grid; gap: 2rem;">
+                    <!-- Información de Contacto -->
+                    <div>
+                        <h3 style="color: var(--color-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary);">
+                            2. Datos de Contacto
+                        </h3>
+                        <div style="display: grid; gap: 1rem;">
+                            <div>
+                                <strong>Teléfono:</strong> ${escapeHtml(socio.telefono || 'No especificado')}
+                            </div>
+                            <div>
+                                <strong>Email:</strong> ${escapeHtml(socio.email || 'No especificado')}
+                            </div>
+                            ${socio.contactoEmergencia ? `
+                            <div>
+                                <strong>Contacto de emergencia:</strong> ${escapeHtml(socio.contactoEmergencia)}
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <!-- Situación en la Cooperativa -->
+                    <div>
+                        <h3 style="color: var(--color-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary);">
+                            3. Situación del Socio en la Cooperativa
+                        </h3>
+                        <div>
+                            <strong>Fecha de ingreso:</strong> ${formatDate(socio.fechaIngreso)}
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <strong>Estado:</strong> 
+                            <span class="badge ${socio.estado === 'Activo' || socio.estado === 'activo' ? 'badge-active' : 'badge-inactive'}">
+                                ${socio.estado || 'Activo'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Aportaciones -->
+                    <div>
+                        <h3 style="color: var(--color-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary);">
+                            4. Aportaciones y Obligaciones
+                        </h3>
+                        <div>
+                            <strong>Cuota mensual:</strong> ${window.formatCurrency ? window.formatCurrency(socio.cuotaMensual || 0) : (socio.cuotaMensual || 0) + ' €'}
+                        </div>
+                    </div>
+
+                    <!-- Autorizaciones -->
+                    ${socio.consentimientoDatos || socio.aceptacionNormas ? `
+                    <div>
+                        <h3 style="color: var(--color-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary);">
+                            5. Autorizaciones Legales
+                        </h3>
+                        <div style="display: grid; gap: 0.5rem;">
+                            ${socio.consentimientoDatos ? '<div>✅ Consentimiento para uso interno de datos</div>' : ''}
+                            ${socio.aceptacionNormas ? '<div>✅ Aceptación de normas internas</div>' : ''}
+                            ${socio.fechaConsentimiento ? `<div style="font-size: 0.875rem; color: #6b7280;">Fecha de consentimiento: ${formatDate(socio.fechaConsentimiento)}</div>` : ''}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <!-- Participación -->
+                    ${socio.areasColaboracion || socio.disponibilidadHoras ? `
+                    <div>
+                        <h3 style="color: var(--color-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary);">
+                            6. Participación y Disponibilidad
+                        </h3>
+                        <div style="display: grid; gap: 1rem;">
+                            ${socio.areasColaboracion && socio.areasColaboracion.length > 0 ? `
+                            <div>
+                                <strong>Áreas de colaboración:</strong>
+                                <div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                    ${socio.areasColaboracion.map(area => {
+                                        const areaNames = {
+                                            'administracion': 'Administración',
+                                            'eventos': 'Eventos',
+                                            'apoyo_social': 'Apoyo Social',
+                                            'comunicacion': 'Comunicación',
+                                            'finanzas': 'Finanzas',
+                                            'proyectos': 'Proyectos'
+                                        };
+                                        return `<span style="background: #e0e7ff; color: #6366f1; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem;">${areaNames[area] || area}</span>`;
+                                    }).join('')}
+                                </div>
+                            </div>
+                            ` : ''}
+                            ${socio.otrasAreas ? `
+                            <div>
+                                <strong>Otras áreas:</strong> ${escapeHtml(socio.otrasAreas)}
+                            </div>
+                            ` : ''}
+                            <div>
+                                <strong>Disponibilidad:</strong> ${socio.disponibilidadHoras || 0} horas/mes
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+
+            // Agregar información de miembros de la familia si existe
+            if (socio.miembros && socio.miembros.length > 0) {
+                let miembrosHtml = `
+                    <div>
+                        <h3 style="color: var(--color-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary);">
+                            1. Identificación de los Integrantes de la Familia (${socio.miembros.length} ${socio.miembros.length === 1 ? 'miembro' : 'miembros'})
+                        </h3>
+                        <div style="display: grid; gap: 1.5rem;">
+                `;
+
+                socio.miembros.forEach((miembro, index) => {
+                    miembrosHtml += `
+                        <div style="background: #f9fafb; padding: 1.5rem; border-radius: 8px; border: 1px solid #e5e7eb;">
+                            <h4 style="margin-bottom: 1rem; color: var(--color-primary);">Miembro ${index + 1}</h4>
+                            <div style="display: grid; gap: 0.75rem;">
+                                <div><strong>Nombre completo:</strong> ${escapeHtml(miembro.nombreCompleto || '')}</div>
+                                <div><strong>Documento:</strong> ${escapeHtml(miembro.tipoDocumento ? (miembro.tipoDocumento.toUpperCase() + ': ' + miembro.numeroDocumento) : '')}</div>
+                                <div><strong>Fecha de nacimiento:</strong> ${formatDate(miembro.fechaNacimiento)}</div>
+                                <div><strong>Nacionalidad:</strong> ${escapeHtml(miembro.nacionalidad || '')}</div>
+                                <div><strong>Domicilio actual:</strong> ${escapeHtml(miembro.domicilioActual || '')}</div>
+                                <div><strong>Profesión:</strong> ${escapeHtml(miembro.profesion || '')}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                miembrosHtml += `
+                        </div>
+                    </div>
+                `;
+
+                html = miembrosHtml + html;
+            }
+
+            content.innerHTML = html;
+            modal.classList.remove('hidden');
+        } catch (error) {
+            console.error('❌ Error al mostrar detalles del socio:', error);
+            alert('Error al cargar los detalles del socio');
+        }
+    };
+
+    /**
+     * Cierra el modal de detalles del socio
+     */
+    window.closeSocioDetallesModal = function() {
+        const modal = document.getElementById('socioDetallesModal');
+        if (modal) {
+            modal.classList.add('hidden');
         }
     };
 

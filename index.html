@@ -792,11 +792,53 @@
         });
 
         console.log('✅ Script de respaldo cargado');
+        
+        // Verificar carga de scripts después de un delay
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                console.log('🔍 Verificando funciones disponibles...');
+                const functions = [
+                    'openAddModal', 
+                    'openAddGastoModal', 
+                    'openAddIngresoModal', 
+                    'openAddPagoModal',
+                    'switchTab',
+                    'switchAdminTab'
+                ];
+                
+                functions.forEach(function(fnName) {
+                    if (typeof window[fnName] === 'function') {
+                        console.log('✅ ' + fnName + ' está disponible');
+                    } else {
+                        console.error('❌ ' + fnName + ' NO está disponible');
+                    }
+                });
+            }, 1000);
+        });
     </script>
     
     <!-- Scripts en orden: primero db.js, luego admin-panel.js, finalmente main.js -->
     <script src="js/db.js"></script>
     <script src="js/admin-panel.js"></script>
     <script src="js/main.js"></script>
+    
+    <!-- Script de verificación final -->
+    <script>
+        // Verificar que todo esté cargado
+        window.addEventListener('load', function() {
+            console.log('📄 Página completamente cargada');
+            console.log('🔍 Verificando elementos del DOM...');
+            
+            const elements = ['addSocioBtn', 'addGastoBtn', 'addIngresoBtn', 'addPagoBtn'];
+            elements.forEach(function(id) {
+                const el = document.getElementById(id);
+                if (el) {
+                    console.log('✅ Elemento ' + id + ' encontrado');
+                } else {
+                    console.error('❌ Elemento ' + id + ' NO encontrado');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

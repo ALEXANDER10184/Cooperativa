@@ -7,157 +7,114 @@
     'use strict';
 
     // ============================================
-    // ACCESS PASSWORD PROTECTION
+    // ACCESS PASSWORD PROTECTION - NUEVO SISTEMA
     // ============================================
-    const ACCESS_PASSWORD = 'coopmiesperanza';
+    const APP_PASSWORD = 'coopmiesperanza';
 
     /**
      * Verifica si el usuario está autenticado
      */
-    function isAuthenticated() {
-        return sessionStorage.getItem('appAuthenticated') === 'true';
+    function isAppAuthenticated() {
+        return sessionStorage.getItem('appAuth') === 'true';
     }
 
     /**
-     * Marca al usuario como autenticado
+     * Autentica al usuario
      */
-    function setAuthenticated() {
-        sessionStorage.setItem('appAuthenticated', 'true');
+    function authenticateApp() {
+        sessionStorage.setItem('appAuth', 'true');
     }
 
     /**
-     * Verifica la contraseña de acceso
+     * Verifica la contraseña y muestra/oculta contenido
      */
-    window.checkAccessPassword = function() {
-        console.log('🔐 Verificando contraseña...');
-        const passwordInput = document.getElementById('accessPasswordInput');
-        const errorDiv = document.getElementById('accessPasswordError');
-        const modal = document.getElementById('accessPasswordModal');
-        const mainContent = document.getElementById('mainContent');
-        
-        console.log('📋 Elementos encontrados:');
-        console.log('  - passwordInput:', passwordInput ? '✅' : '❌');
-        console.log('  - errorDiv:', errorDiv ? '✅' : '❌');
-        console.log('  - modal:', modal ? '✅' : '❌');
-        console.log('  - mainContent:', mainContent ? '✅' : '❌');
+    window.checkAppPassword = function() {
+        const passwordInput = document.getElementById('appPasswordInput');
+        const errorMsg = document.getElementById('passwordError');
+        const loginModal = document.getElementById('loginModal');
+        const appContent = document.getElementById('appContent');
         
         if (!passwordInput) {
-            console.error('❌ Input de contraseña no encontrado');
-            alert('Error: Input de contraseña no encontrado');
+            alert('Error: Campo de contraseña no encontrado');
             return;
         }
         
-        const password = passwordInput.value.trim();
-        console.log('🔑 Contraseña ingresada:', password);
-        console.log('🔑 Contraseña esperada:', ACCESS_PASSWORD);
-        console.log('🔍 Comparación:', password === ACCESS_PASSWORD);
+        const enteredPassword = passwordInput.value.trim();
         
-        // Normalizar contraseñas para comparación (sin espacios, minúsculas)
-        const normalizedPassword = password.toLowerCase().trim();
-        const normalizedAccessPassword = ACCESS_PASSWORD.toLowerCase().trim();
-        
-        if (normalizedPassword === normalizedAccessPassword) {
-            console.log('✅ Contraseña correcta - Autenticando...');
-            setAuthenticated();
+        if (enteredPassword === APP_PASSWORD) {
+            // Contraseña correcta
+            authenticateApp();
             
-            // Ocultar modal con múltiples métodos
-            if (modal) {
-                modal.style.display = 'none !important';
-                modal.style.visibility = 'hidden';
-                modal.classList.add('hidden');
-                modal.setAttribute('style', 'display: none !important; visibility: hidden !important;');
-                console.log('✅ Modal ocultado');
-            } else {
-                console.error('❌ Modal no encontrado para ocultar');
+            // Ocultar modal de login
+            if (loginModal) {
+                loginModal.remove();
             }
             
-            // Mostrar contenido principal
-            if (mainContent) {
-                mainContent.style.display = 'block';
-                mainContent.style.visibility = 'visible';
-                mainContent.setAttribute('style', 'display: block !important; visibility: visible !important;');
-                console.log('✅ Contenido principal mostrado');
-            } else {
-                console.error('❌ mainContent no encontrado para mostrar');
+            // Mostrar contenido de la app
+            if (appContent) {
+                appContent.style.display = 'block';
             }
             
-            // Inicializar la UI después de autenticarse
-            setTimeout(() => {
-                if (typeof initUI === 'function') {
-                    console.log('🚀 Inicializando UI...');
-                    initUI().catch(error => {
-                        console.error('❌ Error al inicializar UI:', error);
-                    });
-                } else {
-                    console.warn('⚠️ Función initUI no disponible aún');
-                    // Esperar un poco más e intentar de nuevo
-                    setTimeout(() => {
-                        if (typeof initUI === 'function') {
-                            initUI().catch(error => {
-                                console.error('❌ Error al inicializar UI:', error);
-                            });
-                        }
-                    }, 500);
-                }
-            }, 100);
+            // Inicializar la aplicación
+            if (typeof initUI === 'function') {
+                setTimeout(() => {
+                    initUI().catch(err => console.error('Error inicializando:', err));
+                }, 100);
+            }
         } else {
-            console.log('❌ Contraseña incorrecta');
-            if (errorDiv) {
-                errorDiv.textContent = 'Contraseña incorrecta. Por favor, intenta nuevamente.';
-                errorDiv.style.display = 'block';
+            // Contraseña incorrecta
+            if (errorMsg) {
+                errorMsg.textContent = 'Contraseña incorrecta';
+                errorMsg.style.display = 'block';
             }
-            if (passwordInput) {
-                passwordInput.value = '';
-                passwordInput.focus();
-            }
+            passwordInput.value = '';
+            passwordInput.focus();
         }
     };
 
     /**
-     * Verifica la autenticación al cargar la página
+     * Verifica autenticación al cargar
      */
-    function checkAuthenticationOnLoad() {
-        if (isAuthenticated()) {
-            // Si ya está autenticado, mostrar contenido y ocultar modal
-            const modal = document.getElementById('accessPasswordModal');
-            const mainContent = document.getElementById('mainContent');
-            if (modal) {
-                modal.style.display = 'none';
+    function initAccessControl() {
+        if (isAppAuthenticated()) {
+            // Usuario autenticado - mostrar app
+            const loginModal = document.getElementById('loginModal');
+            const appContent = document.getElementById('appContent');
+            
+            if (loginModal) {
+                loginModal.remove();
             }
-            if (mainContent) {
-                mainContent.style.display = 'block';
+            if (appContent) {
+                appContent.style.display = 'block';
             }
         } else {
-            // Si no está autenticado, mostrar modal y ocultar contenido
-            const modal = document.getElementById('accessPasswordModal');
-            const mainContent = document.getElementById('mainContent');
-            if (modal) {
-                modal.style.display = 'flex';
+            // Usuario no autenticado - mostrar modal
+            const appContent = document.getElementById('appContent');
+            if (appContent) {
+                appContent.style.display = 'none';
             }
-            if (mainContent) {
-                mainContent.style.display = 'none';
-            }
-            // Focus en el input de contraseña
+            
+            // Focus en input después de un momento
             setTimeout(() => {
-                const passwordInput = document.getElementById('accessPasswordInput');
+                const passwordInput = document.getElementById('appPasswordInput');
                 if (passwordInput) {
                     passwordInput.focus();
                 }
-            }, 100);
+            }, 300);
         }
     }
 
-    // Estado global
-    let currentEditId = null;
+// Estado global
+let currentEditId = null;
 
     // Referencias a elementos del DOM
     let socioModal, modalTitle, socioForm, nombre, apellido, email, telefono, estado, submitSocioBtn, cancelModalBtn;
 
-    // ============================================
+// ============================================
     // UTILITY FUNCTIONS
-    // ============================================
+// ============================================
 
-    /**
+/**
      * Escapa HTML para prevenir XSS
      */
     function escapeHtml(text) {
@@ -399,8 +356,8 @@
                     } else {
                         console.warn('⚠️ window.getAll no está disponible');
                         sociosDisplay.textContent = '0';
-                    }
-                } catch (error) {
+        }
+    } catch (error) {
                     console.error('❌ Error al contar socios:', error);
                     sociosDisplay.textContent = '0';
                 }
@@ -416,20 +373,20 @@
     // INITIALIZATION
     // ============================================
 
-    /**
-     * Inicializa las referencias a elementos del DOM
-     */
-    function initDOMReferences() {
-        socioModal = document.getElementById('socioModal');
-        modalTitle = document.getElementById('modalTitle');
-        socioForm = document.getElementById('socioForm');
-        nombre = document.getElementById('nombre');
-        apellido = document.getElementById('apellido');
-        email = document.getElementById('email');
-        telefono = document.getElementById('telefono');
-        estado = document.getElementById('estado');
-        submitSocioBtn = document.getElementById('submitSocioBtn');
-        cancelModalBtn = document.getElementById('cancelModalBtn');
+/**
+ * Inicializa las referencias a elementos del DOM
+ */
+function initDOMReferences() {
+    socioModal = document.getElementById('socioModal');
+    modalTitle = document.getElementById('modalTitle');
+    socioForm = document.getElementById('socioForm');
+    nombre = document.getElementById('nombre');
+    apellido = document.getElementById('apellido');
+    email = document.getElementById('email');
+    telefono = document.getElementById('telefono');
+    estado = document.getElementById('estado');
+    submitSocioBtn = document.getElementById('submitSocioBtn');
+    cancelModalBtn = document.getElementById('cancelModalBtn');
 
         if (!socioModal || !modalTitle || !socioForm) {
             console.warn('⚠️ Algunos elementos del DOM no encontrados aún');
@@ -457,7 +414,7 @@
                     console.error('❌ Error al inicializar DB desde JSONbin:', dbError);
                     alert('Error al conectar con la base de datos. Por favor, verifica tu conexión a internet.');
                 }
-            } else {
+    } else {
                 console.error('❌ window.initDB no está disponible. Asegúrate de que database.js y db.js estén cargados.');
             }
             
@@ -500,13 +457,13 @@
         } catch (error) {
             console.error('❌ Error crítico al inicializar aplicación:', error);
             console.error('Stack:', error.stack);
-        }
     }
+}
 
-    /**
-     * Configura los event listeners
-     */
-    function setupEventListeners() {
+/**
+ * Configura los event listeners
+ */
+function setupEventListeners() {
         console.log('🔧 Configurando event listeners...');
         
         // Listener para botón "Registrarse" (tab de socios)
@@ -525,48 +482,48 @@
         }
 
         // Listener para botón "Agregar Socio" (solo en el tab de administración)
-        const addSocioBtn = document.getElementById('addSocioBtn');
-        if (addSocioBtn) {
+    const addSocioBtn = document.getElementById('addSocioBtn');
+    if (addSocioBtn) {
             addSocioBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 console.log('🔵 Click en Agregar Socio');
                 if (typeof window.openAddModal === 'function') {
                     window.openAddModal();
-                } else {
+    } else {
                     console.error('❌ window.openAddModal no está disponible');
                     alert('Error: función no disponible. Por favor recarga la página.');
                 }
             });
             console.log('✅ Listener agregado a botón "Agregar Socio"');
-        }
+    }
 
-        // Listener para botón "Cancelar"
-        if (cancelModalBtn) {
+    // Listener para botón "Cancelar"
+    if (cancelModalBtn) {
             cancelModalBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 if (typeof window.closeModal === 'function') {
                     window.closeModal();
                 }
             });
-        }
+    }
 
-        // Listener para formulario de socios
-        if (socioForm) {
+    // Listener para formulario de socios
+    if (socioForm) {
             socioForm.addEventListener('submit', function(e) {
                 if (typeof window.handleSubmitForm === 'function') {
                     window.handleSubmitForm(e);
-                } else {
+    } else {
                     e.preventDefault();
                     console.error('❌ window.handleSubmitForm no está disponible');
                     alert('Error: función no disponible. Por favor recarga la página.');
                 }
             });
             console.log('✅ Listener agregado a formulario de socios');
-        }
+    }
 
-        // Listeners para botones de administración
-        const addGastoBtn = document.getElementById('addGastoBtn');
-        if (addGastoBtn) {
+    // Listeners para botones de administración
+    const addGastoBtn = document.getElementById('addGastoBtn');
+    if (addGastoBtn) {
             addGastoBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 console.log('🔵 Click en Agregar Gasto');
@@ -577,11 +534,11 @@
                     alert('Error: función no disponible. Por favor recarga la página.');
                 }
             });
-            console.log('✅ Listener agregado a botón "Agregar Gasto"');
-        }
+        console.log('✅ Listener agregado a botón "Agregar Gasto"');
+    }
 
-        const addIngresoBtn = document.getElementById('addIngresoBtn');
-        if (addIngresoBtn) {
+    const addIngresoBtn = document.getElementById('addIngresoBtn');
+    if (addIngresoBtn) {
             addIngresoBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 console.log('🔵 Click en Agregar Ingreso');
@@ -592,11 +549,11 @@
                     alert('Error: función no disponible. Por favor recarga la página.');
                 }
             });
-            console.log('✅ Listener agregado a botón "Agregar Ingreso"');
-        }
+        console.log('✅ Listener agregado a botón "Agregar Ingreso"');
+    }
 
-        const addPagoBtn = document.getElementById('addPagoBtn');
-        if (addPagoBtn) {
+    const addPagoBtn = document.getElementById('addPagoBtn');
+    if (addPagoBtn) {
             addPagoBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 console.log('🔵 Click en Registrar Pago');
@@ -607,12 +564,12 @@
                     alert('Error: función no disponible. Por favor recarga la página.');
                 }
             });
-            console.log('✅ Listener agregado a botón "Registrar Pago"');
-        }
+        console.log('✅ Listener agregado a botón "Registrar Pago"');
+    }
 
-        // Listeners para formularios de administración
-        const gastoForm = document.getElementById('gastoForm');
-        if (gastoForm) {
+    // Listeners para formularios de administración
+    const gastoForm = document.getElementById('gastoForm');
+    if (gastoForm) {
             gastoForm.addEventListener('submit', function(e) {
                 if (typeof window.handleSubmitGasto === 'function') {
                     window.handleSubmitGasto(e);
@@ -621,10 +578,10 @@
                     console.error('❌ window.handleSubmitGasto no está disponible');
                 }
             });
-        }
+    }
 
-        const ingresoForm = document.getElementById('ingresoForm');
-        if (ingresoForm) {
+    const ingresoForm = document.getElementById('ingresoForm');
+    if (ingresoForm) {
             ingresoForm.addEventListener('submit', function(e) {
                 if (typeof window.handleSubmitIngreso === 'function') {
                     window.handleSubmitIngreso(e);
@@ -633,10 +590,10 @@
                     console.error('❌ window.handleSubmitIngreso no está disponible');
                 }
             });
-        }
+    }
 
-        const pagoForm = document.getElementById('pagoForm');
-        if (pagoForm) {
+    const pagoForm = document.getElementById('pagoForm');
+    if (pagoForm) {
             pagoForm.addEventListener('submit', function(e) {
                 if (typeof window.handleSubmitPago === 'function') {
                     window.handleSubmitPago(e);
@@ -645,31 +602,31 @@
                     console.error('❌ window.handleSubmitPago no está disponible');
                 }
             });
-        }
+    }
 
-        // Listeners para tabs principales
-        const tabSocios = document.getElementById('tabSocios');
-        const tabAdmin = document.getElementById('tabAdmin');
-        
-        if (tabSocios) {
+    // Listeners para tabs principales
+    const tabSocios = document.getElementById('tabSocios');
+    const tabAdmin = document.getElementById('tabAdmin');
+    
+    if (tabSocios) {
             tabSocios.addEventListener('click', function(e) {
                 e.preventDefault();
-                console.log('🔵 Click en tab Socios');
+            console.log('🔵 Click en tab Socios');
                 if (typeof window.switchTab === 'function') {
                     window.switchTab('socios');
-                } else {
+    } else {
                     console.error('❌ window.switchTab no está disponible');
                 }
             });
-        }
+    }
 
-        if (tabAdmin) {
+    if (tabAdmin) {
             tabAdmin.addEventListener('click', function(e) {
                 e.preventDefault();
-                console.log('🔵 Click en tab Administración');
+            console.log('🔵 Click en tab Administración');
                 if (typeof window.switchTab === 'function') {
                     window.switchTab('admin');
-                } else {
+    } else {
                     console.error('❌ window.switchTab no está disponible');
                 }
             });
@@ -714,13 +671,13 @@
                 }
             }
         });
-    }
+}
 
-    // ============================================
-    // TABLE RENDERING
-    // ============================================
+// ============================================
+// TABLE RENDERING
+// ============================================
 
-    /**
+/**
      * Renderiza la tabla simplificada de socios (solo vista, sin acciones)
      * Ahora es async
      */
@@ -734,12 +691,12 @@
             const socios = await window.getAll('socios');
             console.log('📊 Socios encontrados al renderizar tabla:', socios.length, socios);
             
-            const tbody = document.getElementById('sociosTableBody');
-            
-            if (!tbody) {
-                console.error('❌ No se encontró el elemento sociosTableBody');
-                return;
-            }
+        const tbody = document.getElementById('sociosTableBody');
+        
+        if (!tbody) {
+            console.error('❌ No se encontró el elemento sociosTableBody');
+            return;
+        }
 
             tbody.innerHTML = '';
 
@@ -798,53 +755,53 @@
                 return;
             }
 
-            tbody.innerHTML = '';
+        tbody.innerHTML = '';
 
-            if (socios.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="empty-state">
-                            <div class="empty-state-icon">📋</div>
-                            <p>No hay socios registrados</p>
-                            <p style="font-size: 0.875rem; margin-top: 0.5rem;">Haz clic en "Agregar Socio" para comenzar</p>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
+        if (socios.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <p>No hay socios registrados</p>
+                        <p style="font-size: 0.875rem; margin-top: 0.5rem;">Haz clic en "Agregar Socio" para comenzar</p>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
 
-            socios.forEach(socio => {
-                const row = document.createElement('tr');
-                
-                const estadoBadge = (socio.estado === 'Activo' || socio.estado === 'activo')
-                    ? '<span class="badge badge-active">Activo</span>'
-                    : '<span class="badge badge-inactive">Inactivo</span>';
+        socios.forEach(socio => {
+            const row = document.createElement('tr');
+            
+            const estadoBadge = (socio.estado === 'Activo' || socio.estado === 'activo')
+                ? '<span class="badge badge-active">Activo</span>'
+                : '<span class="badge badge-inactive">Inactivo</span>';
 
-                row.innerHTML = `
+            row.innerHTML = `
                     <td style="font-family: monospace; font-size: 0.875rem; color: #6b7280;">${socio.id ? socio.id.substring(0, 8) + '...' : 'N/A'}</td>
-                    <td>${escapeHtml(socio.nombre || '')}</td>
-                    <td>${escapeHtml(socio.apellido || '')}</td>
-                    <td>${escapeHtml(socio.email || '')}</td>
-                    <td>${escapeHtml(socio.telefono || '')}</td>
-                    <td>${estadoBadge}</td>
-                    <td>
-                        <div class="actions">
+                <td>${escapeHtml(socio.nombre || '')}</td>
+                <td>${escapeHtml(socio.apellido || '')}</td>
+                <td>${escapeHtml(socio.email || '')}</td>
+                <td>${escapeHtml(socio.telefono || '')}</td>
+                <td>${estadoBadge}</td>
+                <td>
+                    <div class="actions">
                             <button class="btn-icon btn-icon-view view-btn" data-id="${socio.id}" title="Ver Detalles" style="background: #e0e7ff; color: #6366f1;">
                                 <span class="material-icons-round">visibility</span>
                             </button>
-                            <button class="btn-icon btn-icon-edit edit-btn" data-id="${socio.id}" title="Editar">
-                                <span class="material-icons-round">edit</span>
-                            </button>
-                            <button class="btn-icon btn-icon-delete delete-btn" data-id="${socio.id}" title="Eliminar">
-                                <span class="material-icons-round">delete</span>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                
+                        <button class="btn-icon btn-icon-edit edit-btn" data-id="${socio.id}" title="Editar">
+                            <span class="material-icons-round">edit</span>
+                        </button>
+                        <button class="btn-icon btn-icon-delete delete-btn" data-id="${socio.id}" title="Eliminar">
+                            <span class="material-icons-round">delete</span>
+                        </button>
+                    </div>
+                </td>
+            `;
+            
                 const viewBtn = row.querySelector('.view-btn');
-                const editBtn = row.querySelector('.edit-btn');
-                const deleteBtn = row.querySelector('.delete-btn');
+            const editBtn = row.querySelector('.edit-btn');
+            const deleteBtn = row.querySelector('.delete-btn');
                 
                 if (viewBtn) {
                     viewBtn.addEventListener('click', async () => {
@@ -858,8 +815,8 @@
                         }
                     });
                 }
-                
-                if (editBtn) {
+            
+            if (editBtn) {
                     editBtn.addEventListener('click', async () => {
                         try {
                             await window.openEditModal(socio.id);
@@ -868,9 +825,9 @@
                             alert('Error al abrir el formulario de edición');
                         }
                     });
-                }
-                
-                if (deleteBtn) {
+            }
+            
+            if (deleteBtn) {
                     deleteBtn.addEventListener('click', async () => {
                         try {
                             await window.handleDeleteSocio(socio.id);
@@ -879,13 +836,13 @@
                             alert('Error al eliminar el socio');
                         }
                     });
-                }
-                
-                tbody.appendChild(row);
-            });
+            }
+            
+            tbody.appendChild(row);
+        });
 
             console.log(`✅ Tabla de administración renderizada con ${socios.length} socios`);
-        } catch (error) {
+    } catch (error) {
             console.error('❌ Error al renderizar tabla de administración:', error);
         }
     };
@@ -1088,9 +1045,9 @@
         }
     };
 
-    // ============================================
-    // MODAL FUNCTIONS
-    // ============================================
+// ============================================
+// MODAL FUNCTIONS
+// ============================================
 
     /**
      * Actualiza los campos de miembros de la familia en el modal
@@ -1159,27 +1116,27 @@
         }
     }
 
-    /**
-     * Abre el modal para agregar un nuevo socio
-     */
+/**
+ * Abre el modal para agregar un nuevo socio
+ */
     window.openAddModal = function() {
-        console.log('🔵 openAddModal() llamado');
+    console.log('🔵 openAddModal() llamado');
         
         try {
             socioModal = document.getElementById('socioModal');
             modalTitle = document.getElementById('modalTitle');
             socioForm = document.getElementById('socioForm');
-            
-            if (!socioModal || !modalTitle || !socioForm) {
-                console.error('❌ Referencias del DOM no inicializadas');
+    
+    if (!socioModal || !modalTitle || !socioForm) {
+        console.error('❌ Referencias del DOM no inicializadas');
                 alert('Error: No se encontraron los elementos del formulario. Por favor recarga la página.');
-                return;
-            }
+        return;
+    }
 
-            currentEditId = null;
-            socioForm.reset();
-            modalTitle.textContent = 'Agregar Socio';
-            
+    currentEditId = null;
+    socioForm.reset();
+    modalTitle.textContent = 'Agregar Socio';
+    
             // Inicializar fecha de ingreso con fecha actual
             const fechaIngresoInput = document.getElementById('modalFechaIngreso');
             if (fechaIngresoInput) {
@@ -1195,26 +1152,26 @@
             if (numMiembrosInput) {
                 numMiembrosInput.removeEventListener('input', updateModalMiembrosFamilia);
                 numMiembrosInput.addEventListener('input', updateModalMiembrosFamilia);
-            }
+    }
 
-            socioModal.classList.remove('hidden');
-            console.log('✅ Modal abierto correctamente');
+    socioModal.classList.remove('hidden');
+    console.log('✅ Modal abierto correctamente');
         } catch (error) {
             console.error('❌ Error al abrir modal:', error);
             alert('Error al abrir el formulario: ' + error.message);
-        }
+}
     };
 
-    /**
-     * Abre el modal para editar un socio existente
-     */
+/**
+ * Abre el modal para editar un socio existente
+ */
     window.openEditModal = async function(id) {
-        try {
-            if (!socioModal || !modalTitle || !socioForm || !nombre || !apellido || !email || !telefono || !estado) {
+    try {
+        if (!socioModal || !modalTitle || !socioForm || !nombre || !apellido || !email || !telefono || !estado) {
                 initDOMReferences();
                 if (!socioModal || !modalTitle || !socioForm) {
-                    console.error('❌ Referencias del DOM no inicializadas');
-                    return;
+            console.error('❌ Referencias del DOM no inicializadas');
+            return;
                 }
             }
 
@@ -1225,59 +1182,59 @@
 
             const socio = await window.getItem('socios', id);
 
-            if (!socio) {
-                alert('Socio no encontrado');
-                return;
-            }
-
-            nombre.value = socio.nombre || '';
-            apellido.value = socio.apellido || '';
-            email.value = socio.email || '';
-            telefono.value = socio.telefono || '';
-            estado.value = socio.estado || 'Activo';
-
-            currentEditId = id;
-            modalTitle.textContent = 'Editar Socio';
-            
-            if (submitSocioBtn) {
-                submitSocioBtn.textContent = 'Actualizar';
-            }
-
-            socioModal.classList.remove('hidden');
-        } catch (error) {
-            console.error('❌ Error al abrir modal de edición:', error);
-            alert('Error al cargar los datos del socio');
+        if (!socio) {
+            alert('Socio no encontrado');
+            return;
         }
+
+        nombre.value = socio.nombre || '';
+        apellido.value = socio.apellido || '';
+        email.value = socio.email || '';
+        telefono.value = socio.telefono || '';
+        estado.value = socio.estado || 'Activo';
+
+        currentEditId = id;
+        modalTitle.textContent = 'Editar Socio';
+        
+        if (submitSocioBtn) {
+            submitSocioBtn.textContent = 'Actualizar';
+        }
+
+        socioModal.classList.remove('hidden');
+    } catch (error) {
+        console.error('❌ Error al abrir modal de edición:', error);
+        alert('Error al cargar los datos del socio');
+    }
     };
 
-    /**
-     * Cierra el modal
-     */
+/**
+ * Cierra el modal
+ */
     window.closeModal = function() {
         if (!socioModal) {
             initDOMReferences();
         }
-        if (socioModal) {
-            socioModal.classList.add('hidden');
-            currentEditId = null;
-        }
+    if (socioModal) {
+        socioModal.classList.add('hidden');
+        currentEditId = null;
+    }
     };
 
-    // ============================================
-    // FORM HANDLING
-    // ============================================
+// ============================================
+// FORM HANDLING
+// ============================================
 
-    /**
-     * Maneja el envío del formulario (agregar o editar)
-     */
+/**
+ * Maneja el envío del formulario (agregar o editar)
+ */
     window.handleSubmitForm = async function(event) {
-        event.preventDefault();
-        
-        try {
+    event.preventDefault();
+
+    try {
             if (typeof window.addItem !== 'function' || typeof window.updateItem !== 'function') {
                 alert('Error: funciones de base de datos no disponibles');
-                return;
-            }
+            return;
+        }
 
             // Recopilar información de miembros de la familia
             const miembros = [];
@@ -1327,24 +1284,24 @@
             const estadoValue = document.getElementById('modalEstado')?.value || 'Activo';
 
             if (!telefonoValue || !emailValue || !fechaIngreso || !consentimientoDatos || !aceptacionNormas) {
-                alert('Por favor completa todos los campos requeridos');
-                return;
-            }
+            alert('Por favor completa todos los campos requeridos');
+            return;
+        }
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(emailValue)) {
-                alert('Por favor ingresa un email válido');
-                return;
-            }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailValue)) {
+            alert('Por favor ingresa un email válido');
+            return;
+        }
 
             // Datos del socio principal (primer miembro)
             const nombrePrincipal = miembros[0]?.nombreCompleto.split(' ')[0] || '';
             const apellidoPrincipal = miembros[0]?.nombreCompleto.split(' ').slice(1).join(' ') || miembros[0]?.nombreCompleto || '';
 
-            const socioData = {
+        const socioData = {
                 nombre: nombrePrincipal,
                 apellido: apellidoPrincipal,
-                telefono: telefonoValue,
+            telefono: telefonoValue,
                 email: emailValue,
                 contactoEmergencia: document.getElementById('modalContactoEmergencia')?.value.trim() || '',
                 
@@ -1373,13 +1330,13 @@
                 fechaRegistro: currentEditId ? undefined : new Date().toISOString()
             };
 
-            if (currentEditId) {
+        if (currentEditId) {
                 await window.updateItem('socios', currentEditId, socioData);
-                console.log('✅ Socio actualizado:', currentEditId);
-            } else {
+            console.log('✅ Socio actualizado:', currentEditId);
+        } else {
                 await window.addItem('socios', socioData);
-                console.log('✅ Socio agregado');
-            }
+            console.log('✅ Socio agregado');
+        }
 
             window.closeModal();
             
@@ -1394,23 +1351,23 @@
                 await window.updateBalanceDisplay();
             }
 
-            showNotification(
-                currentEditId ? 'Socio actualizado exitosamente' : 'Socio agregado exitosamente',
-                'success'
-            );
-        } catch (error) {
-            console.error('❌ Error al guardar socio:', error);
+        showNotification(
+            currentEditId ? 'Socio actualizado exitosamente' : 'Socio agregado exitosamente',
+            'success'
+        );
+    } catch (error) {
+        console.error('❌ Error al guardar socio:', error);
             alert('Error al guardar el socio: ' + error.message);
-        }
+    }
     };
 
-    // ============================================
-    // DELETE FUNCTION
-    // ============================================
+// ============================================
+// DELETE FUNCTION
+// ============================================
 
-    /**
-     * Maneja la eliminación de un socio
-     */
+/**
+ * Maneja la eliminación de un socio
+ */
     window.handleDeleteSocio = async function(id) {
         try {
             if (typeof window.getAll !== 'function' || typeof window.deleteItem !== 'function') {
@@ -1419,21 +1376,21 @@
             }
             
             const socios = await window.getAll('socios');
-            const socio = socios.find(s => s.id === id);
+        const socio = socios.find(s => s.id === id);
 
-            if (!socio) {
-                alert('Socio no encontrado');
-                return;
-            }
+        if (!socio) {
+            alert('Socio no encontrado');
+            return;
+        }
 
-            const confirmMessage = `¿Estás seguro de eliminar a ${socio.nombre} ${socio.apellido}?`;
-            
-            if (!confirm(confirmMessage)) {
-                return;
-            }
+        const confirmMessage = `¿Estás seguro de eliminar a ${socio.nombre} ${socio.apellido}?`;
+        
+        if (!confirm(confirmMessage)) {
+            return;
+        }
 
             await window.deleteItem('socios', id);
-            console.log('✅ Socio eliminado:', id);
+        console.log('✅ Socio eliminado:', id);
 
             await renderSociosTable();
             
@@ -1442,34 +1399,30 @@
                 await window.updateBalanceDisplay();
             }
 
-            showNotification('Socio eliminado exitosamente', 'success');
-        } catch (error) {
-            console.error('❌ Error al eliminar socio:', error);
-            alert('Error al eliminar el socio. Por favor, intenta nuevamente.');
-        }
+        showNotification('Socio eliminado exitosamente', 'success');
+    } catch (error) {
+        console.error('❌ Error al eliminar socio:', error);
+        alert('Error al eliminar el socio. Por favor, intenta nuevamente.');
+    }
     };
 
-    // ============================================
+// ============================================
     // INITIALIZE ON LOAD
-    // ============================================
+// ============================================
 
     // Inicializar cuando el DOM esté listo
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('📄 DOM cargado, verificando autenticación...');
-            checkAuthenticationOnLoad();
-            // Solo inicializar UI si está autenticado
-            if (isAuthenticated()) {
+            initAccessControl();
+            if (isAppAuthenticated()) {
                 initUI().catch(error => {
                     console.error('❌ Error fatal en inicialización:', error);
                 });
             }
         });
     } else {
-        console.log('📄 DOM ya está listo, verificando autenticación...');
-        checkAuthenticationOnLoad();
-        // Solo inicializar UI si está autenticado
-        if (isAuthenticated()) {
+        initAccessControl();
+        if (isAppAuthenticated()) {
             initUI().catch(error => {
                 console.error('❌ Error fatal en inicialización:', error);
             });

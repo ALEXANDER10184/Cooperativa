@@ -456,27 +456,28 @@
     </style>
 </head>
 <body>
-    <!-- Modal: Contraseña de Acceso -->
-    <div id="accessPasswordModal" class="modal" style="display: flex !important; z-index: 10000 !important; background: rgba(0, 0, 0, 0.8) !important;">
-        <div class="modal-content" style="max-width: 400px; background: white;">
-            <div class="modal-header">
-                <h2 class="modal-title">Acceso a la Aplicación</h2>
+    <!-- Modal de Login -->
+    <div id="loginModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 99999; display: flex; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 400px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+            <h2 style="margin: 0 0 1.5rem 0; color: #1f2937; font-size: 1.5rem;">Acceso a la Aplicación</h2>
+            <div id="passwordError" style="color: #ef4444; font-size: 0.875rem; margin-bottom: 1rem; display: none;"></div>
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500;">Contraseña</label>
+                <input type="password" id="appPasswordInput" placeholder="Ingresa la contraseña" required autofocus 
+                       style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;"
+                       onkeypress="if(event.key==='Enter'){if(typeof window.checkAppPassword==='function'){window.checkAppPassword();}}">
             </div>
-            <form id="accessPasswordForm" onsubmit="event.preventDefault(); try{window.checkAccessPassword();}catch(e){alert('Error: '+e.message);}">
-                <div class="form-group">
-                    <label class="form-label">Contraseña</label>
-                    <input type="password" id="accessPasswordInput" class="form-input" placeholder="Ingresa la contraseña para acceder" required autofocus>
-                </div>
-                <div id="accessPasswordError" style="color: #ef4444; font-size: 0.875rem; margin-bottom: 1rem; display: none;"></div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); event.stopPropagation(); try{if(typeof window.checkAccessPassword==='function'){window.checkAccessPassword();}else{alert('Función no disponible. Recarga la página.');}}catch(e){alert('Error: '+e.message);console.error(e);}return false;">Acceder</button>
-                </div>
-            </form>
+            <button onclick="if(typeof window.checkAppPassword==='function'){window.checkAppPassword();}" 
+                    style="width: 100%; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;"
+                    onmouseover="this.style.background='#1d4ed8'" 
+                    onmouseout="this.style.background='#2563eb'">
+                Acceder
+            </button>
         </div>
     </div>
 
-    <!-- Contenido Principal (oculto hasta autenticación) -->
-    <div id="mainContent" style="display: none !important;">
+    <!-- Contenido Principal -->
+    <div id="appContent" style="display: none;">
     <!-- Navbar -->
     <nav class="navbar">
         <div class="navbar-content">
@@ -714,15 +715,15 @@
                                 <select id="mesAporteSelector" class="form-select" style="width: auto;" onchange="if(typeof window.renderAportesTable==='function'){window.renderAportesTable().catch(e=>{console.error('Error:',e);alert('Error al cargar aportes.');});}">
                                     <!-- Se llenará dinámicamente -->
                                 </select>
-                            </div>
+                    </div>
                             <div style="display: flex; gap: 0.5rem; align-items: center;">
                                 <label class="form-label" style="margin: 0;">Filtro:</label>
                                 <select id="filtroAportesSelector" class="form-select" style="width: auto;" onchange="if(typeof window.renderAportesTable==='function'){window.renderAportesTable().catch(e=>{console.error('Error:',e);alert('Error al cargar aportes.');});}">
                                     <option value="todos">Todos</option>
                                     <option value="pagados">Ya Pagados</option>
                                     <option value="pendientes">Falta por Pagar</option>
-                                </select>
-                            </div>
+                        </select>
+                    </div>
                         </div>
                     </div>
 
@@ -1247,5 +1248,7 @@
     </script>
     </div>
     <!-- Fin del contenido principal -->
+    </div>
+    <!-- Fin appContent -->
 </body>
 </html>

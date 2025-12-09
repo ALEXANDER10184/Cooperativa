@@ -858,6 +858,11 @@
                 
                 await window.addItem('ingresos', ingresoData);
                 console.log('✅ Ingreso creado automáticamente desde pago');
+                
+                // Verificar si este pago corresponde a un aporte mensual
+                if (typeof window.verificarPagoComoAporte === 'function') {
+                    await window.verificarPagoComoAporte(socioId, monto, fecha);
+                }
             }
 
             window.closePagoModal();
@@ -1030,7 +1035,7 @@
     /**
      * Verifica si un pago corresponde a un aporte mensual
      */
-    async function verificarPagoComoAporte(socioId, monto, fecha) {
+    window.verificarPagoComoAporte = async function(socioId, monto, fecha) {
         try {
             const socio = await window.getItem('socios', socioId);
             if (!socio) return null;

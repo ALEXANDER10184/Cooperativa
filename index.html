@@ -1169,17 +1169,8 @@
                 tabAdmin.onclick = null;
                 tabAdmin.addEventListener('click', function(e) {
                     e.preventDefault();
-                    // Verificar autenticación antes de cambiar de tab
-                    if (typeof window.isAdminAuthenticated === 'function' && !window.isAdminAuthenticated()) {
-                        // Si no está autenticado, mostrar modal de contraseña
-                        if (typeof window.openAdminPasswordModal === 'function') {
-                            window.openAdminPasswordModal();
-                        }
-                    } else {
-                        // Si está autenticado, cambiar de tab normalmente
-                        if (typeof window.switchTab === 'function') {
-                            window.switchTab('admin').catch(e => console.error('Error:', e));
-                        }
+                    if (typeof window.switchTab === 'function') {
+                        window.switchTab('admin').catch(e => console.error('Error:', e));
                     }
                 });
             }

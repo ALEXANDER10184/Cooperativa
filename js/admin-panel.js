@@ -872,11 +872,25 @@
             }
 
             window.closePagoModal();
+            
+            // Verificar si este pago corresponde a un aporte mensual y marcarlo
+            if (!currentEditPagoId && typeof window.verificarPagoComoAporte === 'function') {
+                await window.verificarPagoComoAporte(socioId, monto, fecha);
+            }
+            
             await window.renderPagosTable();
             
             // Actualizar tabla de ingresos si está visible (se creó un ingreso automático)
             if (typeof window.renderIngresosTable === 'function') {
                 await window.renderIngresosTable();
+            }
+            
+            // Si estamos en el tab de aportes, recargar la tabla
+            const aportesTab = document.getElementById('aportesTab');
+            if (aportesTab && !aportesTab.classList.contains('hidden') && aportesTab.classList.contains('active')) {
+                if (typeof window.renderAportesTable === 'function') {
+                    await window.renderAportesTable();
+                }
             }
             
             // Actualizar balance inmediatamente (importante: pagos se suman a ingresos)
@@ -1055,11 +1069,13 @@
                 const mesAno = `${fechaPago.getFullYear()}-${String(fechaPago.getMonth() + 1).padStart(2, '0')}`;
                 
                 const aporte = await obtenerAporteMensual(socioId, mesAno);
-                if (aporte && aporte.estado === 'pendiente') {
+                if (aporte) {
+                    // Actualizar aporte como pagado (aunque ya esté pagado, actualizar fecha si es diferente)
                     await window.updateItem('aportesMensuales', aporte.id, {
                         estado: 'pagado',
                         fechaPago: fecha
                     });
+                    console.log(`✅ Aporte mensual marcado como pagado automáticamente para ${socio.nombre} ${socio.apellido} - ${mesAno}`);
                     return aporte.id;
                 }
             }

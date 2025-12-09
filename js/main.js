@@ -326,6 +326,9 @@
             // Configurar listeners
             setupEventListeners();
             
+            // Generar código QR
+            generateQRCode();
+            
             // Renderizar tablas iniciales (ahora async)
             await renderSociosTable();
             

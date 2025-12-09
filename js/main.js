@@ -39,15 +39,25 @@
             return;
         }
         
-        const enteredPassword = passwordInput.value.trim();
+        let enteredPassword = passwordInput.value;
+        
+        // Limpiar espacios al inicio y al final
+        enteredPassword = enteredPassword.trim();
+        
+        // Eliminar espacios en medio también (por si acaso)
+        enteredPassword = enteredPassword.replace(/\s+/g, '');
         
         console.log('🔐 Verificando contraseña...');
-        console.log('🔑 Contraseña ingresada:', enteredPassword);
+        console.log('🔑 Contraseña ingresada (raw):', passwordInput.value);
+        console.log('🔑 Contraseña ingresada (limpia):', enteredPassword);
         console.log('🔑 Contraseña esperada:', APP_PASSWORD);
-        console.log('🔍 Comparación:', enteredPassword === APP_PASSWORD);
+        console.log('🔑 Longitud ingresada:', enteredPassword.length);
+        console.log('🔑 Longitud esperada:', APP_PASSWORD.length);
+        console.log('🔍 Comparación exacta:', enteredPassword === APP_PASSWORD);
+        console.log('🔍 Comparación (lowercase):', enteredPassword.toLowerCase() === APP_PASSWORD.toLowerCase());
         
-        // Comparación directa (sin normalizar para mayor seguridad)
-        if (enteredPassword === APP_PASSWORD) {
+        // Comparación (permitir mayúsculas/minúsculas por si hay problemas de teclado)
+        if (enteredPassword === APP_PASSWORD || enteredPassword.toLowerCase() === APP_PASSWORD.toLowerCase()) {
             console.log('✅ Contraseña correcta - Autenticando...');
             
             // Contraseña correcta

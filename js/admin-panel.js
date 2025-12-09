@@ -819,12 +819,12 @@
             window.closePagoModal();
             window.renderPagosTable();
             
-            // Actualizar tabla de ingresos si está visible
+            // Actualizar tabla de ingresos si está visible (se creó un ingreso automático)
             if (typeof window.renderIngresosTable === 'function') {
                 window.renderIngresosTable();
             }
             
-            // Actualizar balance
+            // Actualizar balance inmediatamente (importante: pagos se suman a ingresos)
             if (typeof window.updateBalanceDisplay === 'function') {
                 window.updateBalanceDisplay();
             }
@@ -867,12 +867,12 @@
             window.deleteItem('pagos', id);
             window.renderPagosTable();
             
-            // Actualizar tabla de ingresos
+            // Actualizar tabla de ingresos (si se eliminó el ingreso relacionado)
             if (typeof window.renderIngresosTable === 'function') {
                 window.renderIngresosTable();
             }
             
-            // Actualizar balance
+            // Actualizar balance inmediatamente (importante: pagos afectan ingresos totales)
             if (typeof window.updateBalanceDisplay === 'function') {
                 window.updateBalanceDisplay();
             }

@@ -75,7 +75,8 @@
     }
 
     /**
-     * Calcula el balance total desde gastos e ingresos
+     * Calcula el balance total desde gastos, ingresos y pagos de socios
+     * Los pagos de socios también se suman a los ingresos totales
      */
     window.calculateBalance = function() {
         try {
@@ -87,18 +88,37 @@
                 };
             }
             
+            // Obtener ingresos directos
             const ingresos = window.getAll('ingresos');
-            const gastos = window.getAll('gastos');
-            
-            const totalIncome = ingresos.reduce((sum, ingreso) => {
+            const totalIngresosDirectos = ingresos.reduce((sum, ingreso) => {
                 return sum + (parseFloat(ingreso.monto) || 0);
             }, 0);
             
+            // Obtener pagos de socios y sumarlos a los ingresos
+            const pagos = window.getAll('pagos');
+            const totalPagosSocios = pagos.reduce((sum, pago) => {
+                return sum + (parseFloat(pago.monto) || 0);
+            }, 0);
+            
+            // Los ingresos totales son: ingresos directos + pagos de socios
+            const totalIncome = totalIngresosDirectos + totalPagosSocios;
+            
+            // Obtener gastos
+            const gastos = window.getAll('gastos');
             const totalExpenses = gastos.reduce((sum, gasto) => {
                 return sum + (parseFloat(gasto.monto) || 0);
             }, 0);
             
+            // Calcular balance (ingresos totales - gastos)
             const balance = totalIncome - totalExpenses;
+            
+            console.log('💰 Balance calculado:', {
+                ingresosDirectos: totalIngresosDirectos,
+                pagosSocios: totalPagosSocios,
+                ingresosTotales: totalIncome,
+                gastos: totalExpenses,
+                balance: balance
+            });
             
             return {
                 totalIncome,
@@ -764,6 +784,11 @@
             console.log('✅ Socio eliminado:', id);
 
             renderSociosTable();
+            
+            // Actualizar balance (en caso de que haya afectado pagos)
+            if (typeof window.updateBalanceDisplay === 'function') {
+                window.updateBalanceDisplay();
+            }
 
             showNotification('Socio eliminado exitosamente', 'success');
         } catch (error) {

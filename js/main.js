@@ -300,6 +300,9 @@
             renderSociosTable();
             
             // Renderizar tablas de administración (se cargarán cuando se abra el tab)
+            if (typeof window.renderAdminSociosTable === 'function') {
+                window.renderAdminSociosTable();
+            }
             if (typeof window.renderGastosTable === 'function') {
                 window.renderGastosTable();
             }

@@ -1,6 +1,6 @@
 // ============================================
 // INTERNATIONALIZATION SYSTEM
-// Cooperativa Provivienda "Mi Esperanza"
+// Cooperativa Pro-Vivienda mi Esperanza
 // ============================================
 
 const translations = {
@@ -17,7 +17,7 @@ const translations = {
         welcomeMessage: "Bienvenido. Estás a punto de registrarte en la Cooperativa Provivienda 'Mi Esperanza', un proyecto comunitario para apoyarnos mutuamente en temas de vivienda.",
 
         // Landing page
-        logoText: "Cooperativa Provivienda",
+        logoText: "Cooperativa Pro-Vivienda mi Esperanza",
         logoSubtext: "Mi Esperanza",
         tagline: "Construyendo hogares, juntos.",
         registerBtn: "Registrarse como nuevo socio",
@@ -76,7 +76,7 @@ const translations = {
         minMembers: "Debe haber al menos 1 persona en el hogar",
 
         // Success messages
-        registrationSuccess: "Tus datos han sido registrados en la Cooperativa Provivienda 'Mi Esperanza'. Bienvenido, cooperativista.",
+        registrationSuccess: "Tus datos han sido registrados en la Cooperativa Pro-Vivienda mi Esperanza. Bienvenido, cooperativista.",
 
         // Admin panel
         adminTitle: "Panel Administrativo",

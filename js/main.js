@@ -1,5 +1,5 @@
 // ============================================
-// COOPERATIVA PROVIVIENDA - MAIN LOGIC
+// COOPERATIVA PRO-VIVIENDA MI ESPERANZA - MAIN LOGIC
 // Versión sin módulos ES6 para compatibilidad
 // ============================================
 

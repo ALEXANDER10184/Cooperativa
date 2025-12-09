@@ -1,5 +1,5 @@
 /* ============================================
-   COOPERATIVA PROVIVIENDA "MI ESPERANZA"
+   COOPERATIVA PRO-VIVIENDA MI ESPERANZA
    Modern Design System & Styles (2025)
    ============================================ */
 
@@ -41,7 +41,7 @@
   /* 48px */
 
   /* Typography Scale */
-  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-family: 'Poppins', 'Roboto', system-ui, -apple-system, sans-serif;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
   /* 16px min for legibility */

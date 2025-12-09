@@ -1,6 +1,6 @@
 // ============================================
 // REGISTRATION FORM LOGIC
-// Cooperativa Provivienda "Mi Esperanza"
+// Cooperativa Pro-Vivienda mi Esperanza
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function () {

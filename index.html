@@ -794,7 +794,9 @@
         console.log('✅ Script de respaldo cargado');
     </script>
     
-    <!-- Script principal como módulo -->
-    <script type="module" src="js/main.js"></script>
+    <!-- Scripts en orden: primero db.js, luego admin-panel.js, finalmente main.js -->
+    <script src="js/db.js"></script>
+    <script src="js/admin-panel.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>

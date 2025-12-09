@@ -355,6 +355,9 @@ async function handleSubmit(event) {
         otrasAreas: otrasAreas,
         disponibilidadHoras: parseInt(document.getElementById('disponibilidadHoras').value) || 0,
         
+        // Observaciones
+        observaciones: observaciones,
+        
         // Estado y registro
         estado: 'Activo',
         fechaRegistro: new Date().toISOString()

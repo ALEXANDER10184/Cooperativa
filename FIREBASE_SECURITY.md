@@ -199,3 +199,4 @@ Los usuarios deberán iniciar sesión nuevamente con la nueva contraseña.
 - Ejecuta `./deploy_rules.sh` nuevamente
 - Verifica en Firebase Console que las reglas estén actualizadas
 
+

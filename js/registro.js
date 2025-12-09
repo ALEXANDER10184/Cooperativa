@@ -280,7 +280,7 @@ function validateForm() {
 // FORM SUBMISSION
 // ============================================
 
-function handleSubmit(event) {
+async function handleSubmit(event) {
     event.preventDefault();
 
     const btnEnviar = document.getElementById('btnEnviar');
@@ -363,13 +363,13 @@ function handleSubmit(event) {
     btnEnviar.innerHTML = "Enviando...";
     btnEnviar.disabled = true;
 
-    // Guardar usando db.js
+    // Guardar usando db.js (ahora async)
     try {
         if (typeof window.addItem !== 'function') {
             throw new Error('window.addItem no está disponible');
         }
 
-        window.addItem('socios', socioData);
+        await window.addItem('socios', socioData);
         
         btnEnviar.innerHTML = "Enviado ✔️";
         btnEnviar.disabled = false;

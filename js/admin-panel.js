@@ -81,8 +81,9 @@
 
     /**
      * Cambia entre tabs principales (Socios / Administración)
+     * Ahora es async
      */
-    window.switchTab = function(tab) {
+    window.switchTab = async function(tab) {
         const sociosPanel = document.getElementById("panelSocios");
         const adminPanel = document.getElementById("panelAdmin");
         const tabSocios = document.getElementById("tabSocios");
@@ -116,47 +117,47 @@
                 if (activeSubTab && activeSubTab.id) {
                     const subTabName = activeSubTab.id.replace('Tab', '');
                     if (subTabName === 'gastos' && typeof window.renderGastosTable === 'function') {
-                        window.renderGastosTable();
+                        await window.renderGastosTable();
                     } else if (subTabName === 'ingresos' && typeof window.renderIngresosTable === 'function') {
-                        window.renderIngresosTable();
+                        await window.renderIngresosTable();
                     } else if (subTabName === 'pagos') {
                         if (typeof window.loadSociosSelector === 'function') {
-                            window.loadSociosSelector();
+                            await window.loadSociosSelector();
                         }
                         if (typeof window.renderPagosTable === 'function') {
-                            window.renderPagosTable();
+                            await window.renderPagosTable();
                         }
                     } else if (subTabName === 'socios' && typeof window.renderAdminSociosTable === 'function') {
-                        window.renderAdminSociosTable();
+                        await window.renderAdminSociosTable();
                     }
                 } else {
                 // Si no hay sub-tab activo, activar gastos por defecto
                 const defaultTab = 'gastos';
-                window.switchAdminTab(defaultTab);
+                await window.switchAdminTab(defaultTab);
                 }
                 
                 // Siempre cargar selector de socios (necesario para pagos)
-                if (typeof window.loadSociosSelector === 'function') {
-                    window.loadSociosSelector();
-                }
+                    if (typeof window.loadSociosSelector === 'function') {
+                        await window.loadSociosSelector();
+                    }
             } catch (error) {
                 console.error("❌ Error al renderizar tablas:", error);
             }
         }
     };
 
-    window.switchMainTab = function(tabName) {
+    window.switchMainTab = async function(tabName) {
         if (tabName === 'socios') {
-            window.switchTab('socios');
+            await window.switchTab('socios');
         } else if (tabName === 'administracion' || tabName === 'admin') {
-            window.switchTab('admin');
+            await window.switchTab('admin');
         }
     };
 
     /**
      * Cambia entre sub-tabs de administración
      */
-    window.switchAdminTab = function(subTabName) {
+    window.switchAdminTab = async function(subTabName) {
         document.querySelectorAll('.sub-tab-content').forEach(content => {
             content.classList.remove('active');
         });
@@ -177,16 +178,16 @@
 
         // Renderizar contenido según el tab seleccionado
         if (subTabName === 'pagos') {
-            if (typeof window.loadSociosSelector === 'function') {
-                window.loadSociosSelector();
-            }
+                    if (typeof window.loadSociosSelector === 'function') {
+                        await window.loadSociosSelector();
+                    }
             if (typeof window.renderPagosTable === 'function') {
-                window.renderPagosTable();
+                await window.renderPagosTable();
             }
         } else if (subTabName === 'socios') {
             console.log('📋 Renderizando tabla de administración de socios...');
             if (typeof window.renderAdminSociosTable === 'function') {
-                window.renderAdminSociosTable();
+                await window.renderAdminSociosTable();
             } else {
                 console.error('❌ renderAdminSociosTable no está disponible');
             }
@@ -196,7 +197,7 @@
             }
         } else if (subTabName === 'ingresos') {
             if (typeof window.renderIngresosTable === 'function') {
-                window.renderIngresosTable();
+                await window.renderIngresosTable();
             }
         }
     };
@@ -292,7 +293,7 @@
         modal.classList.remove('hidden');
     };
 
-    window.openEditGastoModal = function(id) {
+    window.openEditGastoModal = async function(id) {
         try {
             if (typeof window.getItem !== 'function') {
                 alert('Error: funciones de base de datos no disponibles');
@@ -332,7 +333,7 @@
         }
     };
 
-    window.handleSubmitGasto = function(event) {
+    window.handleSubmitGasto = async function(event) {
         event.preventDefault();
 
         try {
@@ -357,17 +358,17 @@
             }
 
             if (currentEditGastoId) {
-                window.updateItem('gastos', currentEditGastoId, gastoData);
+                await window.updateItem('gastos', currentEditGastoId, gastoData);
             } else {
-                window.addItem('gastos', gastoData);
+                await window.addItem('gastos', gastoData);
             }
 
             window.closeGastoModal();
-            window.renderGastosTable();
+            await window.renderGastosTable();
             
             // Actualizar balance
             if (typeof window.updateBalanceDisplay === 'function') {
-                window.updateBalanceDisplay();
+                await window.updateBalanceDisplay();
             }
             
             showNotification(
@@ -380,7 +381,7 @@
         }
     };
 
-    window.handleDeleteGasto = function(id) {
+    window.handleDeleteGasto = async function(id) {
         try {
             if (typeof window.getItem !== 'function' || typeof window.deleteItem !== 'function') {
                 alert('Error: funciones de base de datos no disponibles');
@@ -397,12 +398,12 @@
                 return;
             }
 
-            window.deleteItem('gastos', id);
-            window.renderGastosTable();
+            await window.deleteItem('gastos', id);
+            await window.renderGastosTable();
             
             // Actualizar balance
             if (typeof window.updateBalanceDisplay === 'function') {
-                window.updateBalanceDisplay();
+                await window.updateBalanceDisplay();
             }
             
             showNotification('Gasto eliminado exitosamente', 'success');
@@ -416,14 +417,14 @@
     // INGRESOS MANAGEMENT
     // ============================================
 
-    window.renderIngresosTable = function() {
+    window.renderIngresosTable = async function() {
         try {
             if (typeof window.getAll !== 'function') {
                 console.error('getAll no está disponible');
                 return;
             }
             
-            const ingresos = window.getAll('ingresos');
+            const ingresos = await window.getAll('ingresos');
             const tbody = document.getElementById('ingresosTableBody');
             
             if (!tbody) return;
@@ -503,7 +504,7 @@
         modal.classList.remove('hidden');
     };
 
-    window.openEditIngresoModal = function(id) {
+    window.openEditIngresoModal = async function(id) {
         try {
             if (typeof window.getItem !== 'function') {
                 alert('Error: funciones de base de datos no disponibles');
@@ -543,7 +544,7 @@
         }
     };
 
-    window.handleSubmitIngreso = function(event) {
+    window.handleSubmitIngreso = async function(event) {
         event.preventDefault();
 
         try {
@@ -567,14 +568,6 @@
                 return;
             }
 
-            if (currentEditIngresoId) {
-                window.updateItem('ingresos', currentEditIngresoId, ingresoData);
-            } else {
-                window.addItem('ingresos', ingresoData);
-            }
-
-            window.closeIngresoModal();
-            window.renderIngresosTable();
             showNotification(
                 currentEditIngresoId ? 'Ingreso actualizado exitosamente' : 'Ingreso agregado exitosamente',
                 'success'
@@ -585,7 +578,7 @@
         }
     };
 
-    window.handleDeleteIngreso = function(id) {
+    window.handleDeleteIngreso = async function(id) {
         try {
             if (typeof window.getItem !== 'function' || typeof window.deleteItem !== 'function') {
                 alert('Error: funciones de base de datos no disponibles');
@@ -621,14 +614,14 @@
     // PAGOS MANAGEMENT
     // ============================================
 
-    window.loadSociosSelector = function() {
+    window.loadSociosSelector = async function() {
         try {
             if (typeof window.getAll !== 'function') {
                 console.error('getAll no está disponible');
                 return;
             }
             
-            const socios = window.getAll('socios');
+            const socios = await window.getAll('socios');
             const selector = document.getElementById('socioSelector');
             const pagoSelector = document.getElementById('pagoSocioId');
 
@@ -653,7 +646,7 @@
         }
     };
 
-    window.renderPagosTable = function() {
+    window.renderPagosTable = async function() {
         try {
             if (typeof window.getAll !== 'function' || typeof window.getItemsByField !== 'function') {
                 console.error('Funciones de base de datos no disponibles');
@@ -748,9 +741,9 @@
         }
 
         form.reset();
-        if (typeof window.loadSociosSelector === 'function') {
-            window.loadSociosSelector();
-        }
+                    if (typeof window.loadSociosSelector === 'function') {
+                        await window.loadSociosSelector();
+                    }
         
         const selector = document.getElementById('socioSelector');
         const pagoSocioId = document.getElementById('pagoSocioId');
@@ -768,14 +761,14 @@
         modal.classList.remove('hidden');
     };
 
-    window.openEditPagoModal = function(id) {
+    window.openEditPagoModal = async function(id) {
         try {
             if (typeof window.getItem !== 'function') {
                 alert('Error: funciones de base de datos no disponibles');
                 return;
             }
             
-            const pago = window.getItem('pagos', id);
+            const pago = await window.getItem('pagos', id);
             if (!pago) {
                 alert('Pago no encontrado');
                 return;
@@ -788,9 +781,9 @@
 
             if (!modal || !form || !title) return;
 
-            if (typeof window.loadSociosSelector === 'function') {
-                window.loadSociosSelector();
-            }
+                    if (typeof window.loadSociosSelector === 'function') {
+                        await window.loadSociosSelector();
+                    }
             document.getElementById('pagoSocioId').value = pago.socioId || '';
             document.getElementById('pagoFecha').value = pago.fecha || '';
             document.getElementById('pagoMonto').value = pago.monto || '';
@@ -812,7 +805,7 @@
         }
     };
 
-    window.handleSubmitPago = function(event) {
+    window.handleSubmitPago = async function(event) {
         event.preventDefault();
 
         try {
@@ -865,7 +858,7 @@
             
             // Actualizar tabla de ingresos si está visible (se creó un ingreso automático)
             if (typeof window.renderIngresosTable === 'function') {
-                window.renderIngresosTable();
+                await window.renderIngresosTable();
             }
             
             // Actualizar balance inmediatamente (importante: pagos se suman a ingresos)
@@ -883,14 +876,14 @@
         }
     };
 
-    window.handleDeletePago = function(id) {
+    window.handleDeletePago = async function(id) {
         try {
             if (typeof window.getItem !== 'function' || typeof window.deleteItem !== 'function') {
                 alert('Error: funciones de base de datos no disponibles');
                 return;
             }
             
-            const pago = window.getItem('pagos', id);
+            const pago = await window.getItem('pagos', id);
             if (!pago) {
                 alert('Pago no encontrado');
                 return;
@@ -908,17 +901,17 @@
                 console.log('✅ Ingreso relacionado eliminado');
             }
             
-            window.deleteItem('pagos', id);
-            window.renderPagosTable();
+            await window.deleteItem('pagos', id);
+            await window.renderPagosTable();
             
             // Actualizar tabla de ingresos (si se eliminó el ingreso relacionado)
             if (typeof window.renderIngresosTable === 'function') {
-                window.renderIngresosTable();
+                await window.renderIngresosTable();
             }
             
             // Actualizar balance inmediatamente (importante: pagos afectan ingresos totales)
             if (typeof window.updateBalanceDisplay === 'function') {
-                window.updateBalanceDisplay();
+                await window.updateBalanceDisplay();
             }
             
             showNotification('Pago eliminado exitosamente', 'success');

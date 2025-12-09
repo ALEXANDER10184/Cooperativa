@@ -89,3 +89,4 @@ Consulta `GUIA_DESPLIEGUE.md` para instrucciones detalladas sobre cómo publicar
 
 Este proyecto es de uso privado para la Cooperativa Provivienda "Mi Esperanza".
 
+

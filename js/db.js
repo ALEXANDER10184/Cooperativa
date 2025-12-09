@@ -1,64 +1,10 @@
 // ============================================
-// DATABASE MODULE - JSON + localStorage
+// DATABASE MODULE - JSONbin (Base de datos online)
 // Versión sin módulos ES6 para compatibilidad
 // ============================================
 
 (function() {
     'use strict';
-
-    const DB_KEY = 'db';
-    const DB_JSON_PATH = '/data/db.json';
-
-    /**
-     * Guarda el estado actual de la base de datos en localStorage
-     */
-    function saveDB(db) {
-        try {
-            localStorage.setItem(DB_KEY, JSON.stringify(db));
-            console.log('💾 Base de datos guardada en localStorage');
-        } catch (error) {
-            console.error('❌ Error al guardar DB:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * Obtiene la base de datos actual desde localStorage
-     * Si no existe, crea una estructura vacía automáticamente
-     */
-    function getDB() {
-        try {
-            const storedDB = localStorage.getItem(DB_KEY);
-            if (!storedDB) {
-                // Si no existe, crear estructura vacía automáticamente
-                console.log('⚠️ Base de datos no encontrada, creando estructura vacía...');
-                const emptyDB = {
-                    socios: [],
-                    registros: [],
-                    gastos: [],
-                    ingresos: [],
-                    pagos: [],
-                    configuraciones: {}
-                };
-                saveDB(emptyDB);
-                return emptyDB;
-            }
-            return JSON.parse(storedDB);
-        } catch (error) {
-            console.error('❌ Error al obtener DB:', error);
-            // En caso de error, crear estructura vacía
-            const emptyDB = {
-                socios: [],
-                registros: [],
-                gastos: [],
-                ingresos: [],
-                pagos: [],
-                configuraciones: {}
-            };
-            saveDB(emptyDB);
-            return emptyDB;
-        }
-    }
 
     /**
      * Genera un ID único automático
@@ -68,31 +14,60 @@
     }
 
     /**
+     * Obtiene la base de datos desde JSONbin
+     * Ahora es async porque usa fetch
+     */
+    async function getDB() {
+        try {
+            if (typeof window.cargarDatos !== 'function') {
+                throw new Error('database.js no está cargado. Asegúrate de incluir <script src="js/database.js"></script> antes de db.js');
+            }
+            
+            const db = await window.cargarDatos();
+            return db;
+        } catch (error) {
+            console.error('❌ Error al obtener DB:', error);
+            // En caso de error, devolver estructura vacía
+            return {
+                socios: [],
+                registros: [],
+                gastos: [],
+                ingresos: [],
+                pagos: [],
+                chat: [],
+                mensajes: [],
+                configuraciones: {}
+            };
+        }
+    }
+
+    /**
+     * Guarda la base de datos en JSONbin
+     * Ahora es async porque usa fetch
+     */
+    async function saveDB(db) {
+        try {
+            if (typeof window.guardarDatos !== 'function') {
+                throw new Error('database.js no está cargado. Asegúrate de incluir <script src="js/database.js"></script> antes de db.js');
+            }
+            
+            await window.guardarDatos(db);
+            console.log('💾 Base de datos guardada en JSONbin');
+        } catch (error) {
+            console.error('❌ Error al guardar DB:', error);
+            throw error;
+        }
+    }
+
+    /**
      * Inicializa la base de datos
+     * Ahora carga desde JSONbin en lugar de localStorage
      */
     window.initDB = async function() {
         try {
-            // Si ya existe en localStorage, usarlo
-            const storedDB = localStorage.getItem(DB_KEY);
-            if (storedDB) {
-                console.log('📦 Base de datos cargada desde localStorage');
-                return JSON.parse(storedDB);
-            }
-
-            // Si no existe, cargar desde JSON
-            console.log('📥 Cargando base de datos inicial desde db.json...');
-            const response = await fetch(DB_JSON_PATH);
-            
-            if (!response.ok) {
-                throw new Error(`Error al cargar db.json: ${response.status} ${response.statusText}`);
-            }
-
-            const db = await response.json();
-            
-            // Guardar en localStorage para futuras sesiones
-            saveDB(db);
-            
-            console.log('✅ Base de datos inicial cargada y guardada');
+            console.log('📥 Inicializando base de datos desde JSONbin...');
+            const db = await getDB();
+            console.log('✅ Base de datos inicializada');
             return db;
         } catch (error) {
             console.error('❌ Error al inicializar DB:', error);
@@ -104,10 +79,18 @@
                 gastos: [],
                 ingresos: [],
                 pagos: [],
+                chat: [],
+                mensajes: [],
                 configuraciones: {}
             };
             
-            saveDB(emptyDB);
+            // Intentar guardar estructura vacía
+            try {
+                await saveDB(emptyDB);
+            } catch (saveError) {
+                console.warn('⚠️ No se pudo guardar estructura vacía:', saveError);
+            }
+            
             console.log('📝 Base de datos vacía creada');
             return emptyDB;
         }
@@ -115,11 +98,11 @@
 
     /**
      * Obtiene todos los items de una colección
-     * Siempre devuelve un array, incluso si hay errores
+     * Ahora es async
      */
-    window.getAll = function(collection) {
+    window.getAll = async function(collection) {
         try {
-            const db = getDB();
+            const db = await getDB();
             
             if (!db) {
                 console.warn('⚠️ Base de datos no disponible, devolviendo array vacío');
@@ -129,7 +112,7 @@
             if (!db[collection]) {
                 console.warn(`⚠️ Colección "${collection}" no existe. Creando vacía.`);
                 db[collection] = [];
-                saveDB(db);
+                await saveDB(db);
             }
             
             return db[collection] || [];
@@ -142,10 +125,11 @@
 
     /**
      * Obtiene un item por ID
+     * Ahora es async
      */
-    window.getItem = function(collection, id) {
+    window.getItem = async function(collection, id) {
         try {
-            const items = window.getAll(collection);
+            const items = await window.getAll(collection);
             return items.find(item => item.id === id) || null;
         } catch (error) {
             console.error(`❌ Error al obtener item "${id}" de "${collection}":`, error);
@@ -155,24 +139,11 @@
 
     /**
      * Agrega un nuevo item a una colección
+     * Ahora es async
      */
-    window.addItem = function(collection, item) {
+    window.addItem = async function(collection, item) {
         try {
-            let db;
-            try {
-                db = getDB();
-            } catch (e) {
-                // Si getDB falla, crear estructura vacía
-                db = {
-                    socios: [],
-                    registros: [],
-                    gastos: [],
-                    ingresos: [],
-                    pagos: [],
-                    configuraciones: {}
-                };
-                saveDB(db);
-            }
+            let db = await getDB();
             
             // Crear colección si no existe
             if (!db[collection]) {
@@ -192,8 +163,8 @@
             // Agregar item
             db[collection].push(item);
             
-            // Persistir
-            saveDB(db);
+            // Persistir en JSONbin
+            await saveDB(db);
             
             console.log(`✅ Item agregado a "${collection}" con ID: ${item.id}`);
             return item;
@@ -206,10 +177,11 @@
 
     /**
      * Actualiza un item existente
+     * Ahora es async
      */
-    window.updateItem = function(collection, id, newData) {
+    window.updateItem = async function(collection, id, newData) {
         try {
-            const db = getDB();
+            const db = await getDB();
             
             if (!db[collection]) {
                 throw new Error(`Colección "${collection}" no existe`);
@@ -233,8 +205,8 @@
             
             db[collection][itemIndex] = updatedItem;
             
-            // Persistir
-            saveDB(db);
+            // Persistir en JSONbin
+            await saveDB(db);
             
             console.log(`✅ Item actualizado en "${collection}" con ID: ${id}`);
             return updatedItem;
@@ -246,10 +218,11 @@
 
     /**
      * Elimina un item de una colección
+     * Ahora es async
      */
-    window.deleteItem = function(collection, id) {
+    window.deleteItem = async function(collection, id) {
         try {
-            const db = getDB();
+            const db = await getDB();
             
             if (!db[collection]) {
                 throw new Error(`Colección "${collection}" no existe`);
@@ -266,8 +239,8 @@
             // Eliminar item
             db[collection].splice(itemIndex, 1);
             
-            // Persistir
-            saveDB(db);
+            // Persistir en JSONbin
+            await saveDB(db);
             
             console.log(`✅ Item eliminado de "${collection}" con ID: ${id}`);
             return true;
@@ -279,10 +252,11 @@
 
     /**
      * Obtiene items filtrados por un campo específico
+     * Ahora es async
      */
-    window.getItemsByField = function(collection, field, value) {
+    window.getItemsByField = async function(collection, field, value) {
         try {
-            const items = window.getAll(collection);
+            const items = await window.getAll(collection);
             return items.filter(item => item[field] === value);
         } catch (error) {
             console.error(`❌ Error al obtener items por campo "${field}" de "${collection}":`, error);
@@ -290,6 +264,6 @@
         }
     };
 
-    console.log('✅ Módulo db.js cargado');
+    console.log('✅ Módulo db.js cargado (JSONbin)');
 
 })();

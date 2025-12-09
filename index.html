@@ -1016,6 +1016,7 @@
     </script>
     
     <!-- Scripts en orden: primero db.js, luego admin-panel.js, finalmente main.js -->
+    <script src="js/database.js"></script>
     <script src="js/db.js"></script>
     <script src="js/admin-panel.js"></script>
     <script src="js/main.js"></script>
@@ -1152,7 +1153,7 @@
                 
                 // Actualizar balance y conteo de socios
                 if (typeof window.updateBalanceDisplay === 'function') {
-                    window.updateBalanceDisplay();
+                    window.updateBalanceDisplay().catch(err => console.error('Error actualizando balance:', err));
                 }
             }, 500);
         });
@@ -1162,15 +1163,15 @@
         setTimeout(reconectarBotones, 2000);
         
         // Forzar actualización de balance y socios múltiples veces
-        setTimeout(function() {
+        setTimeout(async function() {
             if (typeof window.updateBalanceDisplay === 'function') {
-                window.updateBalanceDisplay();
+                await window.updateBalanceDisplay().catch(err => console.error('Error actualizando balance:', err));
             }
         }, 1000);
         
-        setTimeout(function() {
+        setTimeout(async function() {
             if (typeof window.updateBalanceDisplay === 'function') {
-                window.updateBalanceDisplay();
+                await window.updateBalanceDisplay().catch(err => console.error('Error actualizando balance:', err));
             }
         }, 2000);
     </script>

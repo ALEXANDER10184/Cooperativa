@@ -189,8 +189,8 @@
             if (sociosDisplay) {
                 try {
                     if (typeof window.getAll === 'function') {
-                        const socios = window.getAll('socios');
-                        const registros = window.getAll('registros');
+                        const socios = await window.getAll('socios');
+                        const registros = await window.getAll('registros');
                         
                         // Contar socios de la colección 'socios'
                         let totalSocios = socios ? socios.length : 0;
@@ -256,61 +256,37 @@
             // Inicializar referencias del DOM
             initDOMReferences();
             
-            // Inicializar base de datos - Asegurar que siempre esté inicializada
+            // Inicializar base de datos desde JSONbin
             if (typeof window.initDB === 'function') {
                 try {
                     await window.initDB();
-                    console.log('✅ Base de datos inicializada');
+                    console.log('✅ Base de datos inicializada desde JSONbin');
                 } catch (dbError) {
-                    console.error('⚠️ Error al inicializar DB desde JSON, usando localStorage:', dbError);
-                    // Asegurar que al menos tengamos una estructura vacía
-                    if (!localStorage.getItem('db')) {
-                        const emptyDB = {
-                            socios: [],
-                            registros: [],
-                            gastos: [],
-                            ingresos: [],
-                            pagos: [],
-                            configuraciones: {}
-                        };
-                        localStorage.setItem('db', JSON.stringify(emptyDB));
-                        console.log('✅ Estructura vacía creada');
-                    }
+                    console.error('❌ Error al inicializar DB desde JSONbin:', dbError);
+                    alert('Error al conectar con la base de datos. Por favor, verifica tu conexión a internet.');
                 }
             } else {
-                // Si initDB no está disponible, crear estructura vacía directamente
-                if (!localStorage.getItem('db')) {
-                    const emptyDB = {
-                        socios: [],
-                        registros: [],
-                        gastos: [],
-                        ingresos: [],
-                        pagos: [],
-                        configuraciones: {}
-                    };
-                    localStorage.setItem('db', JSON.stringify(emptyDB));
-                    console.log('✅ Estructura vacía creada (sin initDB)');
-                }
+                console.error('❌ window.initDB no está disponible. Asegúrate de que database.js y db.js estén cargados.');
             }
             
             // Configurar listeners
             setupEventListeners();
             
-            // Renderizar tablas iniciales
-            renderSociosTable();
+            // Renderizar tablas iniciales (ahora async)
+            await renderSociosTable();
             
             // Renderizar tablas de administración (se cargarán cuando se abra el tab)
             if (typeof window.renderAdminSociosTable === 'function') {
-                window.renderAdminSociosTable();
+                await window.renderAdminSociosTable();
             }
             if (typeof window.renderGastosTable === 'function') {
-                window.renderGastosTable();
+                await window.renderGastosTable();
             }
             if (typeof window.renderIngresosTable === 'function') {
-                window.renderIngresosTable();
+                await window.renderIngresosTable();
             }
             if (typeof window.loadSociosSelector === 'function') {
-                window.loadSociosSelector();
+                await window.loadSociosSelector();
             }
             
             // Actualizar balance inicial - hacerlo inmediatamente y también después de un delay
@@ -551,15 +527,16 @@
 
     /**
      * Renderiza la tabla simplificada de socios (solo vista, sin acciones)
+     * Ahora es async
      */
-    function renderSociosTable() {
+    async function renderSociosTable() {
         try {
             if (typeof window.getAll !== 'function') {
                 console.warn('getAll no está disponible aún');
                 return;
             }
             
-            const socios = window.getAll('socios');
+            const socios = await window.getAll('socios');
             console.log('📊 Socios encontrados al renderizar tabla:', socios.length, socios);
             
             const tbody = document.getElementById('sociosTableBody');
@@ -609,15 +586,16 @@
 
     /**
      * Renderiza la tabla completa de socios para administración (con acciones)
+     * Ahora es async
      */
-    window.renderAdminSociosTable = function() {
+    window.renderAdminSociosTable = async function() {
         try {
             if (typeof window.getAll !== 'function') {
                 console.warn('getAll no está disponible aún');
                 return;
             }
             
-            const socios = window.getAll('socios');
+            const socios = await window.getAll('socios');
             const tbody = document.getElementById('adminSociosTableBody');
             
             if (!tbody) {
@@ -700,15 +678,16 @@
 
     /**
      * Muestra los detalles completos de un socio
+     * Ahora es async
      */
-    window.showSocioDetalles = function(socioId) {
+    window.showSocioDetalles = async function(socioId) {
         try {
             if (typeof window.getItem !== 'function') {
                 alert('Error: función no disponible');
                 return;
             }
 
-            const socio = window.getItem('socios', socioId);
+            const socio = await window.getItem('socios', socioId);
             if (!socio) {
                 alert('Socio no encontrado');
                 return;
@@ -1026,7 +1005,7 @@
                 return;
             }
 
-            const socio = window.getItem('socios', id);
+            const socio = await window.getItem('socios', id);
 
             if (!socio) {
                 alert('Socio no encontrado');
@@ -1073,7 +1052,7 @@
     /**
      * Maneja el envío del formulario (agregar o editar)
      */
-    window.handleSubmitForm = function(event) {
+    window.handleSubmitForm = async function(event) {
         event.preventDefault();
         
         try {
@@ -1177,24 +1156,24 @@
             };
 
             if (currentEditId) {
-                window.updateItem('socios', currentEditId, socioData);
+                await window.updateItem('socios', currentEditId, socioData);
                 console.log('✅ Socio actualizado:', currentEditId);
             } else {
-                window.addItem('socios', socioData);
+                await window.addItem('socios', socioData);
                 console.log('✅ Socio agregado');
             }
 
             window.closeModal();
             
             // Actualizar ambas tablas
-            renderSociosTable();
+            await renderSociosTable();
             if (typeof window.renderAdminSociosTable === 'function') {
-                window.renderAdminSociosTable();
+                await window.renderAdminSociosTable();
             }
 
             // Actualizar balance
             if (typeof window.updateBalanceDisplay === 'function') {
-                window.updateBalanceDisplay();
+                await window.updateBalanceDisplay();
             }
 
             showNotification(
@@ -1221,7 +1200,7 @@
                 return;
             }
             
-            const socios = window.getAll('socios');
+            const socios = await window.getAll('socios');
             const socio = socios.find(s => s.id === id);
 
             if (!socio) {

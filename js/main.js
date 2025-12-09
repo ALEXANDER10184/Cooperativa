@@ -346,10 +346,8 @@
             // Configurar listeners
             setupEventListeners();
             
-            // Generar código QR (esperar a que la librería esté lista)
-            setTimeout(function() {
-                generateQRCode();
-            }, 500);
+            // Generar código QR
+            generateQRCode();
             
             // Renderizar tablas iniciales (ahora async)
             await renderSociosTable();

@@ -1101,6 +1101,12 @@ function setupEventListeners() {
                             <div>
                                 <strong>Disponibilidad:</strong> ${socio.disponibilidadHoras || 0} horas/mes
                             </div>
+                            ${socio.observaciones ? `
+                                <div style="margin-top: 1rem; padding: 1rem; background: #f3f4f6; border-radius: 8px; border-left: 4px solid var(--color-primary);">
+                                    <p style="margin: 0 0 0.5rem 0; font-weight: 600; color: var(--color-primary);">Observaciones:</p>
+                                    <p style="margin: 0; white-space: pre-wrap;">${escapeHtml(socio.observaciones)}</p>
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
                     ` : ''}
@@ -1251,6 +1257,12 @@ function setupEventListeners() {
     socioForm.reset();
     modalTitle.textContent = 'Agregar Socio';
     
+            // Limpiar campo de observaciones
+            const observacionesField = document.getElementById('modalObservaciones');
+            if (observacionesField) {
+                observacionesField.value = '';
+            }
+    
             // Inicializar fecha de ingreso con fecha actual
             const fechaIngresoInput = document.getElementById('modalFechaIngreso');
             if (fechaIngresoInput) {
@@ -1306,6 +1318,12 @@ function setupEventListeners() {
         email.value = socio.email || '';
         telefono.value = socio.telefono || '';
         estado.value = socio.estado || 'Activo';
+        
+        // Cargar observaciones
+        const observacionesField = document.getElementById('modalObservaciones');
+        if (observacionesField) {
+            observacionesField.value = socio.observaciones || '';
+        }
 
         currentEditId = id;
         modalTitle.textContent = 'Editar Socio';
@@ -1386,6 +1404,7 @@ function setupEventListeners() {
                 }
             }
             const otrasAreas = document.getElementById('modalOtrasAreas')?.value.trim() || '';
+            const observaciones = document.getElementById('modalObservaciones')?.value.trim() || '';
 
             // Validar campos básicos
             const telefonoValue = document.getElementById('modalTelefono')?.value.trim();
@@ -1439,6 +1458,9 @@ function setupEventListeners() {
                 areasColaboracion: areasColaboracion,
                 otrasAreas: otrasAreas,
                 disponibilidadHoras: disponibilidadHoras,
+                
+                // Observaciones
+                observaciones: observaciones,
                 
                 // Estado y registro
                 fechaRegistro: currentEditId ? undefined : new Date().toISOString()

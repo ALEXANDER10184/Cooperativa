@@ -324,6 +324,7 @@ async function handleSubmit(event) {
         }
     }
     const otrasAreas = document.getElementById('otrasAreas')?.value.trim() || '';
+    const observaciones = document.getElementById('observaciones')?.value.trim() || '';
 
     // Preparar datos completos
     const socioData = {

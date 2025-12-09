@@ -165,6 +165,7 @@
             const ingresosDisplay = document.getElementById('balanceIngresos');
             const gastosDisplay = document.getElementById('balanceGastos');
             const balanceDisplay = document.getElementById('balanceActual');
+            const sociosDisplay = document.getElementById('balanceSocios');
             
             if (ingresosDisplay) {
                 ingresosDisplay.textContent = window.formatCurrency(balance.totalIncome);
@@ -181,6 +182,18 @@
                     balanceDisplay.style.color = '#10b981';
                 } else {
                     balanceDisplay.style.color = '#ef4444';
+                }
+            }
+            
+            // Actualizar número total de socios
+            if (sociosDisplay) {
+                if (typeof window.getAll === 'function') {
+                    const socios = window.getAll('socios');
+                    const totalSocios = socios.length;
+                    sociosDisplay.textContent = totalSocios;
+                    console.log('✅ Total de socios actualizado:', totalSocios);
+                } else {
+                    sociosDisplay.textContent = '0';
                 }
             }
             

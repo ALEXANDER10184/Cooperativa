@@ -858,17 +858,6 @@
                 
                 await window.addItem('ingresos', ingresoData);
                 console.log('✅ Ingreso creado automáticamente desde pago');
-                
-                // Verificar si este pago corresponde a un aporte mensual y marcarlo
-                if (typeof window.verificarPagoComoAporte === 'function') {
-                    await window.verificarPagoComoAporte(socioId, monto, fecha);
-                    
-                    // Si estamos en el tab de aportes, recargar la tabla
-                    const aportesTab = document.getElementById('aportesTab');
-                    if (aportesTab && !aportesTab.classList.contains('hidden') && aportesTab.classList.contains('active')) {
-                        await window.renderAportesTable();
-                    }
-                }
             }
 
             window.closePagoModal();

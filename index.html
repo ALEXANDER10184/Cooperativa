@@ -527,6 +527,16 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Sección QR -->
+                <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e5e7eb; text-align: center;">
+                    <h3 style="margin-bottom: 1rem; color: #374151; font-size: 1.25rem; font-weight: 600;">Compartir Aplicación</h3>
+                    <p style="margin-bottom: 1.5rem; color: #6b7280; font-size: 0.95rem;">Escanea este código QR para acceder a la aplicación desde tu dispositivo móvil</p>
+                    <div id="qrCodeContainer" style="display: inline-block; padding: 1rem; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <!-- El QR se generará aquí -->
+                    </div>
+                    <p style="margin-top: 1rem; color: #9ca3af; font-size: 0.875rem;" id="qrUrl"></p>
+                </div>
             </div>
         </div>
 
@@ -1032,6 +1042,7 @@
     </script>
     
     <!-- Scripts en orden: primero db.js, luego admin-panel.js, finalmente main.js -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script src="js/database.js"></script>
     <script src="js/db.js"></script>
     <script src="js/admin-panel.js"></script>

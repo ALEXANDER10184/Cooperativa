@@ -156,6 +156,60 @@
     };
 
     /**
+     * Genera el código QR para compartir la aplicación
+     */
+    function generateQRCode() {
+        try {
+            const qrContainer = document.getElementById('qrCodeContainer');
+            const qrUrl = document.getElementById('qrUrl');
+            
+            if (!qrContainer) {
+                console.warn('⚠️ Contenedor de QR no encontrado');
+                return;
+            }
+
+            // Obtener la URL actual de la aplicación
+            const appUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+            const fullUrl = appUrl.replace(/\/$/, '') + '/';
+
+            // Limpiar contenedor
+            qrContainer.innerHTML = '';
+
+            // Verificar que la librería QRCode esté disponible
+            if (typeof QRCode === 'undefined') {
+                console.error('❌ Librería QRCode no está disponible');
+                qrContainer.innerHTML = '<p style="color: #ef4444;">Error: Librería QR no cargada</p>';
+                return;
+            }
+
+            // Generar QR
+            QRCode.toCanvas(qrContainer, fullUrl, {
+                width: 250,
+                margin: 2,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, function(error) {
+                if (error) {
+                    console.error('❌ Error al generar QR:', error);
+                    qrContainer.innerHTML = '<p style="color: #ef4444;">Error al generar código QR</p>';
+                } else {
+                    console.log('✅ Código QR generado correctamente');
+                    // Mostrar la URL debajo del QR
+                    if (qrUrl) {
+                        qrUrl.textContent = fullUrl;
+                    }
+                }
+            });
+
+            console.log('📱 URL de la aplicación para QR:', fullUrl);
+        } catch (error) {
+            console.error('❌ Error en generateQRCode:', error);
+        }
+    }
+
+    /**
      * Actualiza la visualización del balance en la página
      */
     window.updateBalanceDisplay = async function() {

@@ -587,35 +587,6 @@
                 </div>
             </div>
 
-
-                    <!-- Tabla de Socios Completa (solo en Admin) -->
-                    <div class="table-container">
-                        <table id="adminSociosTable">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Apellido</th>
-                                    <th>Email</th>
-                                    <th>Teléfono</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminSociosTableBody">
-                                <tr>
-                                    <td colspan="7" class="empty-state">
-                                        <div class="empty-state-icon">📋</div>
-                                        <p>No hay socios registrados</p>
-                                        <p style="font-size: 0.875rem; margin-top: 0.5rem;">Haz clic en "Agregar Socio" para comenzar</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
             <!-- Sub-tab: Gastos -->
             <div id="gastosTab" class="sub-tab-content">
                 <div class="card">
@@ -694,7 +665,7 @@
                     </div>
                     <div class="form-group" style="margin-bottom: 1.5rem;">
                         <label class="form-label">Seleccionar Socio</label>
-                        <select id="socioSelector" class="form-select" onchange="renderPagosTable()">
+                        <select id="socioSelector" class="form-select" onchange="if(typeof window.renderPagosTable==='function'){window.renderPagosTable().catch(e=>console.error('Error:',e));}">
                             <option value="">-- Seleccione un socio --</option>
                         </select>
                     </div>
@@ -1157,23 +1128,6 @@
                 }
             }, 500);
         });
-        
-        // También reconectar después de un delay adicional por si acaso
-        setTimeout(reconectarBotones, 1000);
-        setTimeout(reconectarBotones, 2000);
-        
-        // Forzar actualización de balance y socios múltiples veces
-        setTimeout(async function() {
-            if (typeof window.updateBalanceDisplay === 'function') {
-                await window.updateBalanceDisplay().catch(err => console.error('Error actualizando balance:', err));
-            }
-        }, 1000);
-        
-        setTimeout(async function() {
-            if (typeof window.updateBalanceDisplay === 'function') {
-                await window.updateBalanceDisplay().catch(err => console.error('Error actualizando balance:', err));
-            }
-        }, 2000);
     </script>
 </body>
 </html>

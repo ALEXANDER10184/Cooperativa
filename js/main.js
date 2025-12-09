@@ -78,7 +78,7 @@
      * Calcula el balance total desde gastos, ingresos y pagos de socios
      * Los pagos de socios también se suman a los ingresos totales
      */
-    window.calculateBalance = function() {
+    window.calculateBalance = async function() {
         try {
             if (typeof window.getAll !== 'function') {
                 return {
@@ -89,13 +89,13 @@
             }
             
             // Obtener ingresos directos
-            const ingresos = window.getAll('ingresos');
+            const ingresos = await window.getAll('ingresos');
             const totalIngresosDirectos = ingresos.reduce((sum, ingreso) => {
                 return sum + (parseFloat(ingreso.monto) || 0);
             }, 0);
             
             // Obtener pagos de socios y sumarlos a los ingresos
-            const pagos = window.getAll('pagos');
+            const pagos = await window.getAll('pagos');
             const totalPagosSocios = pagos.reduce((sum, pago) => {
                 return sum + (parseFloat(pago.monto) || 0);
             }, 0);
@@ -104,7 +104,7 @@
             const totalIncome = totalIngresosDirectos + totalPagosSocios;
             
             // Obtener gastos
-            const gastos = window.getAll('gastos');
+            const gastos = await window.getAll('gastos');
             const totalExpenses = gastos.reduce((sum, gasto) => {
                 return sum + (parseFloat(gasto.monto) || 0);
             }, 0);
@@ -158,9 +158,9 @@
     /**
      * Actualiza la visualización del balance en la página
      */
-    window.updateBalanceDisplay = function() {
+    window.updateBalanceDisplay = async function() {
         try {
-            const balance = window.calculateBalance();
+            const balance = await window.calculateBalance();
             
             const ingresosDisplay = document.getElementById('balanceIngresos');
             const gastosDisplay = document.getElementById('balanceGastos');
@@ -652,15 +652,38 @@
                 const deleteBtn = row.querySelector('.delete-btn');
                 
                 if (viewBtn) {
-                    viewBtn.addEventListener('click', () => window.showSocioDetalles(socio.id));
+                    viewBtn.addEventListener('click', async () => {
+                        try {
+                            if (typeof window.showSocioDetalles === 'function') {
+                                await window.showSocioDetalles(socio.id);
+                            }
+                        } catch (error) {
+                            console.error('Error mostrando detalles:', error);
+                            alert('Error al mostrar los detalles del socio');
+                        }
+                    });
                 }
                 
                 if (editBtn) {
-                    editBtn.addEventListener('click', () => window.openEditModal(socio.id));
+                    editBtn.addEventListener('click', async () => {
+                        try {
+                            await window.openEditModal(socio.id);
+                        } catch (error) {
+                            console.error('Error abriendo modal de edición:', error);
+                            alert('Error al abrir el formulario de edición');
+                        }
+                    });
                 }
                 
                 if (deleteBtn) {
-                    deleteBtn.addEventListener('click', () => window.handleDeleteSocio(socio.id));
+                    deleteBtn.addEventListener('click', async () => {
+                        try {
+                            await window.handleDeleteSocio(socio.id);
+                        } catch (error) {
+                            console.error('Error eliminando socio:', error);
+                            alert('Error al eliminar el socio');
+                        }
+                    });
                 }
                 
                 tbody.appendChild(row);
@@ -990,7 +1013,7 @@
     /**
      * Abre el modal para editar un socio existente
      */
-    window.openEditModal = function(id) {
+    window.openEditModal = async function(id) {
         try {
             if (!socioModal || !modalTitle || !socioForm || !nombre || !apellido || !email || !telefono || !estado) {
                 initDOMReferences();
@@ -1193,7 +1216,7 @@
     /**
      * Maneja la eliminación de un socio
      */
-    window.handleDeleteSocio = function(id) {
+    window.handleDeleteSocio = async function(id) {
         try {
             if (typeof window.getAll !== 'function' || typeof window.deleteItem !== 'function') {
                 alert('Error: funciones de base de datos no disponibles');
@@ -1214,14 +1237,14 @@
                 return;
             }
 
-            window.deleteItem('socios', id);
+            await window.deleteItem('socios', id);
             console.log('✅ Socio eliminado:', id);
 
-            renderSociosTable();
+            await renderSociosTable();
             
             // Actualizar balance (en caso de que haya afectado pagos)
             if (typeof window.updateBalanceDisplay === 'function') {
-                window.updateBalanceDisplay();
+                await window.updateBalanceDisplay();
             }
 
             showNotification('Socio eliminado exitosamente', 'success');

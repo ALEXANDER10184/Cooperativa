@@ -193,7 +193,7 @@
             }
         } else if (subTabName === 'gastos') {
             if (typeof window.renderGastosTable === 'function') {
-                window.renderGastosTable();
+                await window.renderGastosTable();
             }
         } else if (subTabName === 'ingresos') {
             if (typeof window.renderIngresosTable === 'function') {
@@ -206,14 +206,14 @@
     // GASTOS MANAGEMENT
     // ============================================
 
-    window.renderGastosTable = function() {
+    window.renderGastosTable = async function() {
         try {
             if (typeof window.getAll !== 'function') {
                 console.error('getAll no está disponible');
                 return;
             }
             
-            const gastos = window.getAll('gastos');
+            const gastos = await window.getAll('gastos');
             const tbody = document.getElementById('gastosTableBody');
             
             if (!tbody) return;
@@ -388,7 +388,7 @@
                 return;
             }
             
-            const gasto = window.getItem('gastos', id);
+            const gasto = await window.getItem('gastos', id);
             if (!gasto) {
                 alert('Gasto no encontrado');
                 return;
@@ -675,7 +675,7 @@
                 return;
             }
 
-            const pagos = window.getItemsByField('pagos', 'socioId', socioId);
+            const pagos = await window.getItemsByField('pagos', 'socioId', socioId);
 
             if (pagos.length === 0) {
                 tbody.innerHTML = `
@@ -729,7 +729,7 @@
         }
     };
 
-    window.openAddPagoModal = function() {
+    window.openAddPagoModal = async function() {
         currentEditPagoId = null;
         const modal = document.getElementById('pagoModal');
         const form = document.getElementById('pagoForm');
@@ -741,9 +741,9 @@
         }
 
         form.reset();
-                    if (typeof window.loadSociosSelector === 'function') {
-                        await window.loadSociosSelector();
-                    }
+        if (typeof window.loadSociosSelector === 'function') {
+            await window.loadSociosSelector();
+        }
         
         const selector = document.getElementById('socioSelector');
         const pagoSocioId = document.getElementById('pagoSocioId');
@@ -832,13 +832,13 @@
             }
 
             if (currentEditPagoId) {
-                window.updateItem('pagos', currentEditPagoId, pagoData);
+                await window.updateItem('pagos', currentEditPagoId, pagoData);
             } else {
                 // Agregar pago
-                const pagoCreado = window.addItem('pagos', pagoData);
+                const pagoCreado = await window.addItem('pagos', pagoData);
                 
                 // Crear ingreso automáticamente cuando se registra un pago nuevo
-                const socio = window.getItem('socios', socioId);
+                const socio = await window.getItem('socios', socioId);
                 const nombreSocio = socio ? `${socio.nombre} ${socio.apellido}` : 'Socio';
                 
                 const ingresoData = {
@@ -849,12 +849,12 @@
                     pagoId: pagoCreado.id // Referencia al pago original usando el ID del pago creado
                 };
                 
-                window.addItem('ingresos', ingresoData);
+                await window.addItem('ingresos', ingresoData);
                 console.log('✅ Ingreso creado automáticamente desde pago');
             }
 
             window.closePagoModal();
-            window.renderPagosTable();
+            await window.renderPagosTable();
             
             // Actualizar tabla de ingresos si está visible (se creó un ingreso automático)
             if (typeof window.renderIngresosTable === 'function') {
@@ -863,7 +863,7 @@
             
             // Actualizar balance inmediatamente (importante: pagos se suman a ingresos)
             if (typeof window.updateBalanceDisplay === 'function') {
-                window.updateBalanceDisplay();
+                await window.updateBalanceDisplay();
             }
             
             showNotification(
@@ -894,10 +894,10 @@
             }
 
             // Si el pago tenía un ingreso asociado, eliminarlo también
-            const ingresos = window.getAll('ingresos');
+            const ingresos = await window.getAll('ingresos');
             const ingresoRelacionado = ingresos.find(ing => ing.pagoId === id);
             if (ingresoRelacionado) {
-                window.deleteItem('ingresos', ingresoRelacionado.id);
+                await window.deleteItem('ingresos', ingresoRelacionado.id);
                 console.log('✅ Ingreso relacionado eliminado');
             }
             

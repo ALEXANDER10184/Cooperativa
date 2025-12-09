@@ -725,42 +725,128 @@
 
     <!-- Modal: Agregar/Editar Socio -->
     <div id="socioModal" class="modal hidden">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
             <div class="modal-header">
                 <h2 id="modalTitle" class="modal-title">Agregar Socio</h2>
                 <button type="button" class="btn-close" onclick="closeModal()">×</button>
             </div>
 
             <form id="socioForm">
+                <!-- 1. Identificación básica de todos los integrantes de la familia -->
+                <h3 style="margin-top: 1rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                    1. Identificación de los Integrantes de la Familia
+                </h3>
+
                 <div class="form-group">
-                    <label class="form-label">Nombre</label>
-                    <input type="text" id="nombre" class="form-input" required>
+                    <label class="form-label required">Número de miembros de la familia</label>
+                    <input type="number" id="modalNumMiembros" class="form-input" min="1" value="1" required>
+                    <small class="form-help">Incluyéndote a ti</small>
+                </div>
+
+                <div id="modalMiembrosContainer"></div>
+
+                <!-- 2. Datos de contacto -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                    2. Datos de Contacto
+                </h3>
+
+                <div class="form-group">
+                    <label class="form-label required">Teléfono</label>
+                    <input type="tel" id="modalTelefono" class="form-input" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Apellido</label>
-                    <input type="text" id="apellido" class="form-input" required>
+                    <label class="form-label required">Correo electrónico</label>
+                    <input type="email" id="modalEmail" class="form-input" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" id="email" class="form-input" required>
+                    <label class="form-label">Contacto de emergencia (opcional)</label>
+                    <input type="text" id="modalContactoEmergencia" class="form-input" placeholder="Nombre y teléfono">
+                    <small class="form-help">Nombre completo y número de teléfono de una persona de contacto en caso de emergencia</small>
                 </div>
 
+                <!-- 3. Situación del socio en la cooperativa -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                    3. Situación del Socio en la Cooperativa
+                </h3>
+
                 <div class="form-group">
-                    <label class="form-label">Teléfono</label>
-                    <input type="tel" id="telefono" class="form-input" required>
+                    <label class="form-label required">Fecha de ingreso</label>
+                    <input type="date" id="modalFechaIngreso" class="form-input" required>
+                    <small class="form-help">Fecha en que te unes a la cooperativa</small>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Estado</label>
-                    <select id="estado" class="form-select" required>
+                    <select id="modalEstado" class="form-select" required>
                         <option value="Activo">Activo</option>
                         <option value="Inactivo">Inactivo</option>
                     </select>
                 </div>
 
-                <div class="form-actions">
+                <!-- 4. Aportaciones y obligaciones -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                    4. Aportaciones y Obligaciones
+                </h3>
+
+                <div class="form-group">
+                    <label class="form-label required">Cuota mensual (€)</label>
+                    <input type="number" id="modalCuotaMensual" class="form-input" min="0" step="0.01" value="5" required>
+                    <small class="form-help">Aporte mensual a la cooperativa (ejemplo: 5 €)</small>
+                </div>
+
+                <!-- 5. Autorizaciones legales -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                    5. Autorizaciones Legales
+                </h3>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: start; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="modalConsentimientoDatos" class="form-checkbox" required>
+                        <span class="form-label">Consentimiento para uso interno de datos</span>
+                    </label>
+                    <small class="form-help">Acepto que mis datos sean utilizados únicamente para fines internos de la cooperativa, cumpliendo con la normativa de protección de datos.</small>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: start; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="modalAceptacionNormas" class="form-checkbox" required>
+                        <span class="form-label">Aceptación de normas internas y régimen disciplinario</span>
+                    </label>
+                    <small class="form-help">Acepto las normas internas de la cooperativa y el régimen disciplinario establecido.</small>
+                </div>
+
+                <!-- 6. Participación y disponibilidad -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                    6. Participación y Disponibilidad
+                </h3>
+
+                <div class="form-group">
+                    <label class="form-label">Áreas donde desea colaborar</label>
+                    <select id="modalAreasColaboracion" class="form-select" multiple style="min-height: 100px;">
+                        <option value="administracion">Administración</option>
+                        <option value="eventos">Eventos</option>
+                        <option value="apoyo_social">Apoyo Social</option>
+                        <option value="comunicacion">Comunicación</option>
+                        <option value="finanzas">Finanzas</option>
+                        <option value="proyectos">Proyectos</option>
+                    </select>
+                    <small class="form-help">Mantén presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples opciones</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Otras áreas (especificar)</label>
+                    <input type="text" id="modalOtrasAreas" class="form-input" placeholder="Especifica otras áreas donde te gustaría colaborar">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required">Disponibilidad aproximada</label>
+                    <input type="number" id="modalDisponibilidadHoras" class="form-input" min="0" step="1" value="0" required>
+                    <small class="form-help">Horas por mes que puedes dedicar a la cooperativa</small>
+                </div>
+
+                <div class="form-actions" style="margin-top: 2rem;">
                     <button type="submit" class="btn btn-primary" id="submitSocioBtn">Guardar</button>
                     <button type="button" class="btn btn-outline" id="cancelModalBtn">Cancelar</button>
                 </div>

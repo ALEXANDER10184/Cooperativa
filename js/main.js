@@ -896,27 +896,82 @@
     // ============================================
 
     /**
+     * Actualiza los campos de miembros de la familia en el modal
+     */
+    function updateModalMiembrosFamilia() {
+        const count = parseInt(document.getElementById('modalNumMiembros')?.value || 1);
+        const container = document.getElementById('modalMiembrosContainer');
+
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        for (let i = 0; i < count; i++) {
+            const memberDiv = document.createElement('div');
+            memberDiv.className = 'card';
+            memberDiv.style.background = '#f9fafb';
+            memberDiv.style.padding = '1.5rem';
+            memberDiv.style.marginBottom = '1rem';
+            memberDiv.style.border = '1px solid #e5e7eb';
+
+            memberDiv.innerHTML = `
+                <h4 style="margin-bottom: 1rem; color: var(--color-primary);">Miembro ${i + 1}</h4>
+                
+                <div class="form-group">
+                    <label class="form-label required">Nombre completo</label>
+                    <input type="text" class="form-input modal-member-nombre" data-index="${i}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Documento</label>
+                    <select class="form-select modal-member-tipo-doc" data-index="${i}" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="dni">DNI</option>
+                        <option value="nie">NIE</option>
+                        <option value="pasaporte">Pasaporte</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Número de documento</label>
+                    <input type="text" class="form-input modal-member-doc-num" data-index="${i}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Fecha de nacimiento</label>
+                    <input type="date" class="form-input modal-member-fecha-nac" data-index="${i}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Nacionalidad</label>
+                    <input type="text" class="form-input modal-member-nacionalidad" data-index="${i}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Domicilio actual</label>
+                    <input type="text" class="form-input modal-member-domicilio" data-index="${i}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Profesión</label>
+                    <input type="text" class="form-input modal-member-profesion" data-index="${i}" required>
+                </div>
+            `;
+
+            container.appendChild(memberDiv);
+        }
+    }
+
+    /**
      * Abre el modal para agregar un nuevo socio
      */
     window.openAddModal = function() {
         console.log('🔵 openAddModal() llamado');
         
         try {
-            // Asegurar referencias del DOM
-            if (!socioModal || !modalTitle || !socioForm) {
-                initDOMReferences();
-            }
-            
             socioModal = document.getElementById('socioModal');
             modalTitle = document.getElementById('modalTitle');
             socioForm = document.getElementById('socioForm');
-            nombre = document.getElementById('nombre');
-            apellido = document.getElementById('apellido');
-            email = document.getElementById('email');
-            telefono = document.getElementById('telefono');
-            estado = document.getElementById('estado');
-            submitSocioBtn = document.getElementById('submitSocioBtn');
-            cancelModalBtn = document.getElementById('cancelModalBtn');
             
             if (!socioModal || !modalTitle || !socioForm) {
                 console.error('❌ Referencias del DOM no inicializadas');
@@ -928,8 +983,21 @@
             socioForm.reset();
             modalTitle.textContent = 'Agregar Socio';
             
-            if (submitSocioBtn) {
-                submitSocioBtn.textContent = 'Guardar';
+            // Inicializar fecha de ingreso con fecha actual
+            const fechaIngresoInput = document.getElementById('modalFechaIngreso');
+            if (fechaIngresoInput) {
+                const today = new Date().toISOString().split('T')[0];
+                fechaIngresoInput.value = today;
+            }
+
+            // Inicializar miembros
+            updateModalMiembrosFamilia();
+
+            // Listener para actualizar miembros cuando cambia el número
+            const numMiembrosInput = document.getElementById('modalNumMiembros');
+            if (numMiembrosInput) {
+                numMiembrosInput.removeEventListener('input', updateModalMiembrosFamilia);
+                numMiembrosInput.addEventListener('input', updateModalMiembrosFamilia);
             }
 
             socioModal.classList.remove('hidden');

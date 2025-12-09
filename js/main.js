@@ -190,9 +190,20 @@
                 try {
                     if (typeof window.getAll === 'function') {
                         const socios = window.getAll('socios');
-                        const totalSocios = socios ? socios.length : 0;
+                        const registros = window.getAll('registros');
+                        
+                        // Contar socios de la colección 'socios'
+                        let totalSocios = socios ? socios.length : 0;
+                        
+                        // Si hay registros y no hay socios, contar registros también
+                        // (por compatibilidad con datos antiguos)
+                        if (totalSocios === 0 && registros && registros.length > 0) {
+                            totalSocios = registros.length;
+                            console.log('⚠️ Usando colección "registros" para contar socios');
+                        }
+                        
                         sociosDisplay.textContent = totalSocios;
-                        console.log('✅ Total de socios actualizado:', totalSocios, 'socios encontrados:', socios);
+                        console.log('✅ Total de socios actualizado:', totalSocios, 'socios en "socios":', socios ? socios.length : 0, 'registros:', registros ? registros.length : 0);
                     } else {
                         console.warn('⚠️ window.getAll no está disponible');
                         sociosDisplay.textContent = '0';

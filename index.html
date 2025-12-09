@@ -700,11 +700,21 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Seguimiento de Aportes Mensuales</h2>
-                        <div style="display: flex; gap: 1rem; align-items: center;">
-                            <label class="form-label" style="margin: 0;">Mes/Año:</label>
-                            <select id="mesAporteSelector" class="form-select" style="width: auto;" onchange="if(typeof window.renderAportesTable==='function'){window.renderAportesTable().catch(e=>{console.error('Error:',e);alert('Error al cargar aportes.');});}">
-                                <!-- Se llenará dinámicamente -->
-                            </select>
+                        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <label class="form-label" style="margin: 0;">Mes/Año:</label>
+                                <select id="mesAporteSelector" class="form-select" style="width: auto;" onchange="if(typeof window.renderAportesTable==='function'){window.renderAportesTable().catch(e=>{console.error('Error:',e);alert('Error al cargar aportes.');});}">
+                                    <!-- Se llenará dinámicamente -->
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <label class="form-label" style="margin: 0;">Filtro:</label>
+                                <select id="filtroAportesSelector" class="form-select" style="width: auto;" onchange="if(typeof window.renderAportesTable==='function'){window.renderAportesTable().catch(e=>{console.error('Error:',e);alert('Error al cargar aportes.');});}">
+                                    <option value="todos">Todos</option>
+                                    <option value="pagados">Ya Pagados</option>
+                                    <option value="pendientes">Falta por Pagar</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 

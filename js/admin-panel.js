@@ -1066,11 +1066,23 @@
     }
 
     /**
+     * Obtiene el filtro seleccionado
+     */
+    function getFiltroAportesSeleccionado() {
+        const selector = document.getElementById('filtroAportesSelector');
+        if (!selector || !selector.value) {
+            return 'todos';
+        }
+        return selector.value;
+    }
+
+    /**
      * Renderiza la tabla de seguimiento de aportes
      */
     window.renderAportesTable = async function() {
         try {
             const mesAno = getMesAnoSeleccionado();
+            const filtro = getFiltroAportesSeleccionado();
             const socios = await window.getAll('socios');
             const tbody = document.getElementById('aportesTableBody');
             
@@ -1094,6 +1106,7 @@
             let totalPagado = 0;
             let totalPendiente = 0;
             let aportesPagados = 0;
+            let sociosMostrados = 0;
 
             // Procesar cada socio
             for (const socio of socios) {
@@ -1102,12 +1115,33 @@
                 const cuotaMensual = parseFloat(socio.cuotaMensual || 0);
                 if (cuotaMensual === 0) continue;
                 
-                totalEsperado += cuotaMensual;
-                
                 let aporte = await obtenerAporteMensual(socio.id, mesAno);
+                const estadoAporte = aporte && aporte.estado === 'pagado' ? 'pagado' : 'pendiente';
+                
+                // Aplicar filtro
+                if (filtro === 'pagados' && estadoAporte !== 'pagado') {
+                    // No mostrar este socio si el filtro es "pagados" y no está pagado
+                    // Pero sí contarlo para las estadísticas totales
+                    totalEsperado += cuotaMensual;
+                    totalPendiente += cuotaMensual;
+                    continue;
+                }
+                
+                if (filtro === 'pendientes' && estadoAporte === 'pagado') {
+                    // No mostrar este socio si el filtro es "pendientes" y está pagado
+                    // Pero sí contarlo para las estadísticas totales
+                    totalEsperado += cuotaMensual;
+                    totalPagado += cuotaMensual;
+                    aportesPagados++;
+                    continue;
+                }
+                
+                // Si llegamos aquí, el socio debe mostrarse según el filtro
+                totalEsperado += cuotaMensual;
+                sociosMostrados++;
                 
                 const row = document.createElement('tr');
-                const estadoBadge = aporte && aporte.estado === 'pagado' 
+                const estadoBadge = estadoAporte === 'pagado'
                     ? '<span class="badge badge-active">Pagado</span>'
                     : '<span class="badge badge-inactive">Pendiente</span>';
                 
@@ -1115,7 +1149,7 @@
                     ? new Date(aporte.fechaPago).toLocaleDateString('es-ES')
                     : '-';
                 
-                if (aporte && aporte.estado === 'pagado') {
+                if (estadoAporte === 'pagado') {
                     totalPagado += cuotaMensual;
                     aportesPagados++;
                 } else {
@@ -1130,7 +1164,7 @@
                     <td>${fechaPagoTexto}</td>
                     <td>
                         <div class="actions">
-                            ${aporte && aporte.estado === 'pagado' 
+                            ${estadoAporte === 'pagado' 
                                 ? `<button class="btn-icon btn-icon-edit" onclick="window.marcarAportePendiente('${aporte.id}')" title="Marcar como Pendiente">
                                     <span class="material-icons-round">undo</span>
                                    </button>`
@@ -1143,6 +1177,27 @@
                 `;
                 
                 tbody.appendChild(row);
+            }
+
+            // Si no hay socios mostrados según el filtro, mostrar mensaje
+            if (sociosMostrados === 0) {
+                let mensaje = '';
+                if (filtro === 'pagados') {
+                    mensaje = 'No hay aportes pagados para este mes';
+                } else if (filtro === 'pendientes') {
+                    mensaje = 'Todos los aportes de este mes están pagados';
+                } else {
+                    mensaje = 'No hay socios registrados';
+                }
+                
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <div class="empty-state-icon">${filtro === 'pagados' ? '✅' : filtro === 'pendientes' ? '⚠️' : '📅'}</div>
+                            <p>${mensaje}</p>
+                        </td>
+                    </tr>
+                `;
             }
 
             // Actualizar resumen

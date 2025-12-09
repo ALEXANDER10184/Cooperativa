@@ -35,6 +35,12 @@
         const modal = document.getElementById('accessPasswordModal');
         const mainContent = document.getElementById('mainContent');
         
+        console.log('📋 Elementos encontrados:');
+        console.log('  - passwordInput:', passwordInput ? '✅' : '❌');
+        console.log('  - errorDiv:', errorDiv ? '✅' : '❌');
+        console.log('  - modal:', modal ? '✅' : '❌');
+        console.log('  - mainContent:', mainContent ? '✅' : '❌');
+        
         if (!passwordInput) {
             console.error('❌ Input de contraseña no encontrado');
             alert('Error: Input de contraseña no encontrado');
@@ -42,35 +48,51 @@
         }
         
         const password = passwordInput.value.trim();
-        console.log('🔑 Contraseña ingresada:', password ? '***' : '(vacía)');
+        console.log('🔑 Contraseña ingresada:', password);
         console.log('🔑 Contraseña esperada:', ACCESS_PASSWORD);
+        console.log('🔍 Comparación:', password === ACCESS_PASSWORD);
         
         if (password === ACCESS_PASSWORD) {
-            console.log('✅ Contraseña correcta');
+            console.log('✅ Contraseña correcta - Autenticando...');
             setAuthenticated();
+            
+            // Ocultar modal con múltiples métodos
             if (modal) {
                 modal.style.display = 'none';
+                modal.classList.add('hidden');
+                console.log('✅ Modal ocultado');
+            } else {
+                console.error('❌ Modal no encontrado para ocultar');
             }
+            
+            // Mostrar contenido principal
             if (mainContent) {
                 mainContent.style.display = 'block';
-            }
-            // Inicializar la UI después de autenticarse
-            if (typeof initUI === 'function') {
-                console.log('🚀 Inicializando UI...');
-                initUI().catch(error => {
-                    console.error('❌ Error al inicializar UI:', error);
-                });
+                mainContent.style.visibility = 'visible';
+                console.log('✅ Contenido principal mostrado');
             } else {
-                console.warn('⚠️ Función initUI no disponible aún');
-                // Esperar un poco e intentar de nuevo
-                setTimeout(() => {
-                    if (typeof initUI === 'function') {
-                        initUI().catch(error => {
-                            console.error('❌ Error al inicializar UI:', error);
-                        });
-                    }
-                }, 500);
+                console.error('❌ mainContent no encontrado para mostrar');
             }
+            
+            // Inicializar la UI después de autenticarse
+            setTimeout(() => {
+                if (typeof initUI === 'function') {
+                    console.log('🚀 Inicializando UI...');
+                    initUI().catch(error => {
+                        console.error('❌ Error al inicializar UI:', error);
+                    });
+                } else {
+                    console.warn('⚠️ Función initUI no disponible aún');
+                    // Esperar un poco más e intentar de nuevo
+                    setTimeout(() => {
+                        if (typeof initUI === 'function') {
+                            initUI().catch(error => {
+                                console.error('❌ Error al inicializar UI:', error);
+                            });
+                        }
+                    }, 500);
+                }
+            }, 100);
         } else {
             console.log('❌ Contraseña incorrecta');
             if (errorDiv) {

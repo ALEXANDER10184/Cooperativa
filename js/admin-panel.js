@@ -76,112 +76,6 @@
     }
 
     // ============================================
-    // ADMIN PASSWORD PROTECTION
-    // ============================================
-
-    const ADMIN_PASSWORD = 'coopmiesperanza';
-
-    /**
-     * Verifica si el usuario está autenticado en administración
-     */
-    window.isAdminAuthenticated = function() {
-        return sessionStorage.getItem('adminAuthenticated') === 'true';
-    };
-    
-    function isAdminAuthenticated() {
-        return window.isAdminAuthenticated();
-    }
-
-    /**
-     * Marca al usuario como autenticado
-     */
-    function setAdminAuthenticated() {
-        sessionStorage.setItem('adminAuthenticated', 'true');
-    }
-
-    /**
-     * Cierra la sesión de administración
-     */
-    function clearAdminAuth() {
-        sessionStorage.removeItem('adminAuthenticated');
-    }
-
-    /**
-     * Abre el modal de contraseña de administración
-     */
-    window.openAdminPasswordModal = function() {
-        const modal = document.getElementById('adminPasswordModal');
-        const passwordInput = document.getElementById('adminPasswordInput');
-        const errorDiv = document.getElementById('adminPasswordError');
-        
-        if (!modal) {
-            console.error('❌ Modal de contraseña no encontrado');
-            return;
-        }
-        
-        if (passwordInput) {
-            passwordInput.value = '';
-        }
-        
-        if (errorDiv) {
-            errorDiv.style.display = 'none';
-            errorDiv.textContent = '';
-        }
-        
-        modal.classList.remove('hidden');
-        
-        // Focus en el input después de que el modal sea visible
-        setTimeout(() => {
-            if (passwordInput) {
-                passwordInput.focus();
-            }
-        }, 200);
-    };
-
-    /**
-     * Cierra el modal de contraseña
-     */
-    window.closeAdminPasswordModal = function() {
-        const modal = document.getElementById('adminPasswordModal');
-        if (modal) {
-            modal.classList.add('hidden');
-        }
-    };
-
-    /**
-     * Verifica la contraseña de administración
-     */
-    window.checkAdminPassword = function() {
-        const passwordInput = document.getElementById('adminPasswordInput');
-        const errorDiv = document.getElementById('adminPasswordError');
-        
-        if (!passwordInput) {
-            console.error('❌ Input de contraseña no encontrado');
-            return;
-        }
-        
-        const password = passwordInput.value.trim();
-        
-        if (password === ADMIN_PASSWORD) {
-            setAdminAuthenticated();
-            window.closeAdminPasswordModal();
-            // Ahora sí permitir acceso a administración
-            if (typeof window.switchTab === 'function') {
-                window.switchTab('admin').catch(e => console.error('Error:', e));
-            }
-        } else {
-            if (errorDiv) {
-                errorDiv.textContent = 'Contraseña incorrecta. Por favor, intenta nuevamente.';
-                errorDiv.style.display = 'block';
-            }
-            if (passwordInput) {
-                passwordInput.value = '';
-                passwordInput.focus();
-            }
-        }
-    };
-
-    // ============================================
     // TAB NAVIGATION
     // ============================================
 
@@ -222,17 +116,6 @@
         }
 
         if (tab === "admin") {
-            // Verificar autenticación antes de permitir acceso
-            if (!isAdminAuthenticated()) {
-                // Si no está autenticado, mostrar modal de contraseña y NO permitir acceso aún
-                if (typeof window.openAdminPasswordModal === 'function') {
-                    window.openAdminPasswordModal();
-                }
-                // No cambiar los tabs, mantener en Socios
-                return;
-            }
-            
-            // Si está autenticado, permitir acceso
             adminPanel.classList.remove("hidden");
             adminPanel.classList.add("active");
             sociosPanel.classList.add("hidden");

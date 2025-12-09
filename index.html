@@ -491,7 +491,7 @@
             <button class="tab-btn active" id="tabSocios" onclick="if(typeof window.switchTab==='function'){window.switchTab('socios').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
                 <span class="material-icons-round">people</span> Socios
             </button>
-            <button class="tab-btn" id="tabAdmin" onclick="if(typeof window.isAdminAuthenticated==='function'&&window.isAdminAuthenticated()){if(typeof window.switchTab==='function'){window.switchTab('admin').catch(e=>{console.error('Error:',e);});}}else{if(typeof window.openAdminPasswordModal==='function'){window.openAdminPasswordModal();}}">
+            <button class="tab-btn" id="tabAdmin" onclick="if(typeof window.switchTab==='function'){window.switchTab('admin').catch(e=>{console.error('Error:',e);});}">
                 <span class="material-icons-round">admin_panel_settings</span> Administración
             </button>
         </div>
@@ -967,27 +967,6 @@
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">Guardar</button>
                     <button type="button" class="btn btn-outline" onclick="closeIngresoModal()">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal: Contraseña Administración -->
-    <div id="adminPasswordModal" class="modal hidden">
-        <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header">
-                <h2 class="modal-title">Acceso Administración</h2>
-                <button type="button" class="btn-close" onclick="window.closeAdminPasswordModal();">×</button>
-            </div>
-            <form id="adminPasswordForm" onsubmit="event.preventDefault(); if(typeof window.checkAdminPassword==='function'){window.checkAdminPassword();}">
-                <div class="form-group">
-                    <label class="form-label">Contraseña</label>
-                    <input type="password" id="adminPasswordInput" class="form-input" placeholder="Ingresa la contraseña" required autofocus>
-                </div>
-                <div id="adminPasswordError" style="color: #ef4444; font-size: 0.875rem; margin-bottom: 1rem; display: none;"></div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Acceder</button>
-                    <button type="button" class="btn btn-outline" onclick="window.closeAdminPasswordModal();">Cancelar</button>
                 </div>
             </form>
         </div>

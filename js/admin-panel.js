@@ -199,6 +199,13 @@
             if (typeof window.renderIngresosTable === 'function') {
                 await window.renderIngresosTable();
             }
+        } else if (subTabName === 'aportes') {
+            if (typeof window.renderAportesTable === 'function') {
+                await window.renderAportesTable();
+            }
+            if (typeof window.loadMesAporteSelector === 'function') {
+                await window.loadMesAporteSelector();
+            }
         }
     };
 
@@ -918,6 +925,317 @@
         } catch (error) {
             console.error('❌ Error al eliminar pago:', error);
             alert('Error al eliminar el pago. Por favor, intenta nuevamente.');
+        }
+    };
+
+    // ============================================
+    // APORTES MENSUALES MANAGEMENT
+    // ============================================
+
+    /**
+     * Carga el selector de mes/año para aportes
+     */
+    window.loadMesAporteSelector = async function() {
+        try {
+            const selector = document.getElementById('mesAporteSelector');
+            if (!selector) return;
+
+            selector.innerHTML = '';
+
+            // Generar opciones para los últimos 12 meses y los próximos 3 meses
+            const meses = [];
+            const fechaActual = new Date();
+            
+            // Últimos 12 meses
+            for (let i = 12; i >= 1; i--) {
+                const fecha = new Date(fechaActual.getFullYear(), fechaActual.getMonth() - i, 1);
+                const mesAno = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+                const mesAnoTexto = fecha.toLocaleDateString('es-ES', { year: 'numeric', month: 'long' });
+                meses.push({ valor: mesAno, texto: mesAnoTexto, fecha: fecha });
+            }
+            
+            // Mes actual
+            const mesActual = `${fechaActual.getFullYear()}-${String(fechaActual.getMonth() + 1).padStart(2, '0')}`;
+            const mesActualTexto = fechaActual.toLocaleDateString('es-ES', { year: 'numeric', month: 'long' });
+            meses.push({ valor: mesActual, texto: mesActualTexto, fecha: fechaActual });
+
+            // Próximos 3 meses
+            for (let i = 1; i <= 3; i++) {
+                const fecha = new Date(fechaActual.getFullYear(), fechaActual.getMonth() + i, 1);
+                const mesAno = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+                const mesAnoTexto = fecha.toLocaleDateString('es-ES', { year: 'numeric', month: 'long' });
+                meses.push({ valor: mesAno, texto: mesAnoTexto, fecha: fecha });
+            }
+
+            meses.forEach(({ valor, texto }) => {
+                const option = document.createElement('option');
+                option.value = valor;
+                option.textContent = texto;
+                if (valor === mesActual) {
+                    option.selected = true;
+                }
+                selector.appendChild(option);
+            });
+
+            console.log('✅ Selector de mes/año cargado');
+        } catch (error) {
+            console.error('❌ Error al cargar selector de mes/año:', error);
+        }
+    };
+
+    /**
+     * Obtiene el mes/año seleccionado
+     */
+    function getMesAnoSeleccionado() {
+        const selector = document.getElementById('mesAporteSelector');
+        if (!selector || !selector.value) {
+            const fecha = new Date();
+            return `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+        }
+        return selector.value;
+    }
+
+    /**
+     * Obtiene o crea el registro de aporte mensual para un socio
+     */
+    async function obtenerAporteMensual(socioId, mesAno) {
+        try {
+            const aportes = await window.getAll('aportesMensuales');
+            let aporte = aportes.find(a => a.socioId === socioId && a.mesAno === mesAno);
+            
+            if (!aporte) {
+                const socio = await window.getItem('socios', socioId);
+                if (!socio) return null;
+                
+                aporte = {
+                    id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                    socioId: socioId,
+                    mesAno: mesAno,
+                    cuotaMensual: parseFloat(socio.cuotaMensual || 0),
+                    estado: 'pendiente',
+                    fechaPago: null,
+                    fechaCreacion: new Date().toISOString()
+                };
+                
+                await window.addItem('aportesMensuales', aporte);
+            }
+            
+            return aporte;
+        } catch (error) {
+            console.error('❌ Error al obtener aporte mensual:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Verifica si un pago corresponde a un aporte mensual
+     */
+    async function verificarPagoComoAporte(socioId, monto, fecha) {
+        try {
+            const socio = await window.getItem('socios', socioId);
+            if (!socio) return null;
+            
+            const cuotaMensual = parseFloat(socio.cuotaMensual || 0);
+            if (cuotaMensual === 0) return null;
+            
+            // Si el monto coincide con la cuota mensual, es probable que sea un aporte
+            if (Math.abs(monto - cuotaMensual) < 0.01) {
+                const fechaPago = new Date(fecha);
+                const mesAno = `${fechaPago.getFullYear()}-${String(fechaPago.getMonth() + 1).padStart(2, '0')}`;
+                
+                const aporte = await obtenerAporteMensual(socioId, mesAno);
+                if (aporte && aporte.estado === 'pendiente') {
+                    await window.updateItem('aportesMensuales', aporte.id, {
+                        estado: 'pagado',
+                        fechaPago: fecha
+                    });
+                    return aporte.id;
+                }
+            }
+            
+            return null;
+        } catch (error) {
+            console.error('❌ Error al verificar pago como aporte:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Renderiza la tabla de seguimiento de aportes
+     */
+    window.renderAportesTable = async function() {
+        try {
+            const mesAno = getMesAnoSeleccionado();
+            const socios = await window.getAll('socios');
+            const tbody = document.getElementById('aportesTableBody');
+            
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (socios.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <div class="empty-state-icon">📅</div>
+                            <p>No hay socios registrados</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let totalEsperado = 0;
+            let totalPagado = 0;
+            let totalPendiente = 0;
+            let aportesPagados = 0;
+
+            // Procesar cada socio
+            for (const socio of socios) {
+                if (socio.estado === 'Inactivo' || socio.estado === 'inactivo') continue;
+                
+                const cuotaMensual = parseFloat(socio.cuotaMensual || 0);
+                if (cuotaMensual === 0) continue;
+                
+                totalEsperado += cuotaMensual;
+                
+                let aporte = await obtenerAporteMensual(socio.id, mesAno);
+                
+                const row = document.createElement('tr');
+                const estadoBadge = aporte && aporte.estado === 'pagado' 
+                    ? '<span class="badge badge-active">Pagado</span>'
+                    : '<span class="badge badge-inactive">Pendiente</span>';
+                
+                const fechaPagoTexto = aporte && aporte.fechaPago 
+                    ? new Date(aporte.fechaPago).toLocaleDateString('es-ES')
+                    : '-';
+                
+                if (aporte && aporte.estado === 'pagado') {
+                    totalPagado += cuotaMensual;
+                    aportesPagados++;
+                } else {
+                    totalPendiente += cuotaMensual;
+                }
+
+                row.innerHTML = `
+                    <td>${escapeHtml(socio.nombre || '')} ${escapeHtml(socio.apellido || '')}</td>
+                    <td>${escapeHtml(socio.telefono || '')}</td>
+                    <td style="font-weight: 600;">${window.formatCurrency ? window.formatCurrency(cuotaMensual) : '€' + cuotaMensual.toFixed(2)}</td>
+                    <td>${estadoBadge}</td>
+                    <td>${fechaPagoTexto}</td>
+                    <td>
+                        <div class="actions">
+                            ${aporte && aporte.estado === 'pagado' 
+                                ? `<button class="btn-icon btn-icon-edit" onclick="window.marcarAportePendiente('${aporte.id}')" title="Marcar como Pendiente">
+                                    <span class="material-icons-round">undo</span>
+                                   </button>`
+                                : `<button class="btn-icon btn-icon-edit" onclick="window.marcarAportePagado('${socio.id}', '${mesAno}')" title="Marcar como Pagado">
+                                    <span class="material-icons-round">check_circle</span>
+                                   </button>`
+                            }
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            }
+
+            // Actualizar resumen
+            const totalEsperadoEl = document.getElementById('totalEsperadoAportes');
+            const totalPagadoEl = document.getElementById('totalPagadoAportes');
+            const totalPendienteEl = document.getElementById('totalPendienteAportes');
+            const porcentajePagadoEl = document.getElementById('porcentajePagadoAportes');
+            
+            if (totalEsperadoEl) {
+                totalEsperadoEl.textContent = window.formatCurrency ? window.formatCurrency(totalEsperado) : '€' + totalEsperado.toFixed(2);
+            }
+            if (totalPagadoEl) {
+                totalPagadoEl.textContent = window.formatCurrency ? window.formatCurrency(totalPagado) : '€' + totalPagado.toFixed(2);
+            }
+            if (totalPendienteEl) {
+                totalPendienteEl.textContent = window.formatCurrency ? window.formatCurrency(totalPendiente) : '€' + totalPendiente.toFixed(2);
+            }
+            if (porcentajePagadoEl && totalEsperado > 0) {
+                const porcentaje = Math.round((totalPagado / totalEsperado) * 100);
+                porcentajePagadoEl.textContent = porcentaje + '%';
+            }
+
+            console.log(`✅ Tabla de aportes renderizada para ${mesAno}`);
+        } catch (error) {
+            console.error('❌ Error al renderizar tabla de aportes:', error);
+            const tbody = document.getElementById('aportesTableBody');
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <div class="empty-state-icon">❌</div>
+                            <p>Error al cargar los aportes. Por favor, recarga la página.</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+    };
+
+    /**
+     * Marca un aporte como pagado
+     */
+    window.marcarAportePagado = async function(socioId, mesAno) {
+        try {
+            const aporte = await obtenerAporteMensual(socioId, mesAno);
+            if (!aporte) {
+                alert('Error: no se pudo obtener el aporte');
+                return;
+            }
+
+            const fechaPago = new Date().toISOString().split('T')[0];
+            
+            await window.updateItem('aportesMensuales', aporte.id, {
+                estado: 'pagado',
+                fechaPago: fechaPago
+            });
+
+            showNotification('Aporte marcado como pagado exitosamente', 'success');
+            
+            // Recargar tabla
+            await window.renderAportesTable();
+            
+            // Actualizar balance
+            if (typeof window.updateBalanceDisplay === 'function') {
+                await window.updateBalanceDisplay();
+            }
+        } catch (error) {
+            console.error('❌ Error al marcar aporte como pagado:', error);
+            alert('Error al marcar el aporte como pagado. Por favor, intenta nuevamente.');
+        }
+    };
+
+    /**
+     * Marca un aporte como pendiente
+     */
+    window.marcarAportePendiente = async function(aporteId) {
+        try {
+            if (!confirm('¿Estás seguro de marcar este aporte como pendiente?')) {
+                return;
+            }
+
+            await window.updateItem('aportesMensuales', aporteId, {
+                estado: 'pendiente',
+                fechaPago: null
+            });
+
+            showNotification('Aporte marcado como pendiente', 'info');
+            
+            // Recargar tabla
+            await window.renderAportesTable();
+            
+            // Actualizar balance
+            if (typeof window.updateBalanceDisplay === 'function') {
+                await window.updateBalanceDisplay();
+            }
+        } catch (error) {
+            console.error('❌ Error al marcar aporte como pendiente:', error);
+            alert('Error al cambiar el estado del aporte. Por favor, intenta nuevamente.');
         }
     };
 

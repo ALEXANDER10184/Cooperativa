@@ -34,6 +34,7 @@
                 gastos: [],
                 ingresos: [],
                 pagos: [],
+                aportesMensuales: [],
                 chat: [],
                 mensajes: [],
                 configuraciones: {}

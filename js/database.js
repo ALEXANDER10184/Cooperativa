@@ -57,6 +57,7 @@
             if (!db.gastos) db.gastos = [];
             if (!db.ingresos) db.ingresos = [];
             if (!db.pagos) db.pagos = [];
+            if (!db.aportesMensuales) db.aportesMensuales = [];
             if (!db.configuraciones) db.configuraciones = {};
             if (!db.chat) db.chat = [];
             if (!db.mensajes) db.mensajes = [];
@@ -81,6 +82,7 @@
                 gastos: [],
                 ingresos: [],
                 pagos: [],
+                aportesMensuales: [],
                 chat: [],
                 mensajes: [],
                 configuraciones: {}

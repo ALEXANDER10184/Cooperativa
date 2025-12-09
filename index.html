@@ -488,10 +488,10 @@
 
         <!-- Tabs de Navegación Principal -->
         <div class="tabs">
-            <button class="tab-btn active" id="tabSocios" onclick="try{window.switchTab('socios');}catch(e){alert('Error: '+e.message);}">
+            <button class="tab-btn active" id="tabSocios" onclick="if(typeof window.switchTab==='function'){window.switchTab('socios').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
                 <span class="material-icons-round">people</span> Socios
             </button>
-            <button class="tab-btn" id="tabAdmin" onclick="try{window.switchTab('admin');}catch(e){alert('Error: '+e.message);}">
+            <button class="tab-btn" id="tabAdmin" onclick="if(typeof window.switchTab==='function'){window.switchTab('admin').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
                 <span class="material-icons-round">admin_panel_settings</span> Administración
             </button>
         </div>
@@ -534,17 +534,20 @@
         <div id="panelAdmin" class="tab-panel hidden">
             <!-- Sub-tabs de Administración -->
             <div class="sub-tabs">
-                <button class="sub-tab-btn" id="subTabSocios" onclick="try{window.switchAdminTab('socios');}catch(e){alert('Error: '+e.message);}">
+                <button class="sub-tab-btn" id="subTabSocios" onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('socios').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
                     <span class="material-icons-round">people</span> Gestión de Socios
                 </button>
-                <button class="sub-tab-btn active" id="subTabGastos" onclick="try{window.switchAdminTab('gastos');}catch(e){alert('Error: '+e.message);}">
+                <button class="sub-tab-btn active" id="subTabGastos" onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('gastos').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
                     <span class="material-icons-round">trending_down</span> Gastos
                 </button>
-                <button class="sub-tab-btn" id="subTabIngresos" onclick="try{window.switchAdminTab('ingresos');}catch(e){alert('Error: '+e.message);}">
+                <button class="sub-tab-btn" id="subTabIngresos" onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('ingresos').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
                     <span class="material-icons-round">trending_up</span> Ingresos
                 </button>
-                <button class="sub-tab-btn" id="subTabPagos" onclick="try{window.switchAdminTab('pagos');}catch(e){alert('Error: '+e.message);}">
+                <button class="sub-tab-btn" id="subTabPagos" onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('pagos').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
                     <span class="material-icons-round">payment</span> Pagos de Socios
+                </button>
+                <button class="sub-tab-btn" id="subTabAportes" onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('aportes').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
+                    <span class="material-icons-round">calendar_month</span> Seguimiento de Aportes
                 </button>
             </div>
 
@@ -665,7 +668,7 @@
                     </div>
                     <div class="form-group" style="margin-bottom: 1.5rem;">
                         <label class="form-label">Seleccionar Socio</label>
-                        <select id="socioSelector" class="form-select" onchange="if(typeof window.renderPagosTable==='function'){window.renderPagosTable().catch(e=>console.error('Error:',e));}">
+                        <select id="socioSelector" class="form-select" onchange="if(typeof window.renderPagosTable==='function'){window.renderPagosTable().catch(e=>{console.error('Error:',e);alert('Error al cargar los pagos. Por favor, recarga la página.');});}">
                             <option value="">-- Seleccione un socio --</option>
                         </select>
                     </div>
@@ -684,6 +687,64 @@
                                     <td colspan="4" class="empty-state">
                                         <div class="empty-state-icon">💳</div>
                                         <p>Seleccione un socio para ver sus pagos</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub-tab: Seguimiento de Aportes -->
+            <div id="aportesTab" class="sub-tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Seguimiento de Aportes Mensuales</h2>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <label class="form-label" style="margin: 0;">Mes/Año:</label>
+                            <select id="mesAporteSelector" class="form-select" style="width: auto;" onchange="if(typeof window.renderAportesTable==='function'){window.renderAportesTable().catch(e=>{console.error('Error:',e);alert('Error al cargar aportes.');});}">
+                                <!-- Se llenará dinámicamente -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Resumen de Aportes -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; background: #f3f4f6; border-radius: 8px;">
+                        <div>
+                            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Total Esperado</div>
+                            <div id="totalEsperadoAportes" style="font-size: 1.5rem; font-weight: 700; color: #2563eb;">€0.00</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Total Pagado</div>
+                            <div id="totalPagadoAportes" style="font-size: 1.5rem; font-weight: 700; color: #10b981;">€0.00</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Total Pendiente</div>
+                            <div id="totalPendienteAportes" style="font-size: 1.5rem; font-weight: 700; color: #ef4444;">€0.00</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Porcentaje Pagado</div>
+                            <div id="porcentajePagadoAportes" style="font-size: 1.5rem; font-weight: 700; color: #6366f1;">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="aportesTable">
+                            <thead>
+                                <tr>
+                                    <th>Socio</th>
+                                    <th>Teléfono</th>
+                                    <th>Cuota Mensual</th>
+                                    <th>Estado</th>
+                                    <th>Fecha de Pago</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="aportesTableBody">
+                                <tr>
+                                    <td colspan="6" class="empty-state">
+                                        <div class="empty-state-icon">📅</div>
+                                        <p>Cargando seguimiento de aportes...</p>
                                     </td>
                                 </tr>
                             </tbody>

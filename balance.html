@@ -91,38 +91,65 @@
     </div>
 
     <!-- Scripts -->
+    <script type="module" src="js/main.js"></script>
     <script src="js/i18n.js"></script>
-    <script src="js/main.js"></script>
     <script>
+        // Esperar a que main.js cargue y las funciones estén disponibles
         document.addEventListener('DOMContentLoaded', async function () {
             // Translate page
-            i18n.translatePage();
+            if (typeof i18n !== 'undefined') {
+                i18n.translatePage();
+            }
 
-            // Load and display balance
+            // Función para cargar y mostrar balance
+            async function loadBalance() {
+                // Esperar a que calculateBalance esté disponible
+                let calculateFunc = window.calculateBalance;
+                let formatFunc = window.formatCurrency;
+                
+                // Si no están disponibles, esperar un poco
+                if (!calculateFunc || !formatFunc) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    calculateFunc = window.calculateBalance;
+                    formatFunc = window.formatCurrency;
+                }
+                
+                if (!calculateFunc || !formatFunc) {
+                    console.error('Funciones de balance no disponibles');
+                    return;
+                }
+                
+                const balance = await calculateFunc();
+                document.getElementById('totalIncomeDisplay').textContent = formatFunc(balance.totalIncome);
+                document.getElementById('totalExpensesDisplay').textContent = formatFunc(balance.totalExpenses);
+                document.getElementById('currentBalanceDisplay').textContent = formatFunc(balance.balance);
+            }
+            
+            // Cargar balance inicial
             await loadBalance();
             
-            // Listen for real-time updates
-            listenData('balance', async (data) => {
-                if (data) {
-                    document.getElementById('totalIncomeDisplay').textContent = formatCurrency(data.ingresosTotales || 0);
-                    document.getElementById('totalExpensesDisplay').textContent = formatCurrency(data.gastosTotales || 0);
-                    document.getElementById('currentBalanceDisplay').textContent = formatCurrency(data.balanceActual || 0);
-                } else {
-                    // Fallback: calculate from ingresos and gastos
-                    const balance = await calculateBalance();
-                    document.getElementById('totalIncomeDisplay').textContent = formatCurrency(balance.totalIncome);
-                    document.getElementById('totalExpensesDisplay').textContent = formatCurrency(balance.totalExpenses);
-                    document.getElementById('currentBalanceDisplay').textContent = formatCurrency(balance.balance);
-                }
-            });
+            // Listen for real-time updates (si está disponible)
+            if (typeof listenData === 'function') {
+                listenData('balance', async (data) => {
+                    let formatFunc = window.formatCurrency;
+                    if (!formatFunc) return;
+                    
+                    if (data) {
+                        document.getElementById('totalIncomeDisplay').textContent = formatFunc(data.ingresosTotales || 0);
+                        document.getElementById('totalExpensesDisplay').textContent = formatFunc(data.gastosTotales || 0);
+                        document.getElementById('currentBalanceDisplay').textContent = formatFunc(data.balanceActual || 0);
+                    } else {
+                        // Fallback: calculate from ingresos and gastos
+                        const balance = await window.calculateBalance();
+                        if (balance) {
+                            document.getElementById('totalIncomeDisplay').textContent = formatFunc(balance.totalIncome);
+                            document.getElementById('totalExpensesDisplay').textContent = formatFunc(balance.totalExpenses);
+                            document.getElementById('currentBalanceDisplay').textContent = formatFunc(balance.balance);
+                        }
+                    }
+                });
+            }
         });
-        
-        async function loadBalance() {
-            const balance = await calculateBalance();
-            document.getElementById('totalIncomeDisplay').textContent = formatCurrency(balance.totalIncome);
-            document.getElementById('totalExpensesDisplay').textContent = formatCurrency(balance.totalExpenses);
-            document.getElementById('currentBalanceDisplay').textContent = formatCurrency(balance.balance);
-        }
     </script>
 </body>
 

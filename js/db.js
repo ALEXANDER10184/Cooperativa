@@ -41,6 +41,9 @@ export async function initDB() {
         const emptyDB = {
             socios: [],
             registros: [],
+            gastos: [],
+            ingresos: [],
+            pagos: [],
             configuraciones: {}
         };
         

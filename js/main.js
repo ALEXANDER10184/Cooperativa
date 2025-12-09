@@ -12,6 +12,14 @@ import {
     getItemsByField
 } from './db.js';
 
+// Hacer addItem disponible globalmente
+window.addItem = addItem;
+window.getAll = getAll;
+window.getItem = getItem;
+window.updateItem = updateItem;
+window.deleteItem = deleteItem;
+window.getItemsByField = getItemsByField;
+
 // Importar funciones del panel de administración
 import {
     switchTab,
@@ -555,6 +563,67 @@ function showNotification(message, type = 'info') {
 }
 
 // ============================================
+// BALANCE FUNCTIONS
+// ============================================
+
+/**
+ * Calcula el balance total desde gastos e ingresos
+ * @returns {Promise<Object>} Objeto con totalIncome, totalExpenses y balance
+ */
+async function calculateBalance() {
+    try {
+        const ingresos = getAll('ingresos');
+        const gastos = getAll('gastos');
+        
+        const totalIncome = ingresos.reduce((sum, ingreso) => {
+            return sum + (parseFloat(ingreso.monto) || 0);
+        }, 0);
+        
+        const totalExpenses = gastos.reduce((sum, gasto) => {
+            return sum + (parseFloat(gasto.monto) || 0);
+        }, 0);
+        
+        const balance = totalIncome - totalExpenses;
+        
+        return {
+            totalIncome,
+            totalExpenses,
+            balance
+        };
+    } catch (error) {
+        console.error('❌ Error al calcular balance:', error);
+        return {
+            totalIncome: 0,
+            totalExpenses: 0,
+            balance: 0
+        };
+    }
+}
+
+/**
+ * Formatea un número como moneda en euros
+ * @param {number} amount - Cantidad a formatear
+ * @returns {string} Cantidad formateada
+ */
+function formatCurrency(amount) {
+    const num = parseFloat(amount) || 0;
+    return new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(num);
+}
+
+/**
+ * Navega a una URL
+ * @param {string} url - URL a la que navegar
+ */
+function navigateTo(url) {
+    window.location.href = url;
+}
+
+// ============================================
 // EXPORT FUNCTIONS TO GLOBAL SCOPE
 // ============================================
 
@@ -571,6 +640,9 @@ window.renderPagosTable = renderPagosTable;
 window.closeGastoModal = closeGastoModal;
 window.closeIngresoModal = closeIngresoModal;
 window.closePagoModal = closePagoModal;
+window.calculateBalance = calculateBalance;
+window.formatCurrency = formatCurrency;
+window.navigateTo = navigateTo;
 
 // ============================================
 // INITIALIZE ON LOAD
@@ -580,12 +652,40 @@ document.addEventListener('DOMContentLoaded', () => {
     initUI();
 });
 
-// Cerrar modal al hacer clic fuera de él
+// Cerrar modales al hacer clic fuera de ellos
 document.addEventListener('click', (event) => {
+    // Modal de socio
     if (socioModal && !socioModal.classList.contains('hidden')) {
         const modalContent = socioModal.querySelector('.modal-content');
         if (modalContent && !modalContent.contains(event.target)) {
             closeModal();
+        }
+    }
+    
+    // Modal de gasto
+    const gastoModal = document.getElementById('gastoModal');
+    if (gastoModal && !gastoModal.classList.contains('hidden')) {
+        const modalContent = gastoModal.querySelector('.modal-content');
+        if (modalContent && !modalContent.contains(event.target)) {
+            closeGastoModal();
+        }
+    }
+    
+    // Modal de ingreso
+    const ingresoModal = document.getElementById('ingresoModal');
+    if (ingresoModal && !ingresoModal.classList.contains('hidden')) {
+        const modalContent = ingresoModal.querySelector('.modal-content');
+        if (modalContent && !modalContent.contains(event.target)) {
+            closeIngresoModal();
+        }
+    }
+    
+    // Modal de pago
+    const pagoModal = document.getElementById('pagoModal');
+    if (pagoModal && !pagoModal.classList.contains('hidden')) {
+        const modalContent = pagoModal.querySelector('.modal-content');
+        if (modalContent && !modalContent.contains(event.target)) {
+            closePagoModal();
         }
     }
 });

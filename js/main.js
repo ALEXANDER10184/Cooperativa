@@ -175,37 +175,57 @@
             // Limpiar contenedor
             qrContainer.innerHTML = '';
 
-            // Verificar que la librería QRCode esté disponible
-            if (typeof QRCode === 'undefined') {
-                console.error('❌ Librería QRCode no está disponible');
-                qrContainer.innerHTML = '<p style="color: #ef4444;">Error: Librería QR no cargada</p>';
-                return;
+            // Función para intentar generar el QR
+            function tryGenerateQR() {
+                // Verificar que la librería QRCode esté disponible
+                if (typeof QRCode === 'undefined') {
+                    console.warn('⚠️ Librería QRCode aún no está disponible, reintentando...');
+                    // Reintentar después de 500ms
+                    setTimeout(tryGenerateQR, 500);
+                    return;
+                }
+
+                try {
+                    // Crear un canvas para el QR
+                    const canvas = document.createElement('canvas');
+                    qrContainer.appendChild(canvas);
+
+                    // Generar QR
+                    QRCode.toCanvas(canvas, fullUrl, {
+                        width: 250,
+                        margin: 2,
+                        color: {
+                            dark: '#000000',
+                            light: '#FFFFFF'
+                        }
+                    }, function(error) {
+                        if (error) {
+                            console.error('❌ Error al generar QR:', error);
+                            qrContainer.innerHTML = '<p style="color: #ef4444; padding: 1rem;">Error al generar código QR. Por favor, recarga la página.</p>';
+                        } else {
+                            console.log('✅ Código QR generado correctamente');
+                            // Mostrar la URL debajo del QR
+                            if (qrUrl) {
+                                qrUrl.textContent = fullUrl;
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.error('❌ Error al generar QR:', error);
+                    qrContainer.innerHTML = '<p style="color: #ef4444; padding: 1rem;">Error: ' + error.message + '</p>';
+                }
             }
 
-            // Generar QR
-            QRCode.toCanvas(qrContainer, fullUrl, {
-                width: 250,
-                margin: 2,
-                color: {
-                    dark: '#000000',
-                    light: '#FFFFFF'
-                }
-            }, function(error) {
-                if (error) {
-                    console.error('❌ Error al generar QR:', error);
-                    qrContainer.innerHTML = '<p style="color: #ef4444;">Error al generar código QR</p>';
-                } else {
-                    console.log('✅ Código QR generado correctamente');
-                    // Mostrar la URL debajo del QR
-                    if (qrUrl) {
-                        qrUrl.textContent = fullUrl;
-                    }
-                }
-            });
+            // Iniciar intento de generación (con retry si la librería no está lista)
+            tryGenerateQR();
 
             console.log('📱 URL de la aplicación para QR:', fullUrl);
         } catch (error) {
             console.error('❌ Error en generateQRCode:', error);
+            const qrContainer = document.getElementById('qrCodeContainer');
+            if (qrContainer) {
+                qrContainer.innerHTML = '<p style="color: #ef4444; padding: 1rem;">Error: ' + error.message + '</p>';
+            }
         }
     }
 
@@ -326,8 +346,10 @@
             // Configurar listeners
             setupEventListeners();
             
-            // Generar código QR
-            generateQRCode();
+            // Generar código QR (esperar a que la librería esté lista)
+            setTimeout(function() {
+                generateQRCode();
+            }, 500);
             
             // Renderizar tablas iniciales (ahora async)
             await renderSociosTable();

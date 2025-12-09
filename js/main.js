@@ -6,6 +6,101 @@
 (function() {
     'use strict';
 
+    // ============================================
+    // ACCESS PASSWORD PROTECTION
+    // ============================================
+    const ACCESS_PASSWORD = 'coopmiesperanza';
+
+    /**
+     * Verifica si el usuario está autenticado
+     */
+    function isAuthenticated() {
+        return sessionStorage.getItem('appAuthenticated') === 'true';
+    }
+
+    /**
+     * Marca al usuario como autenticado
+     */
+    function setAuthenticated() {
+        sessionStorage.setItem('appAuthenticated', 'true');
+    }
+
+    /**
+     * Verifica la contraseña de acceso
+     */
+    window.checkAccessPassword = function() {
+        const passwordInput = document.getElementById('accessPasswordInput');
+        const errorDiv = document.getElementById('accessPasswordError');
+        const modal = document.getElementById('accessPasswordModal');
+        const mainContent = document.getElementById('mainContent');
+        
+        if (!passwordInput) {
+            console.error('❌ Input de contraseña no encontrado');
+            return;
+        }
+        
+        const password = passwordInput.value.trim();
+        
+        if (password === ACCESS_PASSWORD) {
+            setAuthenticated();
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            if (mainContent) {
+                mainContent.style.display = 'block';
+            }
+            // Inicializar la UI después de autenticarse
+            if (typeof initUI === 'function') {
+                initUI().catch(error => {
+                    console.error('❌ Error al inicializar UI:', error);
+                });
+            }
+        } else {
+            if (errorDiv) {
+                errorDiv.textContent = 'Contraseña incorrecta. Por favor, intenta nuevamente.';
+                errorDiv.style.display = 'block';
+            }
+            if (passwordInput) {
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        }
+    };
+
+    /**
+     * Verifica la autenticación al cargar la página
+     */
+    function checkAuthenticationOnLoad() {
+        if (isAuthenticated()) {
+            // Si ya está autenticado, mostrar contenido y ocultar modal
+            const modal = document.getElementById('accessPasswordModal');
+            const mainContent = document.getElementById('mainContent');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            if (mainContent) {
+                mainContent.style.display = 'block';
+            }
+        } else {
+            // Si no está autenticado, mostrar modal y ocultar contenido
+            const modal = document.getElementById('accessPasswordModal');
+            const mainContent = document.getElementById('mainContent');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+            if (mainContent) {
+                mainContent.style.display = 'none';
+            }
+            // Focus en el input de contraseña
+            setTimeout(() => {
+                const passwordInput = document.getElementById('accessPasswordInput');
+                if (passwordInput) {
+                    passwordInput.focus();
+                }
+            }, 100);
+        }
+    }
+
     // Estado global
     let currentEditId = null;
 

@@ -452,6 +452,27 @@
     </style>
 </head>
 <body>
+    <!-- Modal: Contraseña de Acceso -->
+    <div id="accessPasswordModal" class="modal" style="display: flex;">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Acceso a la Aplicación</h2>
+            </div>
+            <form id="accessPasswordForm" onsubmit="event.preventDefault(); if(typeof window.checkAccessPassword==='function'){window.checkAccessPassword();}">
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" id="accessPasswordInput" class="form-input" placeholder="Ingresa la contraseña para acceder" required autofocus>
+                </div>
+                <div id="accessPasswordError" style="color: #ef4444; font-size: 0.875rem; margin-bottom: 1rem; display: none;"></div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Acceder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Contenido Principal (oculto hasta autenticación) -->
+    <div id="mainContent" style="display: none;">
     <!-- Navbar -->
     <nav class="navbar">
         <div class="navbar-content">
@@ -1210,5 +1231,7 @@
             }, 500);
         });
     </script>
+    </div>
+    <!-- Fin del contenido principal -->
 </body>
 </html>

@@ -532,10 +532,15 @@
                 <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e5e7eb; text-align: center;">
                     <h3 style="margin-bottom: 1rem; color: #374151; font-size: 1.25rem; font-weight: 600;">Compartir Aplicación</h3>
                     <p style="margin-bottom: 1.5rem; color: #6b7280; font-size: 0.95rem;">Escanea este código QR para acceder a la aplicación desde tu dispositivo móvil</p>
-                    <div id="qrCodeContainer" style="display: inline-block; padding: 1rem; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <!-- El QR se generará aquí -->
+                    <div id="qrCodeContainer" style="display: inline-block; padding: 1rem; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-width: 250px; min-height: 250px;">
+                        <div style="display: flex; align-items: center; justify-content: center; width: 250px; height: 250px; color: #9ca3af;">
+                            <div style="text-align: center;">
+                                <div class="material-icons-round" style="font-size: 48px; margin-bottom: 0.5rem;">qr_code</div>
+                                <p style="font-size: 0.875rem;">Cargando QR...</p>
+                            </div>
+                        </div>
                     </div>
-                    <p style="margin-top: 1rem; color: #9ca3af; font-size: 0.875rem;" id="qrUrl"></p>
+                    <p style="margin-top: 1rem; color: #9ca3af; font-size: 0.875rem; word-break: break-all;" id="qrUrl"></p>
                 </div>
             </div>
         </div>

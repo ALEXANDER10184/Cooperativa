@@ -3,6 +3,17 @@
    Modern Design System & Styles (2025)
    ============================================ */
 
+/* Respetar preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 :root {
   /* Brand Colors */
   --color-primary: #5FAF6B;
@@ -308,13 +319,18 @@ a {
   padding: 12px 24px;
 }
 
+.btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
 .btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
 .btn:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-primary {
@@ -445,7 +461,8 @@ a {
   border: 2px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-bg);
-  transition: border-color 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
 }
 
 .form-input:focus,
@@ -455,6 +472,8 @@ a {
   border-color: var(--color-primary);
   background: white;
   box-shadow: 0 0 0 4px rgba(95, 175, 107, 0.1);
+  transform: scale(1.02);
+  padding: 18px;
 }
 
 .form-range {

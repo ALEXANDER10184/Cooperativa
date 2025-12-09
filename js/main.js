@@ -375,6 +375,11 @@ let currentEditId = null;
             if (qrUrl) {
                 qrUrl.textContent = fullUrl;
             }
+            // Animación de aparición con escala
+            if (qrContainer) {
+                qrContainer.style.opacity = '1';
+                qrContainer.style.transform = 'scale(1)';
+            }
         };
         
         img.onerror = function() {

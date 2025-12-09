@@ -65,16 +65,20 @@
             font-weight: 500;
             cursor: pointer;
             border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
         }
 
         .tab-btn:hover {
             color: #2563eb;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
         }
 
         .tab-btn.active {
             color: #2563eb;
             border-bottom-color: #2563eb;
+            transform: scale(1.05);
         }
 
         .tab-panel {
@@ -321,19 +325,46 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease-out;
         }
         
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
 
         .modal-content {
-            background: white;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
             padding: 2rem;
             max-width: 500px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 
+                        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+            animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
 
         .modal-header {
@@ -545,7 +576,7 @@
             <!-- Sección QR en la esquina superior izquierda -->
             <div style="position: relative; margin-bottom: 2rem;">
                 <!-- QR en la esquina superior izquierda -->
-                <div id="qrCodeContainer" style="position: absolute; top: 1rem; left: 1rem; padding: 0.5rem; background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.25); z-index: 10;">
+                <div id="qrCodeContainer" style="position: absolute; top: 1rem; left: 1rem; padding: 0.5rem; background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.25); z-index: 10; opacity: 0; transform: scale(0.8); transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);">
                     <div style="display: flex; align-items: center; justify-content: center; width: 150px; height: 150px; color: #9ca3af;">
                         <div style="text-align: center;">
                             <div class="material-icons-round" style="font-size: 32px; margin-bottom: 0.5rem;">qr_code</div>

@@ -29,6 +29,7 @@
      * Verifica la contraseña de acceso
      */
     window.checkAccessPassword = function() {
+        console.log('🔐 Verificando contraseña...');
         const passwordInput = document.getElementById('accessPasswordInput');
         const errorDiv = document.getElementById('accessPasswordError');
         const modal = document.getElementById('accessPasswordModal');
@@ -36,12 +37,16 @@
         
         if (!passwordInput) {
             console.error('❌ Input de contraseña no encontrado');
+            alert('Error: Input de contraseña no encontrado');
             return;
         }
         
         const password = passwordInput.value.trim();
+        console.log('🔑 Contraseña ingresada:', password ? '***' : '(vacía)');
+        console.log('🔑 Contraseña esperada:', ACCESS_PASSWORD);
         
         if (password === ACCESS_PASSWORD) {
+            console.log('✅ Contraseña correcta');
             setAuthenticated();
             if (modal) {
                 modal.style.display = 'none';
@@ -51,11 +56,23 @@
             }
             // Inicializar la UI después de autenticarse
             if (typeof initUI === 'function') {
+                console.log('🚀 Inicializando UI...');
                 initUI().catch(error => {
                     console.error('❌ Error al inicializar UI:', error);
                 });
+            } else {
+                console.warn('⚠️ Función initUI no disponible aún');
+                // Esperar un poco e intentar de nuevo
+                setTimeout(() => {
+                    if (typeof initUI === 'function') {
+                        initUI().catch(error => {
+                            console.error('❌ Error al inicializar UI:', error);
+                        });
+                    }
+                }, 500);
             }
         } else {
+            console.log('❌ Contraseña incorrecta');
             if (errorDiv) {
                 errorDiv.textContent = 'Contraseña incorrecta. Por favor, intenta nuevamente.';
                 errorDiv.style.display = 'block';

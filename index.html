@@ -458,14 +458,14 @@
             <div class="modal-header">
                 <h2 class="modal-title">Acceso a la Aplicación</h2>
             </div>
-            <form id="accessPasswordForm" onsubmit="event.preventDefault(); if(typeof window.checkAccessPassword==='function'){window.checkAccessPassword();}">
+            <form id="accessPasswordForm" onsubmit="event.preventDefault(); try{window.checkAccessPassword();}catch(e){alert('Error: '+e.message);}">
                 <div class="form-group">
                     <label class="form-label">Contraseña</label>
                     <input type="password" id="accessPasswordInput" class="form-input" placeholder="Ingresa la contraseña para acceder" required autofocus>
                 </div>
                 <div id="accessPasswordError" style="color: #ef4444; font-size: 0.875rem; margin-bottom: 1rem; display: none;"></div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Acceder</button>
+                    <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); try{window.checkAccessPassword();}catch(e){alert('Error: '+e.message);}">Acceder</button>
                 </div>
             </form>
         </div>
@@ -1040,6 +1040,16 @@
   <!-- Scripts -->
     <!-- Script de respaldo para capturar errores -->
     <script>
+        // Asegurar que la función de verificación esté disponible
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 DOM cargado, verificando función de acceso...');
+            if (typeof window.checkAccessPassword === 'function') {
+                console.log('✅ Función checkAccessPassword disponible');
+            } else {
+                console.warn('⚠️ Función checkAccessPassword no disponible aún');
+            }
+        });
+        
         // Capturar errores de JavaScript globalmente
         window.addEventListener('error', function(e) {
             console.error('Error global capturado:', e.error);

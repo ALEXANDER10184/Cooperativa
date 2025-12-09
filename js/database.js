@@ -9,9 +9,8 @@
     const BIN_ID = "69379207d0ea881f401c0889";
     const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
     
-    // IMPORTANTE: Reemplaza esto con tu API Key real de JSONbin
-    // Puedes obtenerla en: https://jsonbin.io/app
-    const API_KEY = "$2a$10$YOUR_API_KEY_HERE"; // <-- REEMPLAZAR CON TU API KEY
+    // API Key de JSONbin
+    const API_KEY = "$2a$10$Pgwj4rpZ/MwjOkk83idMjueKf52AjaCew5VtsgNXbigK7LdfF3Ysu";
     
     // Variable para cache local (evita cargar constantemente)
     let cachedDB = null;

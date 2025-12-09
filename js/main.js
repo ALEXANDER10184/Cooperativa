@@ -186,11 +186,11 @@
         const img = document.createElement('img');
         img.src = qrImageUrl;
         img.alt = 'QR Code';
-        img.style.width = '250px';
-        img.style.height = '250px';
+        img.style.width = '200px';
+        img.style.height = '200px';
         img.style.display = 'block';
         img.style.margin = '0 auto';
-        img.style.borderRadius = '8px';
+        img.style.borderRadius = '12px';
         
         img.onload = function() {
             console.log('✅ QR generado');

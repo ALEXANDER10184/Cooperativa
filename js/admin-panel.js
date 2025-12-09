@@ -177,14 +177,7 @@
         }
 
         // Renderizar contenido según el tab seleccionado
-        if (subTabName === 'pagos') {
-                    if (typeof window.loadSociosSelector === 'function') {
-                        await window.loadSociosSelector();
-                    }
-            if (typeof window.renderPagosTable === 'function') {
-                await window.renderPagosTable();
-            }
-        } else if (subTabName === 'socios') {
+        if (subTabName === 'socios') {
             console.log('📋 Renderizando tabla de administración de socios...');
             if (typeof window.renderAdminSociosTable === 'function') {
                 await window.renderAdminSociosTable();

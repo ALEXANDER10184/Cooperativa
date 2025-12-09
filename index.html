@@ -543,9 +543,6 @@
                 <button class="sub-tab-btn" id="subTabIngresos" onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('ingresos').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
                     <span class="material-icons-round">trending_up</span> Ingresos
                 </button>
-                <button class="sub-tab-btn" id="subTabPagos" onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('pagos').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
-                    <span class="material-icons-round">payment</span> Pagos de Socios
-                </button>
                 <button class="sub-tab-btn" id="subTabAportes" onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('aportes').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
                     <span class="material-icons-round">calendar_month</span> Seguimiento de Aportes
                 </button>
@@ -656,45 +653,6 @@
                 </div>
             </div>
 
-            <!-- Sub-tab: Pagos de Socios -->
-            <div id="pagosTab" class="sub-tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">Pagos de Socios</h2>
-                        <button class="btn btn-primary" id="addPagoBtn" onclick="try{window.openAddPagoModal();}catch(e){alert('Error: '+e.message);}">
-                            <span class="material-icons-round">add</span>
-                            Registrar Pago
-                        </button>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label class="form-label">Seleccionar Socio</label>
-                        <select id="socioSelector" class="form-select" onchange="if(typeof window.renderPagosTable==='function'){window.renderPagosTable().catch(e=>{console.error('Error:',e);alert('Error al cargar los pagos. Por favor, recarga la página.');});}">
-                            <option value="">-- Seleccione un socio --</option>
-                        </select>
-                    </div>
-                    <div class="table-container">
-                        <table id="pagosTable">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Monto</th>
-                                    <th>Concepto</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pagosTableBody">
-                                <tr>
-                                    <td colspan="4" class="empty-state">
-                                        <div class="empty-state-icon">💳</div>
-                                        <p>Seleccione un socio para ver sus pagos</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
             <!-- Sub-tab: Seguimiento de Aportes -->
             <div id="aportesTab" class="sub-tab-content">
                 <div class="card">
@@ -715,10 +673,6 @@
                                     <option value="pendientes">Falta por Pagar</option>
                                 </select>
                             </div>
-                            <button class="btn btn-primary" id="registrarPagoAporteBtn" onclick="if(typeof window.openRegistrarPagoDesdeAporte==='function'){window.openRegistrarPagoDesdeAporte().catch(e=>{console.error('Error:',e);alert('Error al abrir formulario de pago.');});}">
-                                <span class="material-icons-round">payment</span>
-                                Registrar Pago
-                            </button>
                         </div>
                     </div>
 

@@ -378,18 +378,28 @@ async function handleSubmit(event) {
         btnEnviar.innerHTML = "Enviado ✔️";
         btnEnviar.disabled = false;
         
-        // Mostrar mensaje de éxito con la contraseña
-        const mensajeExito = `¡Registro completado con éxito! ✔️\n\n` +
-                            `Para acceder a la aplicación, utiliza la siguiente contraseña:\n\n` +
-                            `🔑 Contraseña: coopmiesperanza\n\n` +
-                            `Serás redirigido a la página de acceso en unos segundos...`;
-        
-        alert(mensajeExito);
-        
-        // Redirigir después de un delay
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 3000);
+        // Mostrar modal personalizado con la contraseña destacada
+        const passwordModal = document.getElementById('passwordSuccessModal');
+        if (passwordModal) {
+            passwordModal.style.display = 'flex';
+            // Scroll al inicio para asegurar que se vea el modal
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Redirigir después de 8 segundos (más tiempo para que lean la contraseña)
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 8000);
+        } else {
+            // Fallback a alert si no se encuentra el modal
+            const mensajeExito = `¡Registro completado con éxito! ✔️\n\n` +
+                                `Para acceder a la aplicación, utiliza la siguiente contraseña:\n\n` +
+                                `🔑 Contraseña: coopmiesperanza\n\n` +
+                                `Serás redirigido a la página de acceso en unos segundos...`;
+            alert(mensajeExito);
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 3000);
+        }
     } catch (err) {
         console.error("Error al guardar socio:", err);
         btnEnviar.innerHTML = "Error";

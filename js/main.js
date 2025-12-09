@@ -187,12 +187,18 @@
             
             // Actualizar número total de socios
             if (sociosDisplay) {
-                if (typeof window.getAll === 'function') {
-                    const socios = window.getAll('socios');
-                    const totalSocios = socios.length;
-                    sociosDisplay.textContent = totalSocios;
-                    console.log('✅ Total de socios actualizado:', totalSocios);
-                } else {
+                try {
+                    if (typeof window.getAll === 'function') {
+                        const socios = window.getAll('socios');
+                        const totalSocios = socios ? socios.length : 0;
+                        sociosDisplay.textContent = totalSocios;
+                        console.log('✅ Total de socios actualizado:', totalSocios, 'socios encontrados:', socios);
+                    } else {
+                        console.warn('⚠️ window.getAll no está disponible');
+                        sociosDisplay.textContent = '0';
+                    }
+                } catch (error) {
+                    console.error('❌ Error al contar socios:', error);
                     sociosDisplay.textContent = '0';
                 }
             }
@@ -293,10 +299,17 @@
                 window.loadSociosSelector();
             }
             
-            // Actualizar balance inicial
+            // Actualizar balance inicial - hacerlo inmediatamente y también después de un delay
             if (typeof window.updateBalanceDisplay === 'function') {
                 window.updateBalanceDisplay();
             }
+            
+            // También actualizar después de un delay para asegurar que todo esté cargado
+            setTimeout(function() {
+                if (typeof window.updateBalanceDisplay === 'function') {
+                    window.updateBalanceDisplay();
+                }
+            }, 300);
             
             console.log('✅ Aplicación inicializada correctamente');
         } catch (error) {

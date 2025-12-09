@@ -1239,9 +1239,48 @@
                 tabAdmin.onclick = null;
                 tabAdmin.addEventListener('click', function(e) {
                     e.preventDefault();
+                    // El switchTab ya verifica la autenticación
                     if (typeof window.switchTab === 'function') {
-                        window.switchTab('admin').catch(e => console.error('Error:', e));
+                        window.switchTab('admin').catch(err => console.error('Error:', err));
                     }
+                });
+            }
+            
+            // Configurar event listeners para el modal de administración
+            const adminPasswordInput = document.getElementById('adminPasswordInput');
+            const adminLoginButton = document.getElementById('adminLoginButton');
+            const adminLoginForm = document.getElementById('adminLoginForm');
+            
+            if (adminPasswordInput) {
+                adminPasswordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (typeof window.checkAdminPassword === 'function') {
+                            window.checkAdminPassword();
+                        }
+                    }
+                });
+            }
+            
+            if (adminLoginButton) {
+                adminLoginButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof window.checkAdminPassword === 'function') {
+                        window.checkAdminPassword();
+                    }
+                    return false;
+                });
+            }
+            
+            if (adminLoginForm) {
+                adminLoginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof window.checkAdminPassword === 'function') {
+                        window.checkAdminPassword();
+                    }
+                    return false;
                 });
             }
         }

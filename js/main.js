@@ -338,6 +338,21 @@
     function setupEventListeners() {
         console.log('🔧 Configurando event listeners...');
         
+        // Listener para botón "Registrarse" (tab de socios)
+        const registrarseBtn = document.getElementById('registrarseBtn');
+        if (registrarseBtn) {
+            registrarseBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🔵 Click en Registrarse');
+                if (typeof window.navigateTo === 'function') {
+                    window.navigateTo('registro.html');
+                } else {
+                    window.location.href = 'registro.html';
+                }
+            });
+            console.log('✅ Listener agregado a botón "Registrarse"');
+        }
+
         // Listener para botón "Agregar Socio" (solo en el tab de administración)
         const addSocioBtn = document.getElementById('addSocioBtn');
         if (addSocioBtn) {

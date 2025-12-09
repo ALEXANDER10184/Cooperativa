@@ -973,12 +973,30 @@
                 
                 // Reconectar botones después de verificar
                 reconectarBotones();
+                
+                // Actualizar balance y conteo de socios
+                if (typeof window.updateBalanceDisplay === 'function') {
+                    window.updateBalanceDisplay();
+                }
             }, 500);
         });
         
         // También reconectar después de un delay adicional por si acaso
         setTimeout(reconectarBotones, 1000);
         setTimeout(reconectarBotones, 2000);
+        
+        // Forzar actualización de balance y socios múltiples veces
+        setTimeout(function() {
+            if (typeof window.updateBalanceDisplay === 'function') {
+                window.updateBalanceDisplay();
+            }
+        }, 1000);
+        
+        setTimeout(function() {
+            if (typeof window.updateBalanceDisplay === 'function') {
+                window.updateBalanceDisplay();
+            }
+        }, 2000);
     </script>
 </body>
 </html>

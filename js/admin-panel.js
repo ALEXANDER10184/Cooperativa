@@ -533,7 +533,7 @@
                 return;
             }
             
-            const ingreso = window.getItem('ingresos', id);
+            const ingreso = await window.getItem('ingresos', id);
             if (!ingreso) {
                 alert('Ingreso no encontrado');
                 return;
@@ -545,6 +545,40 @@
             const title = document.getElementById('ingresoModalTitle');
 
             if (!modal || !form || !title) return;
+
+            // Cargar selector de socios
+            const socios = await window.getAll('socios');
+            const socioSelector = document.getElementById('ingresoSocioId');
+            if (socioSelector) {
+                socioSelector.innerHTML = '<option value="">-- Seleccione un socio --</option>';
+                socios.forEach(socio => {
+                    if (socio.estado === 'Activo' || socio.estado === 'activo') {
+                        const option = document.createElement('option');
+                        option.value = socio.id;
+                        option.textContent = `${socio.nombre || ''} ${socio.apellido || ''} - Cuota: €${(socio.cuotaMensual || 0).toFixed(2)}`;
+                        option.setAttribute('data-cuota', socio.cuotaMensual || 0);
+                        if (ingreso.socioId && ingreso.socioId === socio.id) {
+                            option.selected = true;
+                        }
+                        socioSelector.appendChild(option);
+                    }
+                });
+            }
+
+            // Determinar tipo de ingreso
+            const tipoInput = document.getElementById('ingresoTipo');
+            const socioGroup = document.getElementById('ingresoSocioGroup');
+            
+            if (ingreso.origen === 'pago_socio' || ingreso.socioId || ingreso.tipo === 'aporte_socio') {
+                if (tipoInput) tipoInput.value = 'aporte_socio';
+                if (socioGroup) socioGroup.style.display = 'block';
+                if (socioSelector && ingreso.socioId) {
+                    socioSelector.value = ingreso.socioId;
+                }
+            } else {
+                if (tipoInput) tipoInput.value = 'otro';
+                if (socioGroup) socioGroup.style.display = 'none';
+            }
 
             document.getElementById('ingresoFecha').value = ingreso.fecha || '';
             document.getElementById('ingresoConcepto').value = ingreso.concepto || '';
@@ -563,6 +597,68 @@
         if (modal) {
             modal.classList.add('hidden');
             currentEditIngresoId = null;
+        }
+    };
+
+    /**
+     * Maneja el cambio de tipo de ingreso en el formulario
+     */
+    window.handleCambioTipoIngreso = function() {
+        const tipoInput = document.getElementById('ingresoTipo');
+        const socioGroup = document.getElementById('ingresoSocioGroup');
+        const socioSelector = document.getElementById('ingresoSocioId');
+        const conceptoInput = document.getElementById('ingresoConcepto');
+        const montoInput = document.getElementById('ingresoMonto');
+        
+        if (!tipoInput || !socioGroup) return;
+        
+        if (tipoInput.value === 'aporte_socio') {
+            socioGroup.style.display = 'block';
+            socioSelector.required = true;
+            
+            // Limpiar campos cuando se cambia a aporte de socio
+            if (conceptoInput) conceptoInput.value = '';
+            if (montoInput) montoInput.value = '';
+            
+            // Si se selecciona un socio, actualizar concepto y monto
+            if (socioSelector) {
+                socioSelector.onchange = function() {
+                    const selectedOption = socioSelector.options[socioSelector.selectedIndex];
+                    if (selectedOption && selectedOption.value) {
+                        const cuotaMensual = parseFloat(selectedOption.getAttribute('data-cuota') || 0);
+                        const nombreSocio = selectedOption.textContent.split(' - ')[0];
+                        
+                        // Obtener mes actual
+                        const fechaInput = document.getElementById('ingresoFecha');
+                        let mesAno = '';
+                        if (fechaInput && fechaInput.value) {
+                            const fecha = new Date(fechaInput.value);
+                            mesAno = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+                        } else {
+                            const fecha = new Date();
+                            mesAno = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+                        }
+                        
+                        const [ano, mes] = mesAno.split('-');
+                        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                                      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                        const nombreMes = meses[parseInt(mes) - 1];
+                        
+                        if (conceptoInput) {
+                            conceptoInput.value = `Aporte mensual ${nombreMes} ${ano} - ${nombreSocio}`;
+                        }
+                        if (montoInput && cuotaMensual > 0) {
+                            montoInput.value = cuotaMensual.toFixed(2);
+                        }
+                    }
+                };
+            }
+        } else {
+            socioGroup.style.display = 'none';
+            socioSelector.required = false;
+            if (socioSelector) {
+                socioSelector.value = '';
+            }
         }
     };
 

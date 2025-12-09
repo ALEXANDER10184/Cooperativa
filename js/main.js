@@ -156,70 +156,89 @@
     };
 
     /**
-     * Genera el código QR para compartir la aplicación
+     * Genera el código QR para compartir la aplicación usando API externa
      */
-    function generateQRCode() {
+    window.generateQRCode = function() {
         try {
+            console.log('🔍 Intentando generar QR...');
             const qrContainer = document.getElementById('qrCodeContainer');
             const qrUrl = document.getElementById('qrUrl');
             
             if (!qrContainer) {
-                console.warn('⚠️ Contenedor de QR no encontrado');
+                console.error('❌ Contenedor de QR no encontrado en el DOM');
+                // Intentar de nuevo después de un momento
+                setTimeout(function() {
+                    if (document.getElementById('qrCodeContainer')) {
+                        window.generateQRCode();
+                    }
+                }, 1000);
                 return;
             }
 
+            console.log('✅ Contenedor de QR encontrado');
+
             // Obtener la URL actual de la aplicación
-            const appUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
-            const fullUrl = appUrl.replace(/\/$/, '') + '/';
+            let fullUrl = window.location.href;
+            
+            // Si estamos en un archivo local o index.html, ajustar la URL
+            if (fullUrl.includes('index.html')) {
+                fullUrl = fullUrl.replace(/\/index\.html.*$/, '/');
+            } else if (fullUrl.endsWith('/')) {
+                fullUrl = fullUrl;
+            } else {
+                const urlParts = fullUrl.split('/');
+                urlParts.pop();
+                fullUrl = urlParts.join('/') + '/';
+            }
+
+            console.log('📱 URL para QR:', fullUrl);
 
             // Limpiar contenedor
             qrContainer.innerHTML = '';
 
-            // Función para intentar generar el QR
-            function tryGenerateQR() {
-                // Verificar que la librería QRCode esté disponible
-                if (typeof QRCode === 'undefined') {
-                    console.warn('⚠️ Librería QRCode aún no está disponible, reintentando...');
-                    // Reintentar después de 500ms
-                    setTimeout(tryGenerateQR, 500);
-                    return;
+            // Usar API de QR Server para generar QR (más confiable, sin librerías)
+            const encodedUrl = encodeURIComponent(fullUrl);
+            const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodedUrl}&bgcolor=ffffff&color=000000`;
+            
+            console.log('🖼️ URL de imagen QR:', qrImageUrl);
+            
+            // Crear imagen QR
+            const qrImage = document.createElement('img');
+            qrImage.src = qrImageUrl;
+            qrImage.alt = 'Código QR de la aplicación';
+            qrImage.style.width = '250px';
+            qrImage.style.height = '250px';
+            qrImage.style.display = 'block';
+            qrImage.style.margin = '0 auto';
+            qrImage.style.border = '1px solid #e5e7eb';
+            qrImage.style.borderRadius = '8px';
+            
+            qrImage.onload = function() {
+                console.log('✅ Imagen QR cargada correctamente');
+                // Mostrar la URL debajo del QR
+                if (qrUrl) {
+                    qrUrl.textContent = fullUrl;
+                    qrUrl.style.wordBreak = 'break-all';
                 }
-
-                try {
-                    // Crear un canvas para el QR
-                    const canvas = document.createElement('canvas');
-                    qrContainer.appendChild(canvas);
-
-                    // Generar QR
-                    QRCode.toCanvas(canvas, fullUrl, {
-                        width: 250,
-                        margin: 2,
-                        color: {
-                            dark: '#000000',
-                            light: '#FFFFFF'
-                        }
-                    }, function(error) {
-                        if (error) {
-                            console.error('❌ Error al generar QR:', error);
-                            qrContainer.innerHTML = '<p style="color: #ef4444; padding: 1rem;">Error al generar código QR. Por favor, recarga la página.</p>';
-                        } else {
-                            console.log('✅ Código QR generado correctamente');
-                            // Mostrar la URL debajo del QR
-                            if (qrUrl) {
-                                qrUrl.textContent = fullUrl;
-                            }
-                        }
-                    });
-                } catch (error) {
-                    console.error('❌ Error al generar QR:', error);
-                    qrContainer.innerHTML = '<p style="color: #ef4444; padding: 1rem;">Error: ' + error.message + '</p>';
+            };
+            
+            qrImage.onerror = function() {
+                console.error('❌ Error al cargar imagen QR desde API');
+                qrContainer.innerHTML = `
+                    <div style="padding: 2rem; text-align: center; border: 2px dashed #e5e7eb; border-radius: 8px;">
+                        <p style="color: #6b7280; margin-bottom: 1rem;">No se pudo generar el código QR</p>
+                        <p style="color: #2563eb; font-weight: 600; word-break: break-all;">${fullUrl}</p>
+                        <p style="color: #9ca3af; font-size: 0.875rem; margin-top: 1rem;">Puedes copiar y compartir esta URL</p>
+                    </div>
+                `;
+                // Mostrar URL como fallback
+                if (qrUrl) {
+                    qrUrl.innerHTML = `<a href="${fullUrl}" target="_blank" style="color: #2563eb; text-decoration: underline; word-break: break-all;">${fullUrl}</a>`;
                 }
-            }
+            };
+            
+            qrContainer.appendChild(qrImage);
 
-            // Iniciar intento de generación (con retry si la librería no está lista)
-            tryGenerateQR();
-
-            console.log('📱 URL de la aplicación para QR:', fullUrl);
         } catch (error) {
             console.error('❌ Error en generateQRCode:', error);
             const qrContainer = document.getElementById('qrCodeContainer');
@@ -227,7 +246,7 @@
                 qrContainer.innerHTML = '<p style="color: #ef4444; padding: 1rem;">Error: ' + error.message + '</p>';
             }
         }
-    }
+    };
 
     /**
      * Actualiza la visualización del balance en la página

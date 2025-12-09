@@ -533,6 +533,8 @@
             }
             
             const socios = window.getAll('socios');
+            console.log('📊 Socios encontrados al renderizar tabla:', socios.length, socios);
+            
             const tbody = document.getElementById('sociosTableBody');
             
             if (!tbody) {
@@ -596,6 +598,13 @@
             });
 
             console.log(`✅ Tabla renderizada con ${socios.length} socios`);
+            
+            // Actualizar balance después de renderizar (para asegurar que cuente correctamente)
+            if (typeof window.updateBalanceDisplay === 'function') {
+                setTimeout(function() {
+                    window.updateBalanceDisplay();
+                }, 100);
+            }
         } catch (error) {
             console.error('❌ Error al renderizar tabla:', error);
         }

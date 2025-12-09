@@ -489,33 +489,24 @@
         <div id="panelSocios" class="tab-panel active">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">Gestión de Socios</h2>
-                    <button class="btn btn-primary" id="addSocioBtn">
-                        <span class="material-icons-round">add</span>
-                        Agregar Socio
-                    </button>
+                    <h2 class="card-title">Lista de Socios</h2>
                 </div>
 
-                <!-- Tabla de Socios -->
+                <!-- Tabla de Socios Simplificada -->
                 <div class="table-container">
                     <table id="sociosTable">
                         <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>Nombre</th>
                                 <th>Apellido</th>
-                                <th>Email</th>
                                 <th>Teléfono</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="sociosTableBody">
                             <tr>
-                                <td colspan="7" class="empty-state">
+                                <td colspan="3" class="empty-state">
                                     <div class="empty-state-icon">📋</div>
                                     <p>No hay socios registrados</p>
-                                    <p style="font-size: 0.875rem; margin-top: 0.5rem;">Haz clic en "Agregar Socio" para comenzar</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -528,6 +519,9 @@
         <div id="panelAdmin" class="tab-panel hidden">
             <!-- Sub-tabs de Administración -->
             <div class="sub-tabs">
+                <button class="sub-tab-btn" id="subTabSocios" onclick="try{window.switchAdminTab('socios');}catch(e){alert('Error: '+e.message);}">
+                    <span class="material-icons-round">people</span> Gestión de Socios
+                </button>
                 <button class="sub-tab-btn active" id="subTabGastos" onclick="try{window.switchAdminTab('gastos');}catch(e){alert('Error: '+e.message);}">
                     <span class="material-icons-round">trending_down</span> Gastos
                 </button>
@@ -539,8 +533,47 @@
                 </button>
             </div>
 
+            <!-- Sub-tab: Gestión de Socios (Admin) -->
+            <div id="sociosTab" class="sub-tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Gestión de Socios</h2>
+                    <button class="btn btn-primary" id="addSocioBtn" onclick="try{window.openAddModal();}catch(e){alert('Error: '+e.message);}">
+                        <span class="material-icons-round">add</span>
+                        Agregar Socio
+                    </button>
+                    </div>
+
+                    <!-- Tabla de Socios Completa (solo en Admin) -->
+                    <div class="table-container">
+                        <table id="adminSociosTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Email</th>
+                                    <th>Teléfono</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminSociosTableBody">
+                                <tr>
+                                    <td colspan="7" class="empty-state">
+                                        <div class="empty-state-icon">📋</div>
+                                        <p>No hay socios registrados</p>
+                                        <p style="font-size: 0.875rem; margin-top: 0.5rem;">Haz clic en "Agregar Socio" para comenzar</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- Sub-tab: Gastos -->
-            <div id="gastosTab" class="sub-tab-content active">
+            <div id="gastosTab" class="sub-tab-content">
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Gestión de Gastos</h2>

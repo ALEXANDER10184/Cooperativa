@@ -111,9 +111,28 @@
             tabSocios.classList.remove("active");
             
             try {
-                if (typeof window.renderGastosTable === 'function') window.renderGastosTable();
-                if (typeof window.renderIngresosTable === 'function') window.renderIngresosTable();
-                if (typeof window.loadSociosSelector === 'function') window.loadSociosSelector();
+                // Renderizar tablas según el sub-tab activo
+                const activeSubTab = document.querySelector('.sub-tab-content.active');
+                if (activeSubTab && activeSubTab.id) {
+                    const subTabName = activeSubTab.id.replace('Tab', '');
+                    if (subTabName === 'gastos' && typeof window.renderGastosTable === 'function') {
+                        window.renderGastosTable();
+                    } else if (subTabName === 'ingresos' && typeof window.renderIngresosTable === 'function') {
+                        window.renderIngresosTable();
+                    } else if (subTabName === 'pagos' && typeof window.loadSociosSelector === 'function') {
+                        window.loadSociosSelector();
+                        if (typeof window.renderPagosTable === 'function') {
+                            window.renderPagosTable();
+                        }
+                    } else if (subTabName === 'socios' && typeof window.renderAdminSociosTable === 'function') {
+                        window.renderAdminSociosTable();
+                    }
+                }
+                
+                // Siempre cargar selector de socios (necesario para pagos)
+                if (typeof window.loadSociosSelector === 'function') {
+                    window.loadSociosSelector();
+                }
             } catch (error) {
                 console.error("❌ Error al renderizar tablas:", error);
             }
@@ -150,9 +169,22 @@
             btn.classList.add('active');
         }
 
+        // Renderizar contenido según el tab seleccionado
         if (subTabName === 'pagos') {
             if (typeof window.renderPagosTable === 'function') {
                 window.renderPagosTable();
+            }
+        } else if (subTabName === 'socios') {
+            if (typeof window.renderAdminSociosTable === 'function') {
+                window.renderAdminSociosTable();
+            }
+        } else if (subTabName === 'gastos') {
+            if (typeof window.renderGastosTable === 'function') {
+                window.renderGastosTable();
+            }
+        } else if (subTabName === 'ingresos') {
+            if (typeof window.renderIngresosTable === 'function') {
+                window.renderIngresosTable();
             }
         }
     };

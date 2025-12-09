@@ -335,7 +335,7 @@
     function setupEventListeners() {
         console.log('🔧 Configurando event listeners...');
         
-        // Listener para botón "Agregar Socio"
+        // Listener para botón "Agregar Socio" (solo en el tab de administración)
         const addSocioBtn = document.getElementById('addSocioBtn');
         if (addSocioBtn) {
             addSocioBtn.addEventListener('click', function(e) {
@@ -349,8 +349,6 @@
                 }
             });
             console.log('✅ Listener agregado a botón "Agregar Socio"');
-        } else {
-            console.error('❌ No se encontró el botón addSocioBtn');
         }
 
         // Listener para botón "Cancelar"
@@ -534,7 +532,7 @@
     // ============================================
 
     /**
-     * Renderiza la tabla de socios
+     * Renderiza la tabla simplificada de socios (solo vista, sin acciones)
      */
     function renderSociosTable() {
         try {
@@ -550,6 +548,62 @@
             
             if (!tbody) {
                 console.error('❌ No se encontró el elemento sociosTableBody');
+                return;
+            }
+
+            tbody.innerHTML = '';
+
+            if (socios.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <p>No hay socios registrados</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Renderizar lista simplificada (solo nombre, apellido, teléfono)
+            socios.forEach(socio => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${escapeHtml(socio.nombre || '')}</td>
+                    <td>${escapeHtml(socio.apellido || '')}</td>
+                    <td>${escapeHtml(socio.telefono || '')}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            console.log(`✅ Tabla simplificada renderizada con ${socios.length} socios`);
+            
+            // Actualizar balance después de renderizar
+            if (typeof window.updateBalanceDisplay === 'function') {
+                setTimeout(function() {
+                    window.updateBalanceDisplay();
+                }, 100);
+            }
+        } catch (error) {
+            console.error('❌ Error al renderizar tabla:', error);
+        }
+    }
+
+    /**
+     * Renderiza la tabla completa de socios para administración (con acciones)
+     */
+    window.renderAdminSociosTable = function() {
+        try {
+            if (typeof window.getAll !== 'function') {
+                console.warn('getAll no está disponible aún');
+                return;
+            }
+            
+            const socios = window.getAll('socios');
+            const tbody = document.getElementById('adminSociosTableBody');
+            
+            if (!tbody) {
+                console.error('❌ No se encontró el elemento adminSociosTableBody');
                 return;
             }
 
@@ -608,18 +662,11 @@
                 tbody.appendChild(row);
             });
 
-            console.log(`✅ Tabla renderizada con ${socios.length} socios`);
-            
-            // Actualizar balance después de renderizar (para asegurar que cuente correctamente)
-            if (typeof window.updateBalanceDisplay === 'function') {
-                setTimeout(function() {
-                    window.updateBalanceDisplay();
-                }, 100);
-            }
+            console.log(`✅ Tabla de administración renderizada con ${socios.length} socios`);
         } catch (error) {
-            console.error('❌ Error al renderizar tabla:', error);
+            console.error('❌ Error al renderizar tabla de administración:', error);
         }
-    }
+    };
 
     // ============================================
     // MODAL FUNCTIONS
@@ -786,7 +833,12 @@
             }
 
             window.closeModal();
+            
+            // Actualizar ambas tablas
             renderSociosTable();
+            if (typeof window.renderAdminSociosTable === 'function') {
+                window.renderAdminSociosTable();
+            }
 
             showNotification(
                 currentEditId ? 'Socio actualizado exitosamente' : 'Socio agregado exitosamente',

@@ -108,16 +108,21 @@
             font-weight: 500;
             cursor: pointer;
             border-radius: 6px;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
         }
 
         .sub-tab-btn:hover {
             background: #e5e7eb;
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .sub-tab-btn.active {
             background: #2563eb;
             color: white;
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
         }
 
         .sub-tab-content {
@@ -175,10 +180,15 @@
             color: white;
         }
 
+        .btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
+        }
+
         .btn-primary:hover {
             background: #1d4ed8;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3), 0 8px 10px -6px rgba(37, 99, 235, 0.2);
         }
 
         .btn-secondary {
@@ -188,7 +198,8 @@
 
         .btn-secondary:hover {
             background: #059669;
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.3), 0 8px 10px -6px rgba(16, 185, 129, 0.2);
         }
 
         .btn-danger {
@@ -198,7 +209,8 @@
 
         .btn-danger:hover {
             background: #dc2626;
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.3), 0 8px 10px -6px rgba(239, 68, 68, 0.2);
         }
 
         .btn-outline {
@@ -210,6 +222,8 @@
         .btn-outline:hover {
             background: #2563eb;
             color: white;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3), 0 8px 10px -6px rgba(37, 99, 235, 0.2);
         }
 
         .table-container {
@@ -415,19 +429,25 @@
         }
 
         .form-input,
-        .form-select {
+        .form-select,
+        textarea {
             width: 100%;
             padding: 0.75rem;
             border: 2px solid #e5e7eb;
             border-radius: 8px;
             font-size: 1rem;
-            transition: border-color 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
         }
 
         .form-input:focus,
-        .form-select:focus {
+        .form-select:focus,
+        textarea:focus {
             outline: none;
             border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            transform: scale(1.02);
+            padding: 0.875rem;
         }
 
         .form-actions {

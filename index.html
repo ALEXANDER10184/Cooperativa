@@ -506,13 +506,13 @@
         <div id="panelAdmin" class="tab-panel hidden">
             <!-- Sub-tabs de Administración -->
             <div class="sub-tabs">
-                <button class="sub-tab-btn active" id="subTabGastos" onclick="switchAdminTab('gastos')">
+                <button class="sub-tab-btn active" id="subTabGastos" onclick="try{window.switchAdminTab('gastos');}catch(e){alert('Error: '+e.message);}">
                     <span class="material-icons-round">trending_down</span> Gastos
                 </button>
-                <button class="sub-tab-btn" id="subTabIngresos" onclick="switchAdminTab('ingresos')">
+                <button class="sub-tab-btn" id="subTabIngresos" onclick="try{window.switchAdminTab('ingresos');}catch(e){alert('Error: '+e.message);}">
                     <span class="material-icons-round">trending_up</span> Ingresos
                 </button>
-                <button class="sub-tab-btn" id="subTabPagos" onclick="switchAdminTab('pagos')">
+                <button class="sub-tab-btn" id="subTabPagos" onclick="try{window.switchAdminTab('pagos');}catch(e){alert('Error: '+e.message);}">
                     <span class="material-icons-round">payment</span> Pagos de Socios
                 </button>
             </div>
@@ -522,7 +522,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Gestión de Gastos</h2>
-                        <button class="btn btn-primary" id="addGastoBtn" onclick="if(typeof window.openAddGastoModal==='function'){window.openAddGastoModal();}else{alert('Error: función no disponible');}">
+                        <button class="btn btn-primary" id="addGastoBtn" onclick="try{window.openAddGastoModal();}catch(e){alert('Error: '+e.message);}">
                             <span class="material-icons-round">add</span>
                             Agregar Gasto
                         </button>
@@ -555,7 +555,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Gestión de Ingresos</h2>
-                        <button class="btn btn-primary" id="addIngresoBtn" onclick="if(typeof window.openAddIngresoModal==='function'){window.openAddIngresoModal();}else{alert('Error: función no disponible');}">
+                        <button class="btn btn-primary" id="addIngresoBtn" onclick="try{window.openAddIngresoModal();}catch(e){alert('Error: '+e.message);}">
                             <span class="material-icons-round">add</span>
                             Agregar Ingreso
                         </button>
@@ -588,7 +588,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Pagos de Socios</h2>
-                        <button class="btn btn-primary" id="addPagoBtn" onclick="if(typeof window.openAddPagoModal==='function'){window.openAddPagoModal();}else{alert('Error: función no disponible');}">
+                        <button class="btn btn-primary" id="addPagoBtn" onclick="try{window.openAddPagoModal();}catch(e){alert('Error: '+e.message);}">
                             <span class="material-icons-round">add</span>
                             Registrar Pago
                         </button>

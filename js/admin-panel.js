@@ -76,6 +76,87 @@
     }
 
     // ============================================
+    // ADMIN PASSWORD PROTECTION
+    // ============================================
+
+    const ADMIN_PASSWORD = 'coopmiesperanza';
+
+    /**
+     * Verifica si el usuario está autenticado en administración
+     */
+    function isAdminAuthenticated() {
+        return sessionStorage.getItem('adminAuthenticated') === 'true';
+    }
+
+    /**
+     * Marca al usuario como autenticado
+     */
+    function setAdminAuthenticated() {
+        sessionStorage.setItem('adminAuthenticated', 'true');
+    }
+
+    /**
+     * Cierra la sesión de administración
+     */
+    function clearAdminAuth() {
+        sessionStorage.removeItem('adminAuthenticated');
+    }
+
+    /**
+     * Abre el modal de contraseña de administración
+     */
+    window.openAdminPasswordModal = function() {
+        const modal = document.getElementById('adminPasswordModal');
+        const passwordInput = document.getElementById('adminPasswordInput');
+        const errorDiv = document.getElementById('adminPasswordError');
+        
+        if (modal && passwordInput) {
+            passwordInput.value = '';
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+            modal.classList.remove('hidden');
+            setTimeout(() => passwordInput.focus(), 100);
+        }
+    };
+
+    /**
+     * Cierra el modal de contraseña
+     */
+    window.closeAdminPasswordModal = function() {
+        const modal = document.getElementById('adminPasswordModal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    };
+
+    /**
+     * Verifica la contraseña de administración
+     */
+    window.checkAdminPassword = function() {
+        const passwordInput = document.getElementById('adminPasswordInput');
+        const errorDiv = document.getElementById('adminPasswordError');
+        
+        if (!passwordInput) return;
+        
+        const password = passwordInput.value.trim();
+        
+        if (password === ADMIN_PASSWORD) {
+            setAdminAuthenticated();
+            window.closeAdminPasswordModal();
+            // Ahora sí permitir acceso a administración
+            window.switchTab('admin').catch(e => console.error('Error:', e));
+        } else {
+            if (errorDiv) {
+                errorDiv.textContent = 'Contraseña incorrecta. Por favor, intenta nuevamente.';
+                errorDiv.style.display = 'block';
+            }
+            passwordInput.value = '';
+            passwordInput.focus();
+        }
+    };
+
+    // ============================================
     // TAB NAVIGATION
     // ============================================
 
@@ -116,6 +197,14 @@
         }
 
         if (tab === "admin") {
+            // Verificar autenticación antes de permitir acceso
+            if (!isAdminAuthenticated()) {
+                // Si no está autenticado, mostrar modal de contraseña y no permitir acceso
+                window.openAdminPasswordModal();
+                return;
+            }
+            
+            // Si está autenticado, permitir acceso
             adminPanel.classList.remove("hidden");
             adminPanel.classList.add("active");
             sociosPanel.classList.add("hidden");

@@ -1075,23 +1075,61 @@
      */
     window.handleSubmitForm = function(event) {
         event.preventDefault();
-
+        
         try {
-            if (!nombre || !apellido || !email || !telefono || !estado) {
-                initDOMReferences();
-                if (!nombre || !apellido || !email || !telefono || !estado) {
-                    console.error('❌ Referencias del DOM no inicializadas');
-                    return;
-                }
+            if (typeof window.addItem !== 'function' || typeof window.updateItem !== 'function') {
+                alert('Error: funciones de base de datos no disponibles');
+                return;
             }
 
-            const nombreValue = nombre.value.trim();
-            const apellidoValue = apellido.value.trim();
-            const emailValue = email.value.trim();
-            const telefonoValue = telefono.value.trim();
-            const estadoValue = estado.value;
+            // Recopilar información de miembros de la familia
+            const miembros = [];
+            const memberNombres = document.querySelectorAll('.modal-member-nombre');
+            const memberTipoDocs = document.querySelectorAll('.modal-member-tipo-doc');
+            const memberDocNums = document.querySelectorAll('.modal-member-doc-num');
+            const memberFechasNac = document.querySelectorAll('.modal-member-fecha-nac');
+            const memberNacionalidades = document.querySelectorAll('.modal-member-nacionalidad');
+            const memberDomicilios = document.querySelectorAll('.modal-member-domicilio');
+            const memberProfesiones = document.querySelectorAll('.modal-member-profesion');
 
-            if (!nombreValue || !apellidoValue || !emailValue || !telefonoValue) {
+            for (let i = 0; i < memberNombres.length; i++) {
+                if (!memberNombres[i].value.trim() || !memberTipoDocs[i].value || !memberDocNums[i].value.trim()) {
+                    alert('Por favor completa todos los campos requeridos de los miembros de la familia');
+                    return;
+                }
+                
+                miembros.push({
+                    nombreCompleto: memberNombres[i].value.trim(),
+                    tipoDocumento: memberTipoDocs[i].value,
+                    numeroDocumento: memberDocNums[i].value.trim(),
+                    fechaNacimiento: memberFechasNac[i].value,
+                    nacionalidad: memberNacionalidades[i].value.trim(),
+                    domicilioActual: memberDomicilios[i].value.trim(),
+                    profesion: memberProfesiones[i].value.trim()
+                });
+            }
+
+            // Recopilar áreas de colaboración
+            const areasSelect = document.getElementById('modalAreasColaboracion');
+            const areasColaboracion = [];
+            if (areasSelect) {
+                for (let option of areasSelect.selectedOptions) {
+                    areasColaboracion.push(option.value);
+                }
+            }
+            const otrasAreas = document.getElementById('modalOtrasAreas')?.value.trim() || '';
+
+            // Validar campos básicos
+            const telefonoValue = document.getElementById('modalTelefono')?.value.trim();
+            const emailValue = document.getElementById('modalEmail')?.value.trim();
+            const fechaIngreso = document.getElementById('modalFechaIngreso')?.value;
+            const cuotaMensual = parseFloat(document.getElementById('modalCuotaMensual')?.value || 0);
+            const consentimientoDatos = document.getElementById('modalConsentimientoDatos')?.checked;
+            const aceptacionNormas = document.getElementById('modalAceptacionNormas')?.checked;
+            const disponibilidadHoras = parseInt(document.getElementById('modalDisponibilidadHoras')?.value || 0);
+            const estadoValue = document.getElementById('modalEstado')?.value || 'Activo';
+
+            if (!telefonoValue || !emailValue || !fechaIngreso || !consentimientoDatos || !aceptacionNormas) {
                 alert('Por favor completa todos los campos requeridos');
                 return;
             }
@@ -1102,17 +1140,40 @@
                 return;
             }
 
-            if (typeof window.addItem !== 'function' || typeof window.updateItem !== 'function') {
-                alert('Error: funciones de base de datos no disponibles');
-                return;
-            }
+            // Datos del socio principal (primer miembro)
+            const nombrePrincipal = miembros[0]?.nombreCompleto.split(' ')[0] || '';
+            const apellidoPrincipal = miembros[0]?.nombreCompleto.split(' ').slice(1).join(' ') || miembros[0]?.nombreCompleto || '';
 
             const socioData = {
-                nombre: nombreValue,
-                apellido: apellidoValue,
-                email: emailValue,
+                nombre: nombrePrincipal,
+                apellido: apellidoPrincipal,
                 telefono: telefonoValue,
-                estado: estadoValue
+                email: emailValue,
+                contactoEmergencia: document.getElementById('modalContactoEmergencia')?.value.trim() || '',
+                
+                // Información de todos los miembros
+                miembros: miembros,
+                numMiembros: miembros.length,
+                
+                // Situación en la cooperativa
+                fechaIngreso: fechaIngreso,
+                estado: estadoValue,
+                
+                // Aportaciones
+                cuotaMensual: cuotaMensual,
+                
+                // Autorizaciones
+                consentimientoDatos: consentimientoDatos,
+                aceptacionNormas: aceptacionNormas,
+                fechaConsentimiento: new Date().toISOString(),
+                
+                // Participación
+                areasColaboracion: areasColaboracion,
+                otrasAreas: otrasAreas,
+                disponibilidadHoras: disponibilidadHoras,
+                
+                // Estado y registro
+                fechaRegistro: currentEditId ? undefined : new Date().toISOString()
             };
 
             if (currentEditId) {
@@ -1131,13 +1192,18 @@
                 window.renderAdminSociosTable();
             }
 
+            // Actualizar balance
+            if (typeof window.updateBalanceDisplay === 'function') {
+                window.updateBalanceDisplay();
+            }
+
             showNotification(
                 currentEditId ? 'Socio actualizado exitosamente' : 'Socio agregado exitosamente',
                 'success'
             );
         } catch (error) {
             console.error('❌ Error al guardar socio:', error);
-            alert('Error al guardar el socio. Por favor, intenta nuevamente.');
+            alert('Error al guardar el socio: ' + error.message);
         }
     };
 

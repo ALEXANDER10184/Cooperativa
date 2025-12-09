@@ -457,18 +457,19 @@
         <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 400px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
             <h2 style="margin: 0 0 1.5rem 0; color: #1f2937; font-size: 1.5rem;">Acceso a la Aplicación</h2>
             <div id="passwordError" style="color: #ef4444; font-size: 0.875rem; margin-bottom: 1rem; display: none;"></div>
-            <div style="margin-bottom: 1rem;">
-                <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500;">Contraseña</label>
-                <input type="password" id="appPasswordInput" placeholder="Ingresa la contraseña" required autofocus 
-                       style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;"
-                       onkeypress="if(event.key==='Enter'){if(typeof window.checkAppPassword==='function'){window.checkAppPassword();}}">
-            </div>
-            <button onclick="if(typeof window.checkAppPassword==='function'){window.checkAppPassword();}" 
-                    style="width: 100%; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;"
-                    onmouseover="this.style.background='#1d4ed8'" 
-                    onmouseout="this.style.background='#2563eb'">
-                Acceder
-            </button>
+            <form id="loginForm" onsubmit="event.preventDefault(); try{window.checkAppPassword();}catch(e){alert('Error: '+e.message);console.error(e);}return false;">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500;">Contraseña</label>
+                    <input type="password" id="appPasswordInput" placeholder="Ingresa la contraseña" required autofocus 
+                           style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;">
+                </div>
+                <button type="submit" id="loginButton"
+                        style="width: 100%; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;"
+                        onmouseover="this.style.background='#1d4ed8'" 
+                        onmouseout="this.style.background='#2563eb'">
+                    Acceder
+                </button>
+            </form>
         </div>
     </div>
 

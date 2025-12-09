@@ -115,11 +115,56 @@
                 appContent.style.display = 'none';
             }
             
-            // Focus en input después de un momento
+            // Configurar event listeners para el botón y el formulario
             setTimeout(() => {
                 const passwordInput = document.getElementById('appPasswordInput');
+                const loginButton = document.getElementById('loginButton');
+                const loginForm = document.getElementById('loginForm');
+                
                 if (passwordInput) {
                     passwordInput.focus();
+                    
+                    // Permitir Enter para enviar
+                    passwordInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (typeof window.checkAppPassword === 'function') {
+                                window.checkAppPassword();
+                            } else {
+                                console.error('❌ Función checkAppPassword no disponible');
+                            }
+                        }
+                    });
+                }
+                
+                if (loginButton) {
+                    loginButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('🔵 Click en botón Acceder');
+                        if (typeof window.checkAppPassword === 'function') {
+                            window.checkAppPassword();
+                        } else {
+                            console.error('❌ Función checkAppPassword no disponible');
+                            alert('Error: Función no disponible. Por favor recarga la página.');
+                        }
+                        return false;
+                    });
+                }
+                
+                if (loginForm) {
+                    loginForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('🔵 Submit del formulario');
+                        if (typeof window.checkAppPassword === 'function') {
+                            window.checkAppPassword();
+                        } else {
+                            console.error('❌ Función checkAppPassword no disponible');
+                            alert('Error: Función no disponible. Por favor recarga la página.');
+                        }
+                        return false;
+                    });
                 }
             }, 300);
         }

@@ -20,31 +20,32 @@ window.updateItem = updateItem;
 window.deleteItem = deleteItem;
 window.getItemsByField = getItemsByField;
 
-// Importar funciones del panel de administración
-import {
-    switchTab,
-    switchMainTab,
-    switchAdminTab,
-    renderGastosTable,
-    renderIngresosTable,
-    renderPagosTable,
-    openAddGastoModal,
-    openEditGastoModal,
-    closeGastoModal,
-    handleSubmitGasto,
-    handleDeleteGasto,
-    openAddIngresoModal,
-    openEditIngresoModal,
-    closeIngresoModal,
-    handleSubmitIngreso,
-    handleDeleteIngreso,
-    loadSociosSelector,
-    openAddPagoModal,
-    openEditPagoModal,
-    closePagoModal,
-    handleSubmitPago,
-    handleDeletePago
-} from './admin-panel.js';
+// Importar funciones del panel de administración de forma dinámica
+import * as adminPanelModule from './admin-panel.js';
+
+// Asignar funciones importadas a variables locales
+const switchTab = adminPanelModule.switchTab;
+const switchMainTab = adminPanelModule.switchMainTab;
+const switchAdminTab = adminPanelModule.switchAdminTab;
+const renderGastosTable = adminPanelModule.renderGastosTable;
+const renderIngresosTable = adminPanelModule.renderIngresosTable;
+const renderPagosTable = adminPanelModule.renderPagosTable;
+const openAddGastoModal = adminPanelModule.openAddGastoModal;
+const openEditGastoModal = adminPanelModule.openEditGastoModal;
+const closeGastoModal = adminPanelModule.closeGastoModal;
+const handleSubmitGasto = adminPanelModule.handleSubmitGasto;
+const handleDeleteGasto = adminPanelModule.handleDeleteGasto;
+const openAddIngresoModal = adminPanelModule.openAddIngresoModal;
+const openEditIngresoModal = adminPanelModule.openEditIngresoModal;
+const closeIngresoModal = adminPanelModule.closeIngresoModal;
+const handleSubmitIngreso = adminPanelModule.handleSubmitIngreso;
+const handleDeleteIngreso = adminPanelModule.handleDeleteIngreso;
+const loadSociosSelector = adminPanelModule.loadSociosSelector;
+const openAddPagoModal = adminPanelModule.openAddPagoModal;
+const openEditPagoModal = adminPanelModule.openEditPagoModal;
+const closePagoModal = adminPanelModule.closePagoModal;
+const handleSubmitPago = adminPanelModule.handleSubmitPago;
+const handleDeletePago = adminPanelModule.handleDeletePago;
 
 // Estado global
 let currentEditId = null;
@@ -65,30 +66,52 @@ let socioModal, modalTitle, socioForm, nombre, apellido, email, telefono, estado
  */
 async function initUI() {
     try {
+        console.log('🚀 Iniciando aplicación...');
+        
+        // Exportar funciones al scope global PRIMERO
+        exportFunctionsToGlobal();
+        
         // Inicializar referencias del DOM
         initDOMReferences();
         
-        // Inicializar base de datos
-        await initDB();
-        console.log('✅ Base de datos inicializada');
+        // Inicializar base de datos (con manejo de errores robusto)
+        try {
+            await initDB();
+            console.log('✅ Base de datos inicializada');
+        } catch (dbError) {
+            console.error('⚠️ Error al inicializar DB, continuando sin ella:', dbError);
+            // Continuar sin base de datos, usar localStorage directamente
+        }
         
         // Configurar listeners
         setupEventListeners();
         
         // Renderizar tablas iniciales
-        renderSociosTable();
+        try {
+            renderSociosTable();
+        } catch (error) {
+            console.error('⚠️ Error al renderizar tabla de socios:', error);
+        }
         
         // Renderizar tablas de administración (se cargarán cuando se abra el tab)
         try {
-            renderGastosTable();
-            renderIngresosTable();
-            loadSociosSelector();
+            if (typeof renderGastosTable === 'function') renderGastosTable();
+            if (typeof renderIngresosTable === 'function') renderIngresosTable();
+            if (typeof loadSociosSelector === 'function') loadSociosSelector();
         } catch (error) {
             console.warn('⚠️ Tablas de administración no disponibles aún:', error);
         }
+        
+        console.log('✅ Aplicación inicializada correctamente');
     } catch (error) {
-        console.error('❌ Error al inicializar aplicación:', error);
-        alert('Error al cargar la aplicación. Por favor, recarga la página.');
+        console.error('❌ Error crítico al inicializar aplicación:', error);
+        console.error('Stack:', error.stack);
+        
+        // Mostrar mensaje de error amigable
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; background: #ef4444; color: white; padding: 1rem; text-align: center; z-index: 10000;';
+        errorDiv.innerHTML = `Error al cargar la aplicación: ${error.message}. Por favor, recarga la página.`;
+        document.body.insertBefore(errorDiv, document.body.firstChild);
     }
 }
 
@@ -115,7 +138,8 @@ function initDOMReferences() {
 
     const missing = Object.entries(elements).filter(([name, el]) => !el).map(([name]) => name);
     if (missing.length > 0) {
-        console.error('❌ Elementos faltantes:', missing);
+        console.warn('⚠️ Algunos elementos del DOM no encontrados:', missing);
+        console.warn('⚠️ Esto puede ser normal si el modal aún no se ha renderizado');
     } else {
         console.log('✅ Todas las referencias del DOM inicializadas');
     }
@@ -625,32 +649,58 @@ function navigateTo(url) {
 
 // ============================================
 // EXPORT FUNCTIONS TO GLOBAL SCOPE
+// Esta función se llama después de que todas las funciones estén definidas
 // ============================================
+function exportFunctionsToGlobal() {
+    window.openAddModal = openAddModal;
+    window.openEditModal = openEditModal;
+    window.closeModal = closeModal;
+    window.handleDeleteSocio = handleDeleteSocio;
+    window.handleSubmitForm = handleSubmitForm;
+    window.switchTab = switchTab;
+    window.switchMainTab = switchMainTab;
+    window.switchAdminTab = switchAdminTab;
+    window.renderPagosTable = renderPagosTable;
+    window.closeGastoModal = closeGastoModal;
+    window.closeIngresoModal = closeIngresoModal;
+    window.closePagoModal = closePagoModal;
+    window.calculateBalance = calculateBalance;
+    window.formatCurrency = formatCurrency;
+    window.navigateTo = navigateTo;
 
-// Exportar funciones al scope global
-window.openAddModal = openAddModal;
-window.openEditModal = openEditModal;
-window.closeModal = closeModal;
-window.handleDeleteSocio = handleDeleteSocio;
-window.handleSubmitForm = handleSubmitForm;
-window.switchTab = switchTab;
-window.switchMainTab = switchMainTab;
-window.switchAdminTab = switchAdminTab;
-window.renderPagosTable = renderPagosTable;
-window.closeGastoModal = closeGastoModal;
-window.closeIngresoModal = closeIngresoModal;
-window.closePagoModal = closePagoModal;
-window.calculateBalance = calculateBalance;
-window.formatCurrency = formatCurrency;
-window.navigateTo = navigateTo;
+    // Asegurar que las funciones de administración también estén disponibles
+    if (typeof openAddGastoModal !== 'undefined') {
+        window.openAddGastoModal = openAddGastoModal;
+    }
+    if (typeof openAddIngresoModal !== 'undefined') {
+        window.openAddIngresoModal = openAddIngresoModal;
+    }
+    if (typeof openAddPagoModal !== 'undefined') {
+        window.openAddPagoModal = openAddPagoModal;
+    }
+
+    console.log('✅ Funciones exportadas al scope global');
+}
 
 // ============================================
 // INITIALIZE ON LOAD
 // ============================================
 
-document.addEventListener('DOMContentLoaded', () => {
-    initUI();
-});
+// Inicializar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('📄 DOM cargado, iniciando aplicación...');
+        initUI().catch(error => {
+            console.error('❌ Error fatal en inicialización:', error);
+        });
+    });
+} else {
+    // DOM ya está listo
+    console.log('📄 DOM ya está listo, iniciando aplicación...');
+    initUI().catch(error => {
+        console.error('❌ Error fatal en inicialización:', error);
+    });
+}
 
 // Cerrar modales al hacer clic fuera de ellos
 document.addEventListener('click', (event) => {

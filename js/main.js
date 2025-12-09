@@ -346,8 +346,12 @@
             // Configurar listeners
             setupEventListeners();
             
-            // Generar código QR
-            generateQRCode();
+            // Generar código QR (esperar a que el DOM esté completamente listo)
+            setTimeout(function() {
+                if (typeof window.generateQRCode === 'function') {
+                    window.generateQRCode();
+                }
+            }, 100);
             
             // Renderizar tablas iniciales (ahora async)
             await renderSociosTable();

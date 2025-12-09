@@ -455,10 +455,10 @@
     <div class="main-container">
         <!-- Tabs de Navegación Principal -->
         <div class="tabs">
-            <button class="tab-btn active" id="tabSocios">
+            <button class="tab-btn active" id="tabSocios" onclick="try{window.switchTab('socios');}catch(e){alert('Error: '+e.message);}">
                 <span class="material-icons-round">people</span> Socios
             </button>
-            <button class="tab-btn" id="tabAdmin">
+            <button class="tab-btn" id="tabAdmin" onclick="try{window.switchTab('admin');}catch(e){alert('Error: '+e.message);}">
                 <span class="material-icons-round">admin_panel_settings</span> Administración
             </button>
         </div>

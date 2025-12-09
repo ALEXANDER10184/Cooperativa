@@ -778,6 +778,23 @@
     </footer>
 
   <!-- Scripts -->
+    <!-- Script de respaldo para capturar errores -->
+    <script>
+        // Capturar errores de JavaScript globalmente
+        window.addEventListener('error', function(e) {
+            console.error('Error global capturado:', e.error);
+            console.error('En:', e.filename, 'línea', e.lineno);
+        });
+
+        // Capturar errores de promesas rechazadas
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Promesa rechazada sin manejar:', e.reason);
+        });
+
+        console.log('✅ Script de respaldo cargado');
+    </script>
+    
+    <!-- Script principal como módulo -->
     <script type="module" src="js/main.js"></script>
 </body>
 </html>

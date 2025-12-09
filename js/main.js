@@ -236,69 +236,162 @@
      * Configura los event listeners
      */
     function setupEventListeners() {
+        console.log('🔧 Configurando event listeners...');
+        
         // Listener para botón "Agregar Socio"
         const addSocioBtn = document.getElementById('addSocioBtn');
         if (addSocioBtn) {
-            addSocioBtn.addEventListener('click', window.openAddModal);
+            addSocioBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🔵 Click en Agregar Socio');
+                if (typeof window.openAddModal === 'function') {
+                    window.openAddModal();
+                } else {
+                    console.error('❌ window.openAddModal no está disponible');
+                    alert('Error: función no disponible. Por favor recarga la página.');
+                }
+            });
+            console.log('✅ Listener agregado a botón "Agregar Socio"');
+        } else {
+            console.error('❌ No se encontró el botón addSocioBtn');
         }
 
         // Listener para botón "Cancelar"
         if (cancelModalBtn) {
-            cancelModalBtn.addEventListener('click', window.closeModal);
+            cancelModalBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (typeof window.closeModal === 'function') {
+                    window.closeModal();
+                }
+            });
         }
 
         // Listener para formulario de socios
         if (socioForm) {
-            socioForm.addEventListener('submit', window.handleSubmitForm);
+            socioForm.addEventListener('submit', function(e) {
+                if (typeof window.handleSubmitForm === 'function') {
+                    window.handleSubmitForm(e);
+                } else {
+                    e.preventDefault();
+                    console.error('❌ window.handleSubmitForm no está disponible');
+                    alert('Error: función no disponible. Por favor recarga la página.');
+                }
+            });
+            console.log('✅ Listener agregado a formulario de socios');
         }
 
         // Listeners para botones de administración
         const addGastoBtn = document.getElementById('addGastoBtn');
-        if (addGastoBtn && typeof window.openAddGastoModal === 'function') {
-            addGastoBtn.addEventListener('click', window.openAddGastoModal);
+        if (addGastoBtn) {
+            addGastoBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🔵 Click en Agregar Gasto');
+                if (typeof window.openAddGastoModal === 'function') {
+                    window.openAddGastoModal();
+                } else {
+                    console.error('❌ window.openAddGastoModal no está disponible');
+                    alert('Error: función no disponible. Por favor recarga la página.');
+                }
+            });
+            console.log('✅ Listener agregado a botón "Agregar Gasto"');
         }
 
         const addIngresoBtn = document.getElementById('addIngresoBtn');
-        if (addIngresoBtn && typeof window.openAddIngresoModal === 'function') {
-            addIngresoBtn.addEventListener('click', window.openAddIngresoModal);
+        if (addIngresoBtn) {
+            addIngresoBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🔵 Click en Agregar Ingreso');
+                if (typeof window.openAddIngresoModal === 'function') {
+                    window.openAddIngresoModal();
+                } else {
+                    console.error('❌ window.openAddIngresoModal no está disponible');
+                    alert('Error: función no disponible. Por favor recarga la página.');
+                }
+            });
+            console.log('✅ Listener agregado a botón "Agregar Ingreso"');
         }
 
         const addPagoBtn = document.getElementById('addPagoBtn');
-        if (addPagoBtn && typeof window.openAddPagoModal === 'function') {
-            addPagoBtn.addEventListener('click', window.openAddPagoModal);
+        if (addPagoBtn) {
+            addPagoBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🔵 Click en Registrar Pago');
+                if (typeof window.openAddPagoModal === 'function') {
+                    window.openAddPagoModal();
+                } else {
+                    console.error('❌ window.openAddPagoModal no está disponible');
+                    alert('Error: función no disponible. Por favor recarga la página.');
+                }
+            });
+            console.log('✅ Listener agregado a botón "Registrar Pago"');
         }
 
         // Listeners para formularios de administración
         const gastoForm = document.getElementById('gastoForm');
-        if (gastoForm && typeof window.handleSubmitGasto === 'function') {
-            gastoForm.addEventListener('submit', window.handleSubmitGasto);
+        if (gastoForm) {
+            gastoForm.addEventListener('submit', function(e) {
+                if (typeof window.handleSubmitGasto === 'function') {
+                    window.handleSubmitGasto(e);
+                } else {
+                    e.preventDefault();
+                    console.error('❌ window.handleSubmitGasto no está disponible');
+                }
+            });
         }
 
         const ingresoForm = document.getElementById('ingresoForm');
-        if (ingresoForm && typeof window.handleSubmitIngreso === 'function') {
-            ingresoForm.addEventListener('submit', window.handleSubmitIngreso);
+        if (ingresoForm) {
+            ingresoForm.addEventListener('submit', function(e) {
+                if (typeof window.handleSubmitIngreso === 'function') {
+                    window.handleSubmitIngreso(e);
+                } else {
+                    e.preventDefault();
+                    console.error('❌ window.handleSubmitIngreso no está disponible');
+                }
+            });
         }
 
         const pagoForm = document.getElementById('pagoForm');
-        if (pagoForm && typeof window.handleSubmitPago === 'function') {
-            pagoForm.addEventListener('submit', window.handleSubmitPago);
+        if (pagoForm) {
+            pagoForm.addEventListener('submit', function(e) {
+                if (typeof window.handleSubmitPago === 'function') {
+                    window.handleSubmitPago(e);
+                } else {
+                    e.preventDefault();
+                    console.error('❌ window.handleSubmitPago no está disponible');
+                }
+            });
         }
 
         // Listeners para tabs principales
         const tabSocios = document.getElementById('tabSocios');
         const tabAdmin = document.getElementById('tabAdmin');
         
-        if (tabSocios && typeof window.switchTab === 'function') {
-            tabSocios.addEventListener('click', () => {
-                window.switchTab('socios');
+        if (tabSocios) {
+            tabSocios.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🔵 Click en tab Socios');
+                if (typeof window.switchTab === 'function') {
+                    window.switchTab('socios');
+                } else {
+                    console.error('❌ window.switchTab no está disponible');
+                }
             });
         }
 
-        if (tabAdmin && typeof window.switchTab === 'function') {
-            tabAdmin.addEventListener('click', () => {
-                window.switchTab('admin');
+        if (tabAdmin) {
+            tabAdmin.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🔵 Click en tab Administración');
+                if (typeof window.switchTab === 'function') {
+                    window.switchTab('admin');
+                } else {
+                    console.error('❌ window.switchTab no está disponible');
+                }
             });
         }
+        
+        console.log('✅ Event listeners configurados');
 
         // Cerrar modales al hacer clic fuera
         document.addEventListener('click', (event) => {

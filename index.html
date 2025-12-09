@@ -522,7 +522,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Gestión de Gastos</h2>
-                        <button class="btn btn-primary" id="addGastoBtn">
+                        <button class="btn btn-primary" id="addGastoBtn" onclick="if(typeof window.openAddGastoModal==='function'){window.openAddGastoModal();}else{alert('Error: función no disponible');}">
                             <span class="material-icons-round">add</span>
                             Agregar Gasto
                         </button>
@@ -555,7 +555,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Gestión de Ingresos</h2>
-                        <button class="btn btn-primary" id="addIngresoBtn">
+                        <button class="btn btn-primary" id="addIngresoBtn" onclick="if(typeof window.openAddIngresoModal==='function'){window.openAddIngresoModal();}else{alert('Error: función no disponible');}">
                             <span class="material-icons-round">add</span>
                             Agregar Ingreso
                         </button>
@@ -588,7 +588,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Pagos de Socios</h2>
-                        <button class="btn btn-primary" id="addPagoBtn">
+                        <button class="btn btn-primary" id="addPagoBtn" onclick="if(typeof window.openAddPagoModal==='function'){window.openAddPagoModal();}else{alert('Error: función no disponible');}">
                             <span class="material-icons-round">add</span>
                             Registrar Pago
                         </button>

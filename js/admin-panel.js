@@ -102,12 +102,17 @@
             tabSocios.classList.add("active");
             tabAdmin.classList.remove("active");
             
+            // Renderizar tabla de socios
+            if (typeof renderSociosTable === 'function') {
+                renderSociosTable();
+            }
+            
             // Generar QR cuando se cambia al tab de Socios
             setTimeout(function() {
                 if (typeof window.generateQRCode === 'function') {
                     window.generateQRCode();
                 }
-            }, 200);
+            }, 100);
         }
 
         if (tab === "admin") {

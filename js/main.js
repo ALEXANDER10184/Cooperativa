@@ -324,16 +324,8 @@
             // Configurar listeners
             setupEventListeners();
             
-            // Generar código QR (esperar a que el DOM esté completamente listo)
-            // Se generará cuando se abra el tab de Socios o después de un delay
-            setTimeout(function() {
-                const panelSocios = document.getElementById('panelSocios');
-                if (panelSocios && (panelSocios.classList.contains('active') || !panelSocios.classList.contains('hidden'))) {
-                    if (typeof window.generateQRCode === 'function') {
-                        window.generateQRCode();
-                    }
-                }
-            }, 500);
+            // Generar código QR inmediatamente
+            window.generateQRCode();
             
             // Renderizar tablas iniciales (ahora async)
             await renderSociosTable();

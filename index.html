@@ -1052,6 +1052,17 @@
     <script src="js/admin-panel.js"></script>
     <script src="js/main.js"></script>
     
+    <!-- Script para generar QR cuando la página esté lista -->
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (typeof window.generateQRCode === 'function') {
+                    window.generateQRCode();
+                }
+            }, 500);
+        });
+    </script>
+    
     <!-- Script de verificación final y reconexión forzada -->
     <script>
         // Función para reconectar todos los botones

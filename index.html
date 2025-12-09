@@ -140,11 +140,22 @@
         }
 
         .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 
+                        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
             padding: 2rem;
             margin-bottom: 2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 
+                        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+            transform: translateY(-2px);
         }
 
         .card-header {
@@ -228,16 +239,33 @@
 
         .table-container {
             overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 
+                        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 
+                        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
         }
 
         thead {
-            background: #f3f4f6;
+            background: rgba(243, 244, 246, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         th {
@@ -245,21 +273,28 @@
             text-align: left;
             font-weight: 600;
             color: #374151;
-            border-bottom: 2px solid #e5e7eb;
+            border-bottom: 2px solid rgba(229, 231, 235, 0.5);
+            background: rgba(243, 244, 246, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         td {
             padding: 1rem;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid rgba(229, 231, 235, 0.4);
             color: #4b5563;
+            background: rgba(255, 255, 255, 0.4);
         }
 
         tbody tr {
-            transition: background 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         tbody tr:hover {
-            background: #f9fafb;
+            background: rgba(249, 250, 251, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transform: scale(1.01);
         }
 
         .badge {

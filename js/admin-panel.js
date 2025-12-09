@@ -574,20 +574,62 @@
             const concepto = document.getElementById('ingresoConcepto').value.trim();
             const monto = parseFloat(document.getElementById('ingresoMonto').value);
 
+            const tipo = document.getElementById('ingresoTipo')?.value || 'otro';
+            const socioId = document.getElementById('ingresoSocioId')?.value || '';
+
             if (!fecha || !concepto || !monto || monto <= 0) {
                 alert('Por favor completa todos los campos correctamente');
+                return;
+            }
+
+            if (tipo === 'aporte_socio' && !socioId) {
+                alert('Por favor selecciona un socio');
                 return;
             }
 
             const ingresoData = {
                 fecha,
                 concepto,
-                monto
+                monto,
+                tipo: tipo,
+                origen: tipo === 'aporte_socio' ? 'pago_socio' : 'otro'
             };
+
+            // Si es aporte de socio, agregar referencia al socio
+            if (tipo === 'aporte_socio' && socioId) {
+                ingresoData.socioId = socioId;
+            }
 
             if (typeof window.updateItem !== 'function' || typeof window.addItem !== 'function') {
                 alert('Error: funciones de base de datos no disponibles');
                 return;
+            }
+
+            if (currentEditIngresoId) {
+                await window.updateItem('ingresos', currentEditIngresoId, ingresoData);
+            } else {
+                const ingresoCreado = await window.addItem('ingresos', ingresoData);
+                
+                // Si es aporte de socio, verificar y marcar el aporte mensual correspondiente
+                if (tipo === 'aporte_socio' && socioId && typeof window.verificarPagoComoAporte === 'function') {
+                    await window.verificarPagoComoAporte(socioId, monto, fecha);
+                    
+                    // Actualizar tabla de aportes si está visible
+                    const aportesTab = document.getElementById('aportesTab');
+                    if (aportesTab && !aportesTab.classList.contains('hidden') && aportesTab.classList.contains('active')) {
+                        if (typeof window.renderAportesTable === 'function') {
+                            await window.renderAportesTable();
+                        }
+                    }
+                }
+            }
+
+            window.closeIngresoModal();
+            await window.renderIngresosTable();
+            
+            // Actualizar balance
+            if (typeof window.updateBalanceDisplay === 'function') {
+                await window.updateBalanceDisplay();
             }
 
             showNotification(
@@ -607,7 +649,7 @@
                 return;
             }
             
-            const ingreso = window.getItem('ingresos', id);
+            const ingreso = await window.getItem('ingresos', id);
             if (!ingreso) {
                 alert('Ingreso no encontrado');
                 return;
@@ -617,12 +659,12 @@
                 return;
             }
 
-            window.deleteItem('ingresos', id);
-            window.renderIngresosTable();
+            await window.deleteItem('ingresos', id);
+            await window.renderIngresosTable();
             
             // Actualizar balance
             if (typeof window.updateBalanceDisplay === 'function') {
-                window.updateBalanceDisplay();
+                await window.updateBalanceDisplay();
             }
             
             showNotification('Ingreso eliminado exitosamente', 'success');

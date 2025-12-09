@@ -75,33 +75,121 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// ============================================
-// TAB NAVIGATION
-// ============================================
+    // ============================================
+    // ADMIN PASSWORD PROTECTION
+    // ============================================
+    const ADMIN_PASSWORD = 'coop.2026';
 
-/**
- * Cambia entre tabs principales (Socios / Administración)
-     * Ahora es async
- */
-    window.switchTab = async function(tab) {
-    const sociosPanel = document.getElementById("panelSocios");
-    const adminPanel = document.getElementById("panelAdmin");
-    const tabSocios = document.getElementById("tabSocios");
-    const tabAdmin = document.getElementById("tabAdmin");
-
-    if (!sociosPanel || !adminPanel || !tabSocios || !tabAdmin) {
-            console.error("❌ Error: algún ID no existe en el DOM");
-        return;
+    /**
+     * Verifica si el usuario está autenticado en administración
+     */
+    function isAdminAuthenticated() {
+        return sessionStorage.getItem('adminAuth') === 'true';
     }
 
-    if (tab === "socios") {
-        sociosPanel.classList.remove("hidden");
-        sociosPanel.classList.add("active");
-        adminPanel.classList.add("hidden");
-        adminPanel.classList.remove("active");
-        tabSocios.classList.add("active");
-        tabAdmin.classList.remove("active");
+    /**
+     * Autentica al usuario para administración
+     */
+    function setAdminAuthenticated() {
+        sessionStorage.setItem('adminAuth', 'true');
+    }
+
+    /**
+     * Verifica la contraseña de administración
+     */
+    window.checkAdminPassword = function() {
+        const passwordInput = document.getElementById('adminPasswordInput');
+        const errorMsg = document.getElementById('adminPasswordError');
+        const adminModal = document.getElementById('adminLoginModal');
         
+        if (!passwordInput) {
+            alert('Error: Campo de contraseña no encontrado');
+            return;
+        }
+        
+        let enteredPassword = passwordInput.value.trim();
+        
+        console.log('🔐 Verificando contraseña de administración...');
+        console.log('🔑 Contraseña ingresada:', enteredPassword);
+        console.log('🔑 Contraseña esperada:', ADMIN_PASSWORD);
+        
+        if (enteredPassword === ADMIN_PASSWORD) {
+            console.log('✅ Contraseña de administración correcta');
+            
+            // Contraseña correcta
+            setAdminAuthenticated();
+            
+            // Ocultar modal
+            if (adminModal) {
+                adminModal.style.display = 'none';
+            }
+            
+            // Ahora sí permitir acceso a administración
+            if (typeof window.switchTab === 'function') {
+                window.switchTab('admin').catch(err => console.error('Error:', err));
+            }
+        } else {
+            console.log('❌ Contraseña de administración incorrecta');
+            
+            // Contraseña incorrecta
+            if (errorMsg) {
+                errorMsg.textContent = 'Contraseña incorrecta. Por favor, intenta nuevamente.';
+                errorMsg.style.display = 'block';
+            }
+            passwordInput.value = '';
+            passwordInput.focus();
+        }
+    };
+
+    /**
+     * Abre el modal de contraseña de administración
+     */
+    window.openAdminPasswordModal = function() {
+        const adminModal = document.getElementById('adminLoginModal');
+        const passwordInput = document.getElementById('adminPasswordInput');
+        const errorMsg = document.getElementById('adminPasswordError');
+        
+        if (adminModal) {
+            adminModal.style.display = 'flex';
+            if (errorMsg) {
+                errorMsg.style.display = 'none';
+                errorMsg.textContent = '';
+            }
+            setTimeout(() => {
+                if (passwordInput) {
+                    passwordInput.focus();
+                }
+            }, 300);
+        }
+    };
+
+    // ============================================
+    // TAB NAVIGATION
+    // ============================================
+
+    /**
+     * Cambia entre tabs principales (Socios / Administración)
+     * Ahora es async
+     */
+    window.switchTab = async function(tab) {
+        const sociosPanel = document.getElementById("panelSocios");
+        const adminPanel = document.getElementById("panelAdmin");
+        const tabSocios = document.getElementById("tabSocios");
+        const tabAdmin = document.getElementById("tabAdmin");
+
+        if (!sociosPanel || !adminPanel || !tabSocios || !tabAdmin) {
+            console.error("❌ Error: algún ID no existe en el DOM");
+            return;
+        }
+
+        if (tab === "socios") {
+            sociosPanel.classList.remove("hidden");
+            sociosPanel.classList.add("active");
+            adminPanel.classList.add("hidden");
+            adminPanel.classList.remove("active");
+            tabSocios.classList.add("active");
+            tabAdmin.classList.remove("active");
+            
             // Renderizar tabla de socios
             if (typeof renderSociosTable === 'function') {
                 renderSociosTable();
@@ -113,15 +201,26 @@ function showNotification(message, type = 'info') {
                     window.generateQRCode();
                 }
             }, 100);
-    }
+        }
 
-    if (tab === "admin") {
-        adminPanel.classList.remove("hidden");
-        adminPanel.classList.add("active");
-        sociosPanel.classList.add("hidden");
-        sociosPanel.classList.remove("active");
-        tabAdmin.classList.add("active");
-        tabSocios.classList.remove("active");
+        if (tab === "admin") {
+            // Verificar autenticación antes de permitir acceso
+            if (!isAdminAuthenticated()) {
+                // Si no está autenticado, mostrar modal de contraseña
+                if (typeof window.openAdminPasswordModal === 'function') {
+                    window.openAdminPasswordModal();
+                }
+                // No cambiar los tabs, mantener en Socios
+                return;
+            }
+            
+            // Si está autenticado, permitir acceso
+            adminPanel.classList.remove("hidden");
+            adminPanel.classList.add("active");
+            sociosPanel.classList.add("hidden");
+            sociosPanel.classList.remove("active");
+            tabAdmin.classList.add("active");
+            tabSocios.classList.remove("active");
         
             try {
                 // Renderizar tablas según el sub-tab activo

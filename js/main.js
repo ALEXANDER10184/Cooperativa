@@ -386,6 +386,34 @@ let currentEditId = null;
     };
 
     /**
+     * Limpia datos residuales si no hay registros visibles
+     */
+    window.limpiarDatosResiduales = async function() {
+        try {
+            const ingresos = await window.getAll('ingresos') || [];
+            const pagos = await window.getAll('pagos') || [];
+            const gastos = await window.getAll('gastos') || [];
+            const socios = await window.getAll('socios') || [];
+            
+            // Si hay datos pero no hay socios, puede haber datos residuales
+            const hayDatos = ingresos.length > 0 || pagos.length > 0 || gastos.length > 0;
+            
+            if (hayDatos && socios.length === 0) {
+                console.log('🧹 Limpiando datos residuales (hay datos pero no hay socios)...');
+                const db = await window.cargarDatos();
+                db.ingresos = [];
+                db.pagos = [];
+                db.gastos = [];
+                await window.guardarDatos(db);
+                console.log('✅ Datos residuales limpiados');
+                window.invalidateCache();
+            }
+        } catch (error) {
+            console.error('❌ Error al limpiar datos residuales:', error);
+        }
+    };
+
+    /**
      * Actualiza la visualización del balance en la página
      */
     window.updateBalanceDisplay = async function() {
@@ -491,6 +519,11 @@ function initDOMReferences() {
                 try {
                     await window.initDB();
                     console.log('✅ Base de datos inicializada desde JSONbin');
+                    
+                    // Intentar limpiar datos residuales
+                    if (typeof window.limpiarDatosResiduales === 'function') {
+                        await window.limpiarDatosResiduales();
+                    }
                 } catch (dbError) {
                     console.error('❌ Error al inicializar DB desde JSONbin:', dbError);
                     alert('Error al conectar con la base de datos. Por favor, verifica tu conexión a internet.');

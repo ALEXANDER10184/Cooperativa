@@ -130,8 +130,9 @@
                         window.renderAdminSociosTable();
                     }
                 } else {
-                    // Si no hay sub-tab activo, activar gastos por defecto
-                    window.switchAdminTab('gastos');
+                // Si no hay sub-tab activo, activar gastos por defecto
+                const defaultTab = 'gastos';
+                window.switchAdminTab(defaultTab);
                 }
                 
                 // Siempre cargar selector de socios (necesario para pagos)
@@ -176,12 +177,18 @@
 
         // Renderizar contenido según el tab seleccionado
         if (subTabName === 'pagos') {
+            if (typeof window.loadSociosSelector === 'function') {
+                window.loadSociosSelector();
+            }
             if (typeof window.renderPagosTable === 'function') {
                 window.renderPagosTable();
             }
         } else if (subTabName === 'socios') {
+            console.log('📋 Renderizando tabla de administración de socios...');
             if (typeof window.renderAdminSociosTable === 'function') {
                 window.renderAdminSociosTable();
+            } else {
+                console.error('❌ renderAdminSociosTable no está disponible');
             }
         } else if (subTabName === 'gastos') {
             if (typeof window.renderGastosTable === 'function') {

@@ -553,8 +553,8 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Gestión de Socios</h2>
-                        <button class="btn btn-primary" id="addSocioBtn" onclick="try{window.openAddModal();}catch(e){alert('Error: '+e.message);}">
-                            <span class="material-icons-round">add</span>
+                        <button class="btn btn-primary" id="addSocioBtn" onclick="try{window.navigateTo('registro.html');}catch(e){window.location.href='registro.html';}">
+                            <span class="material-icons-round">person_add</span>
                             Agregar Socio
                         </button>
                     </div>

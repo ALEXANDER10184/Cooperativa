@@ -359,11 +359,10 @@
             addSocioBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 console.log('🔵 Click en Agregar Socio');
-                if (typeof window.openAddModal === 'function') {
-                    window.openAddModal();
+                if (typeof window.navigateTo === 'function') {
+                    window.navigateTo('registro.html');
                 } else {
-                    console.error('❌ window.openAddModal no está disponible');
-                    alert('Error: función no disponible. Por favor recarga la página.');
+                    window.location.href = 'registro.html';
                 }
             });
             console.log('✅ Listener agregado a botón "Agregar Socio"');

@@ -320,6 +320,12 @@
 
             window.closeGastoModal();
             window.renderGastosTable();
+            
+            // Actualizar balance
+            if (typeof window.updateBalanceDisplay === 'function') {
+                window.updateBalanceDisplay();
+            }
+            
             showNotification(
                 currentEditGastoId ? 'Gasto actualizado exitosamente' : 'Gasto agregado exitosamente',
                 'success'
@@ -349,6 +355,12 @@
 
             window.deleteItem('gastos', id);
             window.renderGastosTable();
+            
+            // Actualizar balance
+            if (typeof window.updateBalanceDisplay === 'function') {
+                window.updateBalanceDisplay();
+            }
+            
             showNotification('Gasto eliminado exitosamente', 'success');
         } catch (error) {
             console.error('❌ Error al eliminar gasto:', error);
@@ -548,6 +560,12 @@
 
             window.deleteItem('ingresos', id);
             window.renderIngresosTable();
+            
+            // Actualizar balance
+            if (typeof window.updateBalanceDisplay === 'function') {
+                window.updateBalanceDisplay();
+            }
+            
             showNotification('Ingreso eliminado exitosamente', 'success');
         } catch (error) {
             console.error('❌ Error al eliminar ingreso:', error);
@@ -779,13 +797,40 @@
             if (currentEditPagoId) {
                 window.updateItem('pagos', currentEditPagoId, pagoData);
             } else {
-                window.addItem('pagos', pagoData);
+                // Agregar pago
+                const pagoCreado = window.addItem('pagos', pagoData);
+                
+                // Crear ingreso automáticamente cuando se registra un pago nuevo
+                const socio = window.getItem('socios', socioId);
+                const nombreSocio = socio ? `${socio.nombre} ${socio.apellido}` : 'Socio';
+                
+                const ingresoData = {
+                    fecha: fecha,
+                    concepto: `Pago de ${nombreSocio} - ${concepto}`,
+                    monto: monto,
+                    origen: 'pago_socio',
+                    pagoId: pagoCreado.id // Referencia al pago original usando el ID del pago creado
+                };
+                
+                window.addItem('ingresos', ingresoData);
+                console.log('✅ Ingreso creado automáticamente desde pago');
             }
 
             window.closePagoModal();
             window.renderPagosTable();
+            
+            // Actualizar tabla de ingresos si está visible
+            if (typeof window.renderIngresosTable === 'function') {
+                window.renderIngresosTable();
+            }
+            
+            // Actualizar balance
+            if (typeof window.updateBalanceDisplay === 'function') {
+                window.updateBalanceDisplay();
+            }
+            
             showNotification(
-                currentEditPagoId ? 'Pago actualizado exitosamente' : 'Pago registrado exitosamente',
+                currentEditPagoId ? 'Pago actualizado exitosamente' : 'Pago registrado exitosamente. Ingreso creado automáticamente.',
                 'success'
             );
         } catch (error) {
@@ -811,8 +856,27 @@
                 return;
             }
 
+            // Si el pago tenía un ingreso asociado, eliminarlo también
+            const ingresos = window.getAll('ingresos');
+            const ingresoRelacionado = ingresos.find(ing => ing.pagoId === id);
+            if (ingresoRelacionado) {
+                window.deleteItem('ingresos', ingresoRelacionado.id);
+                console.log('✅ Ingreso relacionado eliminado');
+            }
+            
             window.deleteItem('pagos', id);
             window.renderPagosTable();
+            
+            // Actualizar tabla de ingresos
+            if (typeof window.renderIngresosTable === 'function') {
+                window.renderIngresosTable();
+            }
+            
+            // Actualizar balance
+            if (typeof window.updateBalanceDisplay === 'function') {
+                window.updateBalanceDisplay();
+            }
+            
             showNotification('Pago eliminado exitosamente', 'success');
         } catch (error) {
             console.error('❌ Error al eliminar pago:', error);

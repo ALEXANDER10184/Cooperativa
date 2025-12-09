@@ -135,6 +135,41 @@
         window.location.href = url;
     };
 
+    /**
+     * Actualiza la visualización del balance en la página
+     */
+    window.updateBalanceDisplay = function() {
+        try {
+            const balance = window.calculateBalance();
+            
+            const ingresosDisplay = document.getElementById('balanceIngresos');
+            const gastosDisplay = document.getElementById('balanceGastos');
+            const balanceDisplay = document.getElementById('balanceActual');
+            
+            if (ingresosDisplay) {
+                ingresosDisplay.textContent = window.formatCurrency(balance.totalIncome);
+            }
+            
+            if (gastosDisplay) {
+                gastosDisplay.textContent = window.formatCurrency(balance.totalExpenses);
+            }
+            
+            if (balanceDisplay) {
+                balanceDisplay.textContent = window.formatCurrency(balance.balance);
+                // Cambiar color según si es positivo o negativo
+                if (balance.balance >= 0) {
+                    balanceDisplay.style.color = '#10b981';
+                } else {
+                    balanceDisplay.style.color = '#ef4444';
+                }
+            }
+            
+            console.log('✅ Balance actualizado:', balance);
+        } catch (error) {
+            console.error('❌ Error al actualizar balance:', error);
+        }
+    };
+
     // ============================================
     // INITIALIZATION
     // ============================================
@@ -223,6 +258,11 @@
             }
             if (typeof window.loadSociosSelector === 'function') {
                 window.loadSociosSelector();
+            }
+            
+            // Actualizar balance inicial
+            if (typeof window.updateBalanceDisplay === 'function') {
+                window.updateBalanceDisplay();
             }
             
             console.log('✅ Aplicación inicializada correctamente');

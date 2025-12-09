@@ -245,6 +245,7 @@ let currentEditId = null;
     window.calculateBalance = async function() {
         try {
             if (typeof window.getAll !== 'function') {
+                console.warn('⚠️ window.getAll no está disponible');
                 return {
                     totalIncome: 0,
                     totalExpenses: 0,
@@ -253,36 +254,50 @@ let currentEditId = null;
             }
             
             // Obtener ingresos directos
-            const ingresos = await window.getAll('ingresos');
+            const ingresos = await window.getAll('ingresos') || [];
+            console.log('📊 Ingresos encontrados:', ingresos.length, ingresos);
             const totalIngresosDirectos = ingresos.reduce((sum, ingreso) => {
-                return sum + (parseFloat(ingreso.monto) || 0);
+                const monto = parseFloat(ingreso?.monto) || 0;
+                return sum + monto;
             }, 0);
             
             // Obtener pagos de socios y sumarlos a los ingresos
-            const pagos = await window.getAll('pagos');
+            const pagos = await window.getAll('pagos') || [];
+            console.log('📊 Pagos encontrados:', pagos.length, pagos);
             const totalPagosSocios = pagos.reduce((sum, pago) => {
-                return sum + (parseFloat(pago.monto) || 0);
+                const monto = parseFloat(pago?.monto) || 0;
+                return sum + monto;
             }, 0);
             
             // Los ingresos totales son: ingresos directos + pagos de socios
             const totalIncome = totalIngresosDirectos + totalPagosSocios;
             
             // Obtener gastos
-            const gastos = await window.getAll('gastos');
+            const gastos = await window.getAll('gastos') || [];
+            console.log('📊 Gastos encontrados:', gastos.length, gastos);
             const totalExpenses = gastos.reduce((sum, gasto) => {
-                return sum + (parseFloat(gasto.monto) || 0);
+                const monto = parseFloat(gasto?.monto) || 0;
+                return sum + monto;
             }, 0);
             
             // Calcular balance (ingresos totales - gastos)
             const balance = totalIncome - totalExpenses;
             
             console.log('💰 Balance calculado:', {
+                numIngresos: ingresos.length,
                 ingresosDirectos: totalIngresosDirectos,
+                numPagos: pagos.length,
                 pagosSocios: totalPagosSocios,
                 ingresosTotales: totalIncome,
+                numGastos: gastos.length,
                 gastos: totalExpenses,
                 balance: balance
             });
+            
+            // Si hay balance pero no debería haber registros visibles, mostrar advertencia
+            if (balance !== 0 && ingresos.length === 0 && pagos.length === 0 && gastos.length === 0) {
+                console.warn('⚠️ ADVERTENCIA: Hay un balance de', balance, 'pero no hay registros. Puede haber datos residuales en la base de datos.');
+            }
             
             return {
                 totalIncome,

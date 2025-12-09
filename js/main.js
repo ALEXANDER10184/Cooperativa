@@ -41,12 +41,21 @@
         
         const enteredPassword = passwordInput.value.trim();
         
+        console.log('🔐 Verificando contraseña...');
+        console.log('🔑 Contraseña ingresada:', enteredPassword);
+        console.log('🔑 Contraseña esperada:', APP_PASSWORD);
+        console.log('🔍 Comparación:', enteredPassword === APP_PASSWORD);
+        
+        // Comparación directa (sin normalizar para mayor seguridad)
         if (enteredPassword === APP_PASSWORD) {
+            console.log('✅ Contraseña correcta - Autenticando...');
+            
             // Contraseña correcta
             authenticateApp();
             
             // Ocultar modal de login
             if (loginModal) {
+                loginModal.style.display = 'none';
                 loginModal.remove();
             }
             
@@ -62,9 +71,11 @@
                 }, 100);
             }
         } else {
+            console.log('❌ Contraseña incorrecta');
+            
             // Contraseña incorrecta
             if (errorMsg) {
-                errorMsg.textContent = 'Contraseña incorrecta';
+                errorMsg.textContent = 'Contraseña incorrecta. Por favor, intenta nuevamente.';
                 errorMsg.style.display = 'block';
             }
             passwordInput.value = '';

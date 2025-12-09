@@ -491,7 +491,7 @@
             <button class="tab-btn active" id="tabSocios" onclick="if(typeof window.switchTab==='function'){window.switchTab('socios').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
                 <span class="material-icons-round">people</span> Socios
             </button>
-            <button class="tab-btn" id="tabAdmin" onclick="if(typeof window.switchTab==='function'){window.switchTab('admin').catch(e=>{console.error('Error:',e);});}">
+            <button class="tab-btn" id="tabAdmin" onclick="if(typeof window.isAdminAuthenticated==='function'&&window.isAdminAuthenticated()){if(typeof window.switchTab==='function'){window.switchTab('admin').catch(e=>{console.error('Error:',e);});}}else{if(typeof window.openAdminPasswordModal==='function'){window.openAdminPasswordModal();}}">
                 <span class="material-icons-round">admin_panel_settings</span> Administración
             </button>
         </div>

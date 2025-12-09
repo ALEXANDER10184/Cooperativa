@@ -225,9 +225,11 @@
             // Verificar autenticación antes de permitir acceso
             if (!isAdminAuthenticated()) {
                 // Si no está autenticado, mostrar modal de contraseña y NO permitir acceso aún
-                window.openAdminPasswordModal();
+                if (typeof window.openAdminPasswordModal === 'function') {
+                    window.openAdminPasswordModal();
+                }
                 // No cambiar los tabs, mantener en Socios
-                return false;
+                return;
             }
             
             // Si está autenticado, permitir acceso

@@ -1102,42 +1102,52 @@
                 return;
             }
 
+            // Primero calcular estadísticas para TODOS los socios (sin filtro)
             let totalEsperado = 0;
             let totalPagado = 0;
             let totalPendiente = 0;
             let aportesPagados = 0;
-            let sociosMostrados = 0;
 
-            // Procesar cada socio
+            // Calcular estadísticas totales (todos los socios)
             for (const socio of socios) {
                 if (socio.estado === 'Inactivo' || socio.estado === 'inactivo') continue;
                 
                 const cuotaMensual = parseFloat(socio.cuotaMensual || 0);
                 if (cuotaMensual === 0) continue;
                 
-                let aporte = await obtenerAporteMensual(socio.id, mesAno);
+                totalEsperado += cuotaMensual;
+                
+                const aporte = await obtenerAporteMensual(socio.id, mesAno);
+                if (aporte && aporte.estado === 'pagado') {
+                    totalPagado += cuotaMensual;
+                    aportesPagados++;
+                } else {
+                    totalPendiente += cuotaMensual;
+                }
+            }
+
+            // Ahora renderizar solo los socios que cumplen el filtro
+            let sociosMostrados = 0;
+
+            for (const socio of socios) {
+                if (socio.estado === 'Inactivo' || socio.estado === 'inactivo') continue;
+                
+                const cuotaMensual = parseFloat(socio.cuotaMensual || 0);
+                if (cuotaMensual === 0) continue;
+                
+                const aporte = await obtenerAporteMensual(socio.id, mesAno);
                 const estadoAporte = aporte && aporte.estado === 'pagado' ? 'pagado' : 'pendiente';
                 
-                // Aplicar filtro
+                // Aplicar filtro - solo mostrar si cumple
                 if (filtro === 'pagados' && estadoAporte !== 'pagado') {
-                    // No mostrar este socio si el filtro es "pagados" y no está pagado
-                    // Pero sí contarlo para las estadísticas totales
-                    totalEsperado += cuotaMensual;
-                    totalPendiente += cuotaMensual;
-                    continue;
+                    continue; // No mostrar este socio
                 }
                 
                 if (filtro === 'pendientes' && estadoAporte === 'pagado') {
-                    // No mostrar este socio si el filtro es "pendientes" y está pagado
-                    // Pero sí contarlo para las estadísticas totales
-                    totalEsperado += cuotaMensual;
-                    totalPagado += cuotaMensual;
-                    aportesPagados++;
-                    continue;
+                    continue; // No mostrar este socio
                 }
                 
-                // Si llegamos aquí, el socio debe mostrarse según el filtro
-                totalEsperado += cuotaMensual;
+                // Si llegamos aquí, el socio debe mostrarse
                 sociosMostrados++;
                 
                 const row = document.createElement('tr');
@@ -1148,13 +1158,6 @@
                 const fechaPagoTexto = aporte && aporte.fechaPago 
                     ? new Date(aporte.fechaPago).toLocaleDateString('es-ES')
                     : '-';
-                
-                if (estadoAporte === 'pagado') {
-                    totalPagado += cuotaMensual;
-                    aportesPagados++;
-                } else {
-                    totalPendiente += cuotaMensual;
-                }
 
                 row.innerHTML = `
                     <td>${escapeHtml(socio.nombre || '')} ${escapeHtml(socio.apellido || '')}</td>

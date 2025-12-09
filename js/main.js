@@ -52,14 +52,20 @@
         console.log('🔑 Contraseña esperada:', ACCESS_PASSWORD);
         console.log('🔍 Comparación:', password === ACCESS_PASSWORD);
         
-        if (password === ACCESS_PASSWORD) {
+        // Normalizar contraseñas para comparación (sin espacios, minúsculas)
+        const normalizedPassword = password.toLowerCase().trim();
+        const normalizedAccessPassword = ACCESS_PASSWORD.toLowerCase().trim();
+        
+        if (normalizedPassword === normalizedAccessPassword) {
             console.log('✅ Contraseña correcta - Autenticando...');
             setAuthenticated();
             
             // Ocultar modal con múltiples métodos
             if (modal) {
-                modal.style.display = 'none';
+                modal.style.display = 'none !important';
+                modal.style.visibility = 'hidden';
                 modal.classList.add('hidden');
+                modal.setAttribute('style', 'display: none !important; visibility: hidden !important;');
                 console.log('✅ Modal ocultado');
             } else {
                 console.error('❌ Modal no encontrado para ocultar');
@@ -69,6 +75,7 @@
             if (mainContent) {
                 mainContent.style.display = 'block';
                 mainContent.style.visibility = 'visible';
+                mainContent.setAttribute('style', 'display: block !important; visibility: visible !important;');
                 console.log('✅ Contenido principal mostrado');
             } else {
                 console.error('❌ mainContent no encontrado para mostrar');

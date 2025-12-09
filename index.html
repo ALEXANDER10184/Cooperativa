@@ -538,6 +538,45 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Gestión de Socios</h2>
+                        <button class="btn btn-primary" id="addSocioBtn" onclick="try{window.openAddModal();}catch(e){alert('Error: '+e.message);}">
+                            <span class="material-icons-round">add</span>
+                            Agregar Socio
+                        </button>
+                    </div>
+
+                    <!-- Tabla de Socios Completa (solo en Admin) -->
+                    <div class="table-container">
+                        <table id="adminSociosTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Email</th>
+                                    <th>Teléfono</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminSociosTableBody">
+                                <tr>
+                                    <td colspan="7" class="empty-state">
+                                        <div class="empty-state-icon">📋</div>
+                                        <p>No hay socios registrados</p>
+                                        <p style="font-size: 0.875rem; margin-top: 0.5rem;">Haz clic en "Agregar Socio" para comenzar</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub-tab: Gestión de Socios (Admin) -->
+            <div id="sociosTab" class="sub-tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Gestión de Socios</h2>
                     <button class="btn btn-primary" id="addSocioBtn" onclick="try{window.openAddModal();}catch(e){alert('Error: '+e.message);}">
                         <span class="material-icons-round">add</span>
                         Agregar Socio

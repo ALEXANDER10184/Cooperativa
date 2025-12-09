@@ -119,14 +119,19 @@
                         window.renderGastosTable();
                     } else if (subTabName === 'ingresos' && typeof window.renderIngresosTable === 'function') {
                         window.renderIngresosTable();
-                    } else if (subTabName === 'pagos' && typeof window.loadSociosSelector === 'function') {
-                        window.loadSociosSelector();
+                    } else if (subTabName === 'pagos') {
+                        if (typeof window.loadSociosSelector === 'function') {
+                            window.loadSociosSelector();
+                        }
                         if (typeof window.renderPagosTable === 'function') {
                             window.renderPagosTable();
                         }
                     } else if (subTabName === 'socios' && typeof window.renderAdminSociosTable === 'function') {
                         window.renderAdminSociosTable();
                     }
+                } else {
+                    // Si no hay sub-tab activo, activar gastos por defecto
+                    window.switchAdminTab('gastos');
                 }
                 
                 // Siempre cargar selector de socios (necesario para pagos)

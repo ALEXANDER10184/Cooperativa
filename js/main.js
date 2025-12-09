@@ -1410,16 +1410,24 @@
     // Inicializar cuando el DOM esté listo
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('📄 DOM cargado, iniciando aplicación...');
+            console.log('📄 DOM cargado, verificando autenticación...');
+            checkAuthenticationOnLoad();
+            // Solo inicializar UI si está autenticado
+            if (isAuthenticated()) {
+                initUI().catch(error => {
+                    console.error('❌ Error fatal en inicialización:', error);
+                });
+            }
+        });
+    } else {
+        console.log('📄 DOM ya está listo, verificando autenticación...');
+        checkAuthenticationOnLoad();
+        // Solo inicializar UI si está autenticado
+        if (isAuthenticated()) {
             initUI().catch(error => {
                 console.error('❌ Error fatal en inicialización:', error);
             });
-        });
-    } else {
-        console.log('📄 DOM ya está listo, iniciando aplicación...');
-        initUI().catch(error => {
-            console.error('❌ Error fatal en inicialización:', error);
-        });
+        }
     }
 
     console.log('✅ Módulo main.js cargado');

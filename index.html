@@ -973,13 +973,13 @@
     </div>
 
     <!-- Modal: Contraseña Administración -->
-    <div id="adminPasswordModal" class="modal">
+    <div id="adminPasswordModal" class="modal hidden">
         <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header">
                 <h2 class="modal-title">Acceso Administración</h2>
                 <button type="button" class="btn-close" onclick="window.closeAdminPasswordModal();">×</button>
             </div>
-            <form id="adminPasswordForm" onsubmit="event.preventDefault(); window.checkAdminPassword();">
+            <form id="adminPasswordForm" onsubmit="event.preventDefault(); if(typeof window.checkAdminPassword==='function'){window.checkAdminPassword();}">
                 <div class="form-group">
                     <label class="form-label">Contraseña</label>
                     <input type="password" id="adminPasswordInput" class="form-input" placeholder="Ingresa la contraseña" required autofocus>

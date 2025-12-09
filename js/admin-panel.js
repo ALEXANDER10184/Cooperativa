@@ -110,14 +110,28 @@
         const passwordInput = document.getElementById('adminPasswordInput');
         const errorDiv = document.getElementById('adminPasswordError');
         
-        if (modal && passwordInput) {
-            passwordInput.value = '';
-            if (errorDiv) {
-                errorDiv.style.display = 'none';
-            }
-            modal.classList.remove('hidden');
-            setTimeout(() => passwordInput.focus(), 100);
+        if (!modal) {
+            console.error('❌ Modal de contraseña no encontrado');
+            return;
         }
+        
+        if (passwordInput) {
+            passwordInput.value = '';
+        }
+        
+        if (errorDiv) {
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+        }
+        
+        modal.classList.remove('hidden');
+        
+        // Focus en el input después de que el modal sea visible
+        setTimeout(() => {
+            if (passwordInput) {
+                passwordInput.focus();
+            }
+        }, 200);
     };
 
     /**

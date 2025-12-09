@@ -469,7 +469,7 @@
                 </div>
                 <div id="accessPasswordError" style="color: #ef4444; font-size: 0.875rem; margin-bottom: 1rem; display: none;"></div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); try{window.checkAccessPassword();}catch(e){alert('Error: '+e.message);}">Acceder</button>
+                    <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); event.stopPropagation(); try{if(typeof window.checkAccessPassword==='function'){window.checkAccessPassword();}else{alert('Función no disponible. Recarga la página.');}}catch(e){alert('Error: '+e.message);console.error(e);}return false;">Acceder</button>
                 </div>
             </form>
         </div>

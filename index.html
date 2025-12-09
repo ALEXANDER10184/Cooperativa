@@ -715,6 +715,10 @@
                                     <option value="pendientes">Falta por Pagar</option>
                                 </select>
                             </div>
+                            <button class="btn btn-primary" id="registrarPagoAporteBtn" onclick="if(typeof window.openRegistrarPagoDesdeAporte==='function'){window.openRegistrarPagoDesdeAporte().catch(e=>{console.error('Error:',e);alert('Error al abrir formulario de pago.');});}">
+                                <span class="material-icons-round">payment</span>
+                                Registrar Pago
+                            </button>
                         </div>
                     </div>
 

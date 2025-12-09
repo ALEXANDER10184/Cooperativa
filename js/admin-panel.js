@@ -859,9 +859,15 @@
                 await window.addItem('ingresos', ingresoData);
                 console.log('✅ Ingreso creado automáticamente desde pago');
                 
-                // Verificar si este pago corresponde a un aporte mensual
+                // Verificar si este pago corresponde a un aporte mensual y marcarlo
                 if (typeof window.verificarPagoComoAporte === 'function') {
                     await window.verificarPagoComoAporte(socioId, monto, fecha);
+                    
+                    // Si estamos en el tab de aportes, recargar la tabla
+                    const aportesTab = document.getElementById('aportesTab');
+                    if (aportesTab && !aportesTab.classList.contains('hidden') && aportesTab.classList.contains('active')) {
+                        await window.renderAportesTable();
+                    }
                 }
             }
 
@@ -1171,8 +1177,11 @@
                                 ? `<button class="btn-icon btn-icon-edit" onclick="window.marcarAportePendiente('${aporte.id}')" title="Marcar como Pendiente">
                                     <span class="material-icons-round">undo</span>
                                    </button>`
-                                : `<button class="btn-icon btn-icon-edit" onclick="window.marcarAportePagado('${socio.id}', '${mesAno}')" title="Marcar como Pagado">
+                                : `<button class="btn-icon btn-icon-edit" onclick="window.marcarAportePagado('${socio.id}', '${mesAno}')" title="Marcar como Pagado (sin registro de pago)">
                                     <span class="material-icons-round">check_circle</span>
+                                   </button>
+                                   <button class="btn-icon" style="background: #10b981; color: white;" onclick="window.openRegistrarPagoDesdeAporte('${socio.id}', ${cuotaMensual}).catch(e=>{console.error('Error:',e);alert('Error al abrir formulario.');});" title="Registrar Pago">
+                                    <span class="material-icons-round">payment</span>
                                    </button>`
                             }
                         </div>
@@ -1299,6 +1308,67 @@
         } catch (error) {
             console.error('❌ Error al marcar aporte como pendiente:', error);
             alert('Error al cambiar el estado del aporte. Por favor, intenta nuevamente.');
+        }
+    };
+
+    /**
+     * Abre el modal de registro de pago desde el seguimiento de aportes
+     */
+    window.openRegistrarPagoDesdeAporte = async function(socioId = null, montoPredefinido = null) {
+        try {
+            currentEditPagoId = null;
+            const modal = document.getElementById('pagoModal');
+            const form = document.getElementById('pagoForm');
+            const title = document.getElementById('pagoModalTitle');
+
+            if (!modal || !form || !title) {
+                console.error('❌ Elementos del modal de pago no encontrados');
+                return;
+            }
+
+            form.reset();
+            
+            // Cargar selector de socios
+            if (typeof window.loadSociosSelector === 'function') {
+                await window.loadSociosSelector();
+            }
+            
+            const selector = document.getElementById('pagoSocioId');
+            const fechaInput = document.getElementById('pagoFecha');
+            const montoInput = document.getElementById('pagoMonto');
+            const conceptoInput = document.getElementById('pagoConcepto');
+
+            // Si se pasa un socioId, seleccionarlo
+            if (socioId && selector) {
+                selector.value = socioId;
+            }
+
+            // Establecer fecha actual
+            if (fechaInput) {
+                const today = new Date().toISOString().split('T')[0];
+                fechaInput.value = today;
+            }
+
+            // Si hay monto predefinido (cuota mensual), establecerlo
+            if (montoPredefinido && montoInput) {
+                montoInput.value = montoPredefinido;
+            }
+
+            // Si hay socio seleccionado y mes seleccionado, establecer concepto
+            if (socioId && conceptoInput) {
+                const mesAno = getMesAnoSeleccionado();
+                const [ano, mes] = mesAno.split('-');
+                const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                              'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                const nombreMes = meses[parseInt(mes) - 1];
+                conceptoInput.value = `Aporte mensual ${nombreMes} ${ano}`;
+            }
+
+            title.textContent = 'Registrar Pago de Aporte';
+            modal.classList.remove('hidden');
+        } catch (error) {
+            console.error('❌ Error al abrir modal de pago desde aportes:', error);
+            alert('Error al abrir el formulario de pago');
         }
     };
 

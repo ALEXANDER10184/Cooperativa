@@ -172,7 +172,7 @@
                         e.stopPropagation();
                         console.log('🔵 Submit del formulario');
                         if (typeof window.checkAppPassword === 'function') {
-                            window.checkAppPassword();
+                            window.checkAppPassword(false);
                         } else {
                             console.error('❌ Función checkAppPassword no disponible');
                             alert('Error: Función no disponible. Por favor recarga la página.');

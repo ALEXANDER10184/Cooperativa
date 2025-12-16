@@ -816,6 +816,79 @@ tbody tr:last-child td {
   }
 }
 
+/* ============================================
+   QR CARD - GLASSMORPHISM ELEGANTE
+   ============================================ */
+.qr-card-container {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.qr-code-glass {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.qr-code-glass:hover {
+  transform: scale(1.02) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 
+              0 0 0 1px rgba(255, 255, 255, 0.2) inset !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.qr-message-card {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.qr-message-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.qr-message-card:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5), 
+              0 0 0 1px rgba(255, 255, 255, 0.12) inset !important;
+  transform: translateY(-2px);
+}
+
+.qr-message-card:hover::before {
+  opacity: 1;
+}
+
+.qr-icon-elegant {
+  transition: all 0.3s ease;
+}
+
+.qr-message-card:hover .qr-icon-elegant {
+  transform: scale(1.05);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4)) !important;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .qr-code-glass {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    margin-bottom: 1rem;
+  }
+  
+  .qr-message-card {
+    padding-left: 2.5rem !important;
+    padding-top: 200px !important;
+  }
+}
+
 .text-primary {
   color: var(--color-primary) !important;
 }

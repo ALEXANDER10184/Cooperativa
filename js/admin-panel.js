@@ -136,11 +136,19 @@ function showNotification(message, type = 'info') {
             // Ocultar modal
             if (adminModal) {
                 adminModal.style.display = 'none';
+                adminModal.classList.add('hidden');
+            }
+            
+            // Limpiar campo de contraseña
+            if (passwordInput) {
+                passwordInput.value = '';
             }
             
             // Ahora sí permitir acceso a administración
             if (typeof window.switchTab === 'function') {
                 window.switchTab('admin').catch(err => console.error('Error:', err));
+            } else {
+                console.error('❌ switchTab no está disponible');
             }
         } else {
             console.log('❌ Contraseña de administración incorrecta');

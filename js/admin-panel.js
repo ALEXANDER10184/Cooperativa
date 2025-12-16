@@ -94,6 +94,9 @@ function showNotification(message, type = 'info') {
         sessionStorage.setItem('adminAuth', 'true');
     }
 
+    // Exponer función globalmente
+    window.setAdminAuthenticated = setAdminAuthenticated;
+
     /**
      * Verifica la contraseña de administración
      */

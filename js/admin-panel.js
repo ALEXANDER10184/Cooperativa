@@ -78,7 +78,7 @@ function showNotification(message, type = 'info') {
     // ============================================
     // ADMIN PASSWORD PROTECTION
     // ============================================
-    const ADMIN_PASSWORD = 'coop.2026';
+    const ADMIN_PASSWORD = 'coopmiesperanza';
 
     /**
      * Verifica si el usuario está autenticado en administración
@@ -111,12 +111,18 @@ function showNotification(message, type = 'info') {
         }
         
         let enteredPassword = passwordInput.value.trim();
+        // Limpiar espacios en medio también
+        enteredPassword = enteredPassword.replace(/\s+/g, '');
         
         console.log('🔐 Verificando contraseña de administración...');
-        console.log('🔑 Contraseña ingresada:', enteredPassword);
+        console.log('🔑 Contraseña ingresada (raw):', passwordInput.value);
+        console.log('🔑 Contraseña ingresada (limpia):', enteredPassword);
         console.log('🔑 Contraseña esperada:', ADMIN_PASSWORD);
         
-        if (enteredPassword === ADMIN_PASSWORD) {
+        // Comparación flexible (mayúsculas/minúsculas)
+        const isCorrectPassword = enteredPassword === ADMIN_PASSWORD || enteredPassword.toLowerCase() === ADMIN_PASSWORD.toLowerCase();
+        
+        if (isCorrectPassword) {
             console.log('✅ Contraseña de administración correcta');
             
             // Contraseña correcta

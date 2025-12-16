@@ -390,7 +390,7 @@ async function handleSubmit(event) {
             // Fallback a alert si no se encuentra el modal
             const mensajeExito = `¡Registro completado con éxito! ✔️\n\n` +
                 `Para acceder a la aplicación, utiliza la siguiente contraseña:\n\n` +
-                `🔑 Contraseña: coopmiesperanza\n\n` +
+                `🔑 Contraseña: miesperanza\n\n` +
                 `Serás redirigido a la página de acceso en unos segundos...`;
             alert(mensajeExito);
             setTimeout(() => {

@@ -143,7 +143,7 @@
                         if (e.key === 'Enter') {
                             e.preventDefault();
                             if (typeof window.checkAppPassword === 'function') {
-                                window.checkAppPassword();
+                                window.checkAppPassword(false);
                             } else {
                                 console.error('❌ Función checkAppPassword no disponible');
                             }
@@ -157,7 +157,7 @@
                         e.stopPropagation();
                         console.log('🔵 Click en botón Acceder');
                         if (typeof window.checkAppPassword === 'function') {
-                            window.checkAppPassword();
+                            window.checkAppPassword(false);
                         } else {
                             console.error('❌ Función checkAppPassword no disponible');
                             alert('Error: Función no disponible. Por favor recarga la página.');

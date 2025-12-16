@@ -84,8 +84,13 @@ function showNotification(message, type = 'info') {
      * Verifica si el usuario está autenticado en administración
      */
     function isAdminAuthenticated() {
-        return sessionStorage.getItem('adminAuth') === 'true';
+        const auth = sessionStorage.getItem('adminAuth') === 'true';
+        console.log('🔍 Verificando autenticación admin:', auth);
+        return auth;
     }
+    
+    // Exponer función globalmente para debugging
+    window.isAdminAuthenticated = isAdminAuthenticated;
 
     /**
      * Autentica al usuario para administración
@@ -158,17 +163,33 @@ function showNotification(message, type = 'info') {
         const passwordInput = document.getElementById('adminPasswordInput');
         const errorMsg = document.getElementById('adminPasswordError');
         
+        console.log('🔐 Abriendo modal de administración...');
+        console.log('🔍 Modal encontrado:', !!adminModal);
+        
         if (adminModal) {
+            // Remover clase hidden si existe
+            adminModal.classList.remove('hidden');
+            // Forzar display
             adminModal.style.display = 'flex';
+            adminModal.style.visibility = 'visible';
+            adminModal.style.zIndex = '99998';
+            
             if (errorMsg) {
                 errorMsg.style.display = 'none';
                 errorMsg.textContent = '';
             }
+            
             setTimeout(() => {
                 if (passwordInput) {
+                    passwordInput.value = '';
                     passwordInput.focus();
                 }
             }, 300);
+            
+            console.log('✅ Modal de administración abierto');
+        } else {
+            console.error('❌ Modal de administración no encontrado');
+            alert('Error: No se pudo abrir el modal de administración. Por favor recarga la página.');
         }
     };
 
@@ -213,15 +234,24 @@ function showNotification(message, type = 'info') {
         }
 
         if (tab === "admin") {
+            console.log('🔐 Intentando acceder a administración...');
+            console.log('🔑 Autenticado como admin:', isAdminAuthenticated());
+            
             // Verificar autenticación antes de permitir acceso
             if (!isAdminAuthenticated()) {
+                console.log('⚠️ No autenticado como admin, abriendo modal...');
                 // Si no está autenticado, mostrar modal de contraseña
                 if (typeof window.openAdminPasswordModal === 'function') {
                     window.openAdminPasswordModal();
+                } else {
+                    console.error('❌ openAdminPasswordModal no está disponible');
+                    alert('Error: Función de autenticación no disponible. Por favor recarga la página.');
                 }
                 // No cambiar los tabs, mantener en Socios
                 return;
             }
+            
+            console.log('✅ Autenticado como admin, permitiendo acceso...');
             
             // Si está autenticado, permitir acceso
             adminPanel.classList.remove("hidden");

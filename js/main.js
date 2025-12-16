@@ -361,7 +361,10 @@
         img.style.width = '150px';
         img.style.height = '150px';
         img.style.display = 'block';
-        img.style.borderRadius = '8px';
+        img.style.borderRadius = '12px';
+        img.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1) inset';
+        img.style.background = 'white';
+        img.style.padding = '8px';
 
         img.onload = function () {
             console.log('✅ QR generado');

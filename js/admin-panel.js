@@ -135,7 +135,7 @@ function showNotification(message, type = 'info') {
             
             // Ocultar modal
             if (adminModal) {
-                adminModal.style.display = 'none';
+                adminModal.style.setProperty('display', 'none', 'important');
                 adminModal.classList.add('hidden');
             }
             
@@ -175,12 +175,12 @@ function showNotification(message, type = 'info') {
         console.log('🔍 Modal encontrado:', !!adminModal);
         
         if (adminModal) {
-            // Remover clase hidden si existe
+            // Remover clase hidden si existe (tiene !important, así que necesitamos usar style)
             adminModal.classList.remove('hidden');
-            // Forzar display
-            adminModal.style.display = 'flex';
-            adminModal.style.visibility = 'visible';
-            adminModal.style.zIndex = '99998';
+            // Forzar display con !important para sobrescribir la clase hidden
+            adminModal.style.setProperty('display', 'flex', 'important');
+            adminModal.style.setProperty('visibility', 'visible', 'important');
+            adminModal.style.setProperty('z-index', '99998', 'important');
             
             if (errorMsg) {
                 errorMsg.style.display = 'none';

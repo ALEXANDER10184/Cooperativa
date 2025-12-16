@@ -41,14 +41,10 @@ function updateMiembrosFamilia() {
 
     for (let i = 0; i < count; i++) {
         const memberDiv = document.createElement('div');
-        memberDiv.className = 'card';
-        memberDiv.style.background = '#f9fafb';
-        memberDiv.style.padding = '1.5rem';
-        memberDiv.style.marginBottom = '1rem';
-        memberDiv.style.border = '1px solid #e5e7eb';
+        memberDiv.className = 'card mb-1';
 
         memberDiv.innerHTML = `
-            <h4 style="margin-bottom: 1rem; color: var(--color-primary);">Miembro ${i + 1}</h4>
+            <h4 class="text-primary mb-1">Miembro ${i + 1}</h4>
             
             <div class="form-group">
                 <label class="form-label required">Nombre completo</label>
@@ -115,15 +111,16 @@ function validatePhone(phone) {
 
 function showError(input, message) {
     if (!input) return;
-    
+
     clearError(input);
     input.classList.add('error');
-    
+
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message';
     errorDiv.textContent = message;
-    errorDiv.style.cssText = 'color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem;';
-    
+    errorDiv.textContent = message;
+    // Style handled by CSS class .error-message
+
     input.parentNode.insertBefore(errorDiv, input.nextSibling);
 }
 
@@ -334,30 +331,30 @@ async function handleSubmit(event) {
         telefono: document.getElementById('telefono').value.trim(),
         email: document.getElementById('email').value.trim(),
         contactoEmergencia: document.getElementById('contactoEmergencia')?.value.trim() || '',
-        
+
         // Información de todos los miembros
         miembros: miembros,
         numMiembros: miembros.length,
-        
+
         // Situación en la cooperativa
         fechaIngreso: document.getElementById('fechaIngreso').value,
-        
+
         // Aportaciones
         cuotaMensual: parseFloat(document.getElementById('cuotaMensual').value) || 0,
-        
+
         // Autorizaciones
         consentimientoDatos: document.getElementById('consentimientoDatos').checked,
         aceptacionNormas: document.getElementById('aceptacionNormas').checked,
         fechaConsentimiento: new Date().toISOString(),
-        
+
         // Participación
         areasColaboracion: areasColaboracion,
         otrasAreas: otrasAreas,
         disponibilidadHoras: parseInt(document.getElementById('disponibilidadHoras').value) || 0,
-        
+
         // Observaciones
         observaciones: observaciones,
-        
+
         // Estado y registro
         estado: 'Activo',
         fechaRegistro: new Date().toISOString()
@@ -374,17 +371,17 @@ async function handleSubmit(event) {
         }
 
         await window.addItem('socios', socioData);
-        
+
         btnEnviar.innerHTML = "Enviado ✔️";
         btnEnviar.disabled = false;
-        
+
         // Mostrar modal personalizado con la contraseña destacada
         const passwordModal = document.getElementById('passwordSuccessModal');
         if (passwordModal) {
             passwordModal.style.display = 'flex';
             // Scroll al inicio para asegurar que se vea el modal
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
+
             // Redirigir después de 8 segundos (más tiempo para que lean la contraseña)
             setTimeout(() => {
                 window.location.href = 'index.html';
@@ -392,9 +389,9 @@ async function handleSubmit(event) {
         } else {
             // Fallback a alert si no se encuentra el modal
             const mensajeExito = `¡Registro completado con éxito! ✔️\n\n` +
-                                `Para acceder a la aplicación, utiliza la siguiente contraseña:\n\n` +
-                                `🔑 Contraseña: coopmiesperanza\n\n` +
-                                `Serás redirigido a la página de acceso en unos segundos...`;
+                `Para acceder a la aplicación, utiliza la siguiente contraseña:\n\n` +
+                `🔑 Contraseña: coopmiesperanza\n\n` +
+                `Serás redirigido a la página de acceso en unos segundos...`;
             alert(mensajeExito);
             setTimeout(() => {
                 window.location.href = 'index.html';

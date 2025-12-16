@@ -54,3 +54,4 @@ Si el BIN está vacío, la aplicación creará esta estructura automáticamente.
    - `✅ Datos cargados desde JSONbin correctamente`
    - `✅ Módulo database.js cargado (JSONbin)`
 4. Si ves errores, verifica que tu API Key sea correcta
+

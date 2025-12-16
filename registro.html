@@ -8,7 +8,9 @@
     <!-- Google Fonts: Poppins y Roboto -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -52,7 +54,8 @@
 
             <form id="registrationForm">
                 <!-- 1. Identificación básica de todos los integrantes de la familia -->
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                <h3
+                    style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
                     1. Identificación de los Integrantes de la Familia
                 </h3>
 
@@ -65,7 +68,8 @@
                 <div id="miembrosContainer"></div>
 
                 <!-- 2. Datos de contacto -->
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                <h3
+                    style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
                     2. Datos de Contacto
                 </h3>
 
@@ -82,11 +86,13 @@
                 <div class="form-group">
                     <label class="form-label">Contacto de emergencia (opcional)</label>
                     <input type="text" id="contactoEmergencia" class="form-input" placeholder="Nombre y teléfono">
-                    <small class="form-help">Nombre completo y número de teléfono de una persona de contacto en caso de emergencia</small>
+                    <small class="form-help">Nombre completo y número de teléfono de una persona de contacto en caso de
+                        emergencia</small>
                 </div>
 
                 <!-- 3. Situación del socio en la cooperativa -->
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                <h3
+                    style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
                     3. Situación del Socio en la Cooperativa
                 </h3>
 
@@ -97,7 +103,8 @@
                 </div>
 
                 <!-- 4. Aportaciones y obligaciones -->
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                <h3
+                    style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
                     4. Aportaciones y Obligaciones
                 </h3>
 
@@ -108,7 +115,8 @@
                 </div>
 
                 <!-- 5. Autorizaciones legales -->
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                <h3
+                    style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
                     5. Autorizaciones Legales
                 </h3>
 
@@ -117,7 +125,8 @@
                         <input type="checkbox" id="consentimientoDatos" class="form-checkbox" required>
                         <span class="form-label">Consentimiento para uso interno de datos</span>
                     </label>
-                    <small class="form-help">Acepto que mis datos sean utilizados únicamente para fines internos de la cooperativa, cumpliendo con la normativa de protección de datos.</small>
+                    <small class="form-help">Acepto que mis datos sean utilizados únicamente para fines internos de la
+                        cooperativa, cumpliendo con la normativa de protección de datos.</small>
                 </div>
 
                 <div class="form-group">
@@ -125,11 +134,13 @@
                         <input type="checkbox" id="aceptacionNormas" class="form-checkbox" required>
                         <span class="form-label">Aceptación de normas internas y régimen disciplinario</span>
                     </label>
-                    <small class="form-help">Acepto las normas internas de la cooperativa y el régimen disciplinario establecido.</small>
+                    <small class="form-help">Acepto las normas internas de la cooperativa y el régimen disciplinario
+                        establecido.</small>
                 </div>
 
                 <!-- 6. Participación y disponibilidad -->
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                <h3
+                    style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
                     6. Participación y Disponibilidad
                 </h3>
 
@@ -143,29 +154,35 @@
                         <option value="finanzas">Finanzas</option>
                         <option value="proyectos">Proyectos</option>
                     </select>
-                    <small class="form-help">Mantén presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples opciones</small>
+                    <small class="form-help">Mantén presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples
+                        opciones</small>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Otras áreas (especificar)</label>
-                    <input type="text" id="otrasAreas" class="form-input" placeholder="Especifica otras áreas donde te gustaría colaborar">
+                    <input type="text" id="otrasAreas" class="form-input"
+                        placeholder="Especifica otras áreas donde te gustaría colaborar">
                 </div>
 
                 <div class="form-group">
                     <label class="form-label required">Disponibilidad aproximada</label>
-                    <input type="number" id="disponibilidadHoras" class="form-input" min="0" step="1" value="0" required>
+                    <input type="number" id="disponibilidadHoras" class="form-input" min="0" step="1" value="0"
+                        required>
                     <small class="form-help">Horas por mes que puedes dedicar a la cooperativa</small>
                 </div>
 
                 <!-- 7. Observaciones -->
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                <h3
+                    style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
                     7. Observaciones (Opcional)
                 </h3>
 
                 <div class="form-group">
                     <label class="form-label">Observaciones adicionales</label>
-                    <textarea id="observaciones" class="form-input" rows="4" placeholder="Escribe aquí cualquier información adicional que consideres relevante..."></textarea>
-                    <small class="form-help">Información adicional, comentarios o cualquier dato que quieras compartir con la cooperativa</small>
+                    <textarea id="observaciones" class="form-input" rows="4"
+                        placeholder="Escribe aquí cualquier información adicional que consideres relevante..."></textarea>
+                    <small class="form-help">Información adicional, comentarios o cualquier dato que quieras compartir
+                        con la cooperativa</small>
                 </div>
 
                 <!-- Buttons -->
@@ -182,87 +199,33 @@
     </div>
 
     <!-- Modal de Contraseña -->
-    <div id="passwordSuccessModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); z-index: 99999; display: none; justify-content: center; align-items: center; animation: fadeIn 0.3s ease-out;">
-        <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px) saturate(180%); border: 2px solid rgba(37, 99, 235, 0.3); padding: 2.5rem; border-radius: 20px; max-width: 500px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2) inset; animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); text-align: center;">
+    <div id="passwordSuccessModal" class="modal hidden" style="display: none; z-index: 99999;">
+        <div class="modal-content text-center">
             <div style="margin-bottom: 1.5rem;">
-                <span class="material-icons-round" style="font-size: 64px; color: #10b981; animation: checkmarkPulse 1s ease-in-out infinite;">check_circle</span>
+                <span class="material-icons-round"
+                    style="font-size: 64px; color: var(--status-success); animation: checkmarkPulse 1s ease-in-out infinite;">check_circle</span>
             </div>
-            <h2 style="margin: 0 0 1rem 0; color: #1f2937; font-size: 1.75rem; font-weight: 700;">¡Registro Completado! ✔️</h2>
-            <p style="margin: 0 0 1.5rem 0; color: #6b7280; font-size: 1rem; line-height: 1.6;">
+            <h2 class="modal-title" style="margin-bottom: 1rem;">¡Registro Completado! ✔️</h2>
+            <p style="margin-bottom: 1.5rem;">
                 Para acceder a la aplicación, utiliza la siguiente contraseña:
             </p>
-            <div id="passwordDisplay" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1.5rem; border-radius: 12px; margin: 1.5rem 0; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); position: relative; overflow: hidden; animation: passwordGlow 2s ease-in-out infinite;">
-                <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent); animation: shimmer 2s infinite;"></div>
-                <p style="margin: 0 0 0.5rem 0; color: rgba(255, 255, 255, 0.9); font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Contraseña</p>
-                <p id="passwordText" style="margin: 0; color: white; font-size: 2rem; font-weight: 800; letter-spacing: 2px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); font-family: 'Courier New', monospace; animation: passwordPulse 1.5s ease-in-out infinite;">coopmiesperanza</p>
+            <div id="passwordDisplay" class="password-display">
+                <p
+                    style="margin: 0 0 0.5rem 0; color: var(--text-tertiary); font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                    Contraseña</p>
+                <p id="passwordText" class="password-text">miesperanza</p>
             </div>
-            <p style="margin: 1.5rem 0 0 0; color: #6b7280; font-size: 0.875rem;">
+            <p style="margin: 1.5rem 0 0 0;">
                 Serás redirigido a la página de acceso en unos segundos...
             </p>
-            <button onclick="window.location.href='index.html'" 
-                    style="margin-top: 1.5rem; padding: 0.875rem 2rem; background: #2563eb; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);"
-                    onmouseover="this.style.background='#1d4ed8'; this.style.transform='translateY(-2px) scale(1.05)'; this.style.boxShadow='0 8px 20px rgba(37, 99, 235, 0.4)'" 
-                    onmouseout="this.style.background='#2563eb'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 12px rgba(37, 99, 235, 0.3)'">
+            <button onclick="window.location.href='index.html'" class="btn btn-primary"
+                style="margin-top: 1.5rem; width: 100%;">
                 Ir a Iniciar Sesión
             </button>
         </div>
     </div>
 
-    <style>
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: scale(0.8) translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        @keyframes passwordGlow {
-            0%, 100% {
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4), 0 0 30px rgba(102, 126, 234, 0.2);
-            }
-            50% {
-                box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6), 0 0 50px rgba(102, 126, 234, 0.4);
-            }
-        }
-
-        @keyframes passwordPulse {
-            0%, 100% {
-                transform: scale(1);
-                text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            }
-            50% {
-                transform: scale(1.05);
-                text-shadow: 0 4px 12px rgba(255, 255, 255, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
-            }
-        }
-
-        @keyframes shimmer {
-            0% {
-                left: -100%;
-            }
-            100% {
-                left: 100%;
-            }
-        }
-
-        @keyframes checkmarkPulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-        }
-    </style>
+    <!-- Styles moved to css/style.css -->
 
     <!-- Scripts -->
     <script src="js/database.js"></script>

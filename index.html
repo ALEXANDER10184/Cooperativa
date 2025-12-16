@@ -1,574 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cooperativa Pro-Vivienda mi Esperanza - Gestión de Socios</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 0;
-        }
-
-        .navbar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .navbar-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2563eb;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .tab-btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            background: transparent;
-            color: #6b7280;
-            font-weight: 500;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: center;
-        }
-
-        .tab-btn:hover {
-            color: #2563eb;
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-        }
-
-        .tab-btn.active {
-            color: #2563eb;
-            border-bottom-color: #2563eb;
-            transform: scale(1.05);
-        }
-
-        .tab-panel {
-            display: none;
-        }
-
-        .tab-panel.active {
-            display: block;
-        }
-
-        .tab-panel.hidden {
-            display: none !important;
-        }
-
-        .sub-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .sub-tab-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            background: #f3f4f6;
-            color: #374151;
-            font-weight: 500;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: center;
-        }
-
-        .sub-tab-btn:hover {
-            background: #e5e7eb;
-            transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .sub-tab-btn.active {
-            background: #2563eb;
-            color: white;
-            transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
-        }
-
-        .sub-tab-content {
-            display: none;
-        }
-
-        .sub-tab-content.active {
-            display: block;
-        }
-
-        .main-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 
-                        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .card:hover {
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 
-                        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
-            transform: translateY(-2px);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .card-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.95rem;
-        }
-
-        .btn-primary {
-            background: #2563eb;
-            color: white;
-        }
-
-        .btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: center;
-        }
-
-        .btn-primary:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3), 0 8px 10px -6px rgba(37, 99, 235, 0.2);
-        }
-
-        .btn-secondary {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #059669;
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.3), 0 8px 10px -6px rgba(16, 185, 129, 0.2);
-        }
-
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.3), 0 8px 10px -6px rgba(239, 68, 68, 0.2);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: #2563eb;
-            border: 2px solid #2563eb;
-        }
-
-        .btn-outline:hover {
-            background: #2563eb;
-            color: white;
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3), 0 8px 10px -6px rgba(37, 99, 235, 0.2);
-        }
-
-        .table-container {
-            overflow-x: auto;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(15px) saturate(180%);
-            -webkit-backdrop-filter: blur(15px) saturate(180%);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 
-                        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(15px) saturate(180%);
-            -webkit-backdrop-filter: blur(15px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 
-                        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-        }
-
-        thead {
-            background: rgba(243, 244, 246, 0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        th {
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: #374151;
-            border-bottom: 2px solid rgba(229, 231, 235, 0.5);
-            background: rgba(243, 244, 246, 0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid rgba(229, 231, 235, 0.4);
-            color: #4b5563;
-            background: rgba(255, 255, 255, 0.4);
-        }
-
-        tbody tr {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        tbody tr:hover {
-            background: rgba(249, 250, 251, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            transform: scale(1.01);
-        }
-
-        .badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .badge-active {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .badge-inactive {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-icon {
-            padding: 0.5rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transform-origin: center;
-        }
-
-        .btn-icon-edit {
-            background: #dbeafe;
-            color: #2563eb;
-        }
-
-        .btn-icon-edit:hover {
-            background: #2563eb;
-            color: white;
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn-icon-delete {
-            background: #fee2e2;
-            color: #ef4444;
-        }
-
-        .btn-icon-delete:hover {
-            background: #ef4444;
-            color: white;
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-icon-view {
-            background: #e0e7ff;
-            color: #6366f1;
-        }
-
-        .btn-icon-view:hover {
-            background: #6366f1;
-            color: white;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10000 !important;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        .modal-content {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 
-                        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-            animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9) translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .btn-close {
-            background: transparent;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #6b7280;
-            padding: 0.25rem;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-close:hover {
-            background: #f3f4f6;
-            color: #1f2937;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #374151;
-        }
-
-        .form-input,
-        .form-select,
-        textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: center;
-        }
-
-        .form-input:focus,
-        .form-select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-            transform: scale(1.02);
-            padding: 0.875rem;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            margin-top: 2rem;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #6b7280;
-        }
-
-        .empty-state-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        .footer {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1.5rem;
-            text-align: center;
-            color: #6b7280;
-            margin-top: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .navbar-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .main-container {
-                margin: 1rem auto;
-                padding: 0 0.5rem;
-            }
-
-            .card {
-                padding: 1rem;
-            }
-
-            table {
-                font-size: 0.875rem;
-            }
-
-            th, td {
-                padding: 0.5rem;
-            }
-
-            .actions {
-                flex-direction: column;
-            }
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Custom Element Styles removed in favor of css/style.css -->
 </head>
+
 <body>
     <!-- Modal de Login -->
-    <div id="loginModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 99999; display: flex; justify-content: center; align-items: center;">
-        <div style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.3); padding: 2rem; border-radius: 16px; max-width: 400px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;">
-            <h2 style="margin: 0 0 1.5rem 0; color: #1f2937; font-size: 1.5rem;">Acceso a la Aplicación</h2>
-            <div id="passwordError" style="color: #ef4444; font-size: 0.875rem; margin-bottom: 1rem; display: none;"></div>
-            <form id="loginForm" onsubmit="event.preventDefault(); try{window.checkAppPassword();}catch(e){alert('Error: '+e.message);console.error(e);}return false;">
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500;">Contraseña</label>
-                    <input type="password" id="appPasswordInput" placeholder="Ingresa la contraseña" required autofocus 
-                           style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);"
-                           onfocus="this.style.borderColor='#2563eb'; this.style.transform='scale(1.02)'; this.style.padding='0.875rem';"
-                           onblur="this.style.borderColor='#e5e7eb'; this.style.transform='scale(1)'; this.style.padding='0.75rem';">
+    <div id="loginModal" class="modal" style="display: flex; z-index: 99999;">
+        <div class="modal-content">
+            <h2 class="modal-title">Acceso a la Aplicación</h2>
+            <div id="passwordError" class="alert alert-error" style="display: none;"></div>
+            <form id="loginForm"
+                onsubmit="event.preventDefault(); try{window.checkAppPassword(false);}catch(e){alert('Error: '+e.message);console.error(e);}return false;">
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" id="appPasswordInput" placeholder="Ingresa la contraseña" required autofocus
+                        class="form-input">
                 </div>
-                <button type="submit" id="loginButton"
-                        style="width: 100%; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); margin-bottom: 1rem;"
-                        onmouseover="this.style.background='#1d4ed8'; this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 10px 25px -5px rgba(37, 99, 235, 0.3)'" 
-                        onmouseout="this.style.background='#2563eb'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='none'">
-                    Acceder
-                </button>
+                <div style="display: flex; gap: 0.5rem; flex-direction: column;">
+                    <button type="submit" id="loginButton" class="btn btn-primary" style="width: 100%;">
+                        Acceder
+                    </button>
+                    <button type="button" id="adminLoginButton" onclick="event.preventDefault(); try{window.checkAppPassword(true);}catch(e){alert('Error: '+e.message);console.error(e);}" class="btn btn-outline" style="width: 100%;">
+                        <span class="material-icons-round" style="font-size: 1.2rem; vertical-align: middle;">admin_panel_settings</span>
+                        Entrar como Administrador
+                    </button>
+                </div>
             </form>
-            <div style="text-align: center; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
-                <p style="margin: 0 0 1rem 0; color: #6b7280; font-size: 0.875rem;">¿No tienes cuenta aún?</p>
-                <button type="button" onclick="window.location.href='registro.html'"
-                        style="width: 100%; padding: 0.75rem; background: transparent; color: #2563eb; border: 2px solid #2563eb; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);"
-                        onmouseover="this.style.background='#2563eb'; this.style.color='white'; this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 10px 25px -5px rgba(37, 99, 235, 0.3)'" 
-                        onmouseout="this.style.background='transparent'; this.style.color='#2563eb'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='none'">
+            <div style="text-align: center; padding-top: 1rem; border-top: 1px solid var(--glass-border);">
+                <p style="margin-bottom: 1rem; font-size: 0.85rem;">¿No tienes cuenta aún?</p>
+                <button type="button" onclick="window.location.href='registro.html'" class="btn btn-outline"
+                    style="width: 100%;">
                     Registrarme
                 </button>
             </div>
@@ -576,20 +49,18 @@
     </div>
 
     <!-- Modal de Login Administración -->
-    <div id="adminLoginModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 99998; display: none; justify-content: center; align-items: center;">
-        <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 400px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
-            <h2 style="margin: 0 0 1.5rem 0; color: #1f2937; font-size: 1.5rem;">Acceso a Administración</h2>
-            <div id="adminPasswordError" style="color: #ef4444; font-size: 0.875rem; margin-bottom: 1rem; display: none;"></div>
-            <form id="adminLoginForm" onsubmit="event.preventDefault(); try{window.checkAdminPassword();}catch(e){alert('Error: '+e.message);console.error(e);}return false;">
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500;">Contraseña</label>
-                    <input type="password" id="adminPasswordInput" placeholder="Ingresa la contraseña de administración" required autofocus 
-                           style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;">
+    <div id="adminLoginModal" class="modal hidden" style="display: none; z-index: 99998;">
+        <div class="modal-content">
+            <h2 class="modal-title">Acceso a Administración</h2>
+            <div id="adminPasswordError" class="alert alert-error" style="display: none;"></div>
+            <form id="adminLoginForm"
+                onsubmit="event.preventDefault(); try{window.checkAdminPassword();}catch(e){alert('Error: '+e.message);console.error(e);}return false;">
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" id="adminPasswordInput" placeholder="Ingresa la contraseña de administración"
+                        required autofocus class="form-input">
                 </div>
-                <button type="submit" id="adminLoginButton"
-                        style="width: 100%; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;"
-                        onmouseover="this.style.background='#1d4ed8'" 
-                        onmouseout="this.style.background='#2563eb'">
+                <button type="submit" id="adminLoginButton" class="btn btn-primary" style="width: 100%;">
                     Acceder
                 </button>
             </form>
@@ -598,843 +69,886 @@
 
     <!-- Contenido Principal -->
     <div id="appContent" style="display: none;">
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="navbar-content">
-            <div class="navbar-title">
-                <span class="material-icons-round">home</span>
-                Cooperativa Pro-Vivienda mi Esperanza
-      </div>
-        </div>
-    </nav>
-
-    <!-- Main Container -->
-    <div class="main-container">
-        <!-- Balance Card -->
-        <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; text-align: center;">
-                <div>
-                    <div style="font-size: 0.875rem; opacity: 0.9; margin-bottom: 0.5rem;">Ingresos Totales</div>
-                    <div id="balanceIngresos" style="font-size: 2rem; font-weight: 700;">€0.00</div>
-                </div>
-                <div>
-                    <div style="font-size: 0.875rem; opacity: 0.9; margin-bottom: 0.5rem;">Gastos Totales</div>
-                    <div id="balanceGastos" style="font-size: 2rem; font-weight: 700;">€0.00</div>
-                </div>
-                <div>
-                    <div style="font-size: 0.875rem; opacity: 0.9; margin-bottom: 0.5rem;">Balance Actual</div>
-                    <div id="balanceActual" style="font-size: 2rem; font-weight: 700;">€0.00</div>
-                </div>
-                <div>
-                    <div style="font-size: 0.875rem; opacity: 0.9; margin-bottom: 0.5rem;">Socios Totales</div>
-                    <div id="balanceSocios" style="font-size: 2rem; font-weight: 700;">0</div>
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <div class="navbar-title">
+                    <span class="material-icons-round">home</span>
+                    Cooperativa Pro-Vivienda mi Esperanza
                 </div>
             </div>
-        </div>
+        </nav>
 
-        <!-- Tabs de Navegación Principal -->
-        <div class="tabs">
-            <button class="tab-btn active" id="tabSocios" onclick="if(typeof window.switchTab==='function'){window.switchTab('socios').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
-                <span class="material-icons-round">people</span> Socios
-            </button>
-            <button class="tab-btn" id="tabAdmin" onclick="if(typeof window.switchTab==='function'){window.switchTab('admin').catch(e=>{console.error('Error:',e);});}">
-                <span class="material-icons-round">admin_panel_settings</span> Administración
-            </button>
-        </div>
+        <!-- Main Container -->
+        <div class="main-container">
+            <!-- Balance Card -->
+            <!-- Stats Grid (Balance) -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Ingresos Totales</div>
+                    <div id="balanceIngresos" class="stat-value" style="color: var(--status-success);">€0.00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Gastos Totales</div>
+                    <div id="balanceGastos" class="stat-value" style="color: var(--status-danger);">€0.00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Balance Actual</div>
+                    <div id="balanceActual" class="stat-value highlight">€0.00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Socios Totales</div>
+                    <div id="balanceSocios" class="stat-value">0</div>
+                </div>
+            </div>
 
-        <!-- Tab: Socios -->
-        <div id="panelSocios" class="tab-panel active">
-            <!-- Sección QR en la esquina superior izquierda -->
-            <div style="position: relative; margin-bottom: 2rem;">
-                <!-- QR en la esquina superior izquierda -->
-                <div id="qrCodeContainer" style="position: absolute; top: 1rem; left: 1rem; padding: 0.5rem; background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.25); z-index: 10; opacity: 0; transform: scale(0.8); transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);">
-                    <div style="display: flex; align-items: center; justify-content: center; width: 150px; height: 150px; color: #9ca3af;">
-                        <div style="text-align: center;">
-                            <div class="material-icons-round" style="font-size: 32px; margin-bottom: 0.5rem;">qr_code</div>
-                            <p style="font-size: 0.7rem;">Cargando...</p>
+            <!-- Tabs de Navegación Principal -->
+            <div class="tabs">
+                <button class="tab-btn active" id="tabSocios"
+                    onclick="if(typeof window.switchTab==='function'){window.switchTab('socios').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
+                    <span class="material-icons-round">people</span> Socios
+                </button>
+                <button class="tab-btn" id="tabAdmin"
+                    onclick="if(typeof window.switchTab==='function'){window.switchTab('admin').catch(e=>{console.error('Error:',e);});}">
+                    <span class="material-icons-round">admin_panel_settings</span> Administración
+                </button>
+            </div>
+
+            <!-- Tab: Socios -->
+            <div id="panelSocios" class="tab-panel active">
+                <!-- Sección QR en la esquina superior izquierda -->
+                <div style="position: relative; margin-bottom: 2rem;">
+                    <!-- QR en la esquina superior izquierda -->
+                    <div id="qrCodeContainer"
+                        style="position: absolute; top: 1rem; left: 1rem; padding: 0.5rem; background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.25); z-index: 10; opacity: 0; transform: scale(0.8); transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                        <div
+                            style="display: flex; align-items: center; justify-content: center; width: 150px; height: 150px; color: #9ca3af;">
+                            <div style="text-align: center;">
+                                <div class="material-icons-round" style="font-size: 32px; margin-bottom: 0.5rem;">
+                                    qr_code</div>
+                                <p style="font-size: 0.7rem;">Cargando...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mensaje principal con padding para no quedar atrás del QR -->
+                    <div
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; padding: 2rem; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding-left: 180px; min-height: 170px;">
+                        <div style="text-align: left;">
+                            <span class="material-icons-round"
+                                style="font-size: 2rem; margin-bottom: 0.75rem; display: block; opacity: 0.95;">qr_code_scanner</span>
+                            <p style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.6;">
+                                Comparte el código con alguien que quieras
+                            </p>
+                            <p style="font-size: 0.95rem; opacity: 0.9; line-height: 1.5;">
+                                Todos podemos tener un techo digno y seguro
+                            </p>
                         </div>
                     </div>
                 </div>
-                <!-- Mensaje principal con padding para no quedar atrás del QR -->
-                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; padding: 2rem; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding-left: 180px; min-height: 170px;">
-                    <div style="text-align: left;">
-                        <span class="material-icons-round" style="font-size: 2rem; margin-bottom: 0.75rem; display: block; opacity: 0.95;">qr_code_scanner</span>
-                        <p style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.6;">
-                            Comparte el código con alguien que quieras
-                        </p>
-                        <p style="font-size: 0.95rem; opacity: 0.9; line-height: 1.5;">
-                            Todos podemos tener un techo digno y seguro
-                        </p>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Lista de Socios</h2>
+                        <button class="btn btn-primary" id="registrarseBtn"
+                            onclick="try{window.navigateTo('registro.html');}catch(e){window.location.href='registro.html';}">
+                            <span class="material-icons-round">person_add</span>
+                            Registrarse
+                        </button>
+                    </div>
+
+                    <!-- Tabla de Socios Simplificada -->
+                    <div class="table-container">
+                        <table id="sociosTable">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Teléfono</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sociosTableBody">
+                                <tr>
+                                    <td colspan="3" class="empty-state">
+                                        <div class="empty-state-icon">📋</div>
+                                        <p>No hay socios registrados</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Lista de Socios</h2>
-                    <button class="btn btn-primary" id="registrarseBtn" onclick="try{window.navigateTo('registro.html');}catch(e){window.location.href='registro.html';}">
-                        <span class="material-icons-round">person_add</span>
-                        Registrarse
+            <!-- Tab: Administración -->
+            <div id="panelAdmin" class="tab-panel hidden">
+                <!-- Sub-tabs de Administración -->
+                <div class="sub-tabs">
+                    <button class="sub-tab-btn" id="subTabSocios"
+                        onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('socios').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
+                        <span class="material-icons-round">people</span> Gestión de Socios
+                    </button>
+                    <button class="sub-tab-btn active" id="subTabGastos"
+                        onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('gastos').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
+                        <span class="material-icons-round">trending_down</span> Gastos
+                    </button>
+                    <button class="sub-tab-btn" id="subTabIngresos"
+                        onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('ingresos').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
+                        <span class="material-icons-round">trending_up</span> Ingresos
+                    </button>
+                    <button class="sub-tab-btn" id="subTabAportes"
+                        onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('aportes').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
+                        <span class="material-icons-round">calendar_month</span> Seguimiento de Aportes
                     </button>
                 </div>
 
-                <!-- Tabla de Socios Simplificada -->
-                <div class="table-container">
-                    <table id="sociosTable">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Apellido</th>
-                                <th>Teléfono</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sociosTableBody">
-                            <tr>
-                                <td colspan="3" class="empty-state">
-                                    <div class="empty-state-icon">📋</div>
-                                    <p>No hay socios registrados</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- Sub-tab: Gestión de Socios (Admin) -->
+                <div id="sociosTab" class="sub-tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Gestión de Socios</h2>
+                            <button class="btn btn-primary" id="addSocioBtn"
+                                onclick="try{window.openAddModal();}catch(e){alert('Error: '+e.message);}">
+                                <span class="material-icons-round">add</span>
+                                Agregar Socio
+                            </button>
+                        </div>
+
+                        <!-- Tabla de Socios Completa (solo en Admin) -->
+                        <div class="table-container">
+                            <table id="adminSociosTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Email</th>
+                                        <th>Teléfono</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminSociosTableBody">
+                                    <tr>
+                                        <td colspan="7" class="empty-state">
+                                            <div class="empty-state-icon">📋</div>
+                                            <p>No hay socios registrados</p>
+                                            <p style="font-size: 0.875rem; margin-top: 0.5rem;">Haz clic en "Agregar
+                                                Socio" para comenzar</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sub-tab: Gastos -->
+                <div id="gastosTab" class="sub-tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Gestión de Gastos</h2>
+                            <button class="btn btn-primary" id="addGastoBtn"
+                                onclick="try{window.openAddGastoModal();}catch(e){alert('Error: '+e.message);}">
+                                <span class="material-icons-round">add</span>
+                                Agregar Gasto
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table id="gastosTable">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Concepto</th>
+                                        <th>Monto</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gastosTableBody">
+                                    <tr>
+                                        <td colspan="4" class="empty-state">
+                                            <div class="empty-state-icon">💰</div>
+                                            <p>No hay gastos registrados</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sub-tab: Ingresos -->
+                <div id="ingresosTab" class="sub-tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Gestión de Ingresos</h2>
+                            <button class="btn btn-primary" id="addIngresoBtn"
+                                onclick="try{window.openAddIngresoModal();}catch(e){alert('Error: '+e.message);}">
+                                <span class="material-icons-round">add</span>
+                                Agregar Ingreso
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table id="ingresosTable">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Concepto</th>
+                                        <th>Monto</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ingresosTableBody">
+                                    <tr>
+                                        <td colspan="4" class="empty-state">
+                                            <div class="empty-state-icon">💵</div>
+                                            <p>No hay ingresos registrados</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sub-tab: Seguimiento de Aportes -->
+                <div id="aportesTab" class="sub-tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Seguimiento de Aportes Mensuales</h2>
+                            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <label class="form-label" style="margin: 0;">Mes/Año:</label>
+                                    <select id="mesAporteSelector" class="form-select" style="width: auto;"
+                                        onchange="if(typeof window.renderAportesTable==='function'){window.renderAportesTable().catch(e=>{console.error('Error:',e);alert('Error al cargar aportes.');});}">
+                                        <!-- Se llenará dinámicamente -->
+                                    </select>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <label class="form-label" style="margin: 0;">Filtro:</label>
+                                    <select id="filtroAportesSelector" class="form-select" style="width: auto;"
+                                        onchange="if(typeof window.renderAportesTable==='function'){window.renderAportesTable().catch(e=>{console.error('Error:',e);alert('Error al cargar aportes.');});}">
+                                        <option value="todos">Todos</option>
+                                        <option value="pagados">Ya Pagados</option>
+                                        <option value="pendientes">Falta por Pagar</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resumen de Aportes -->
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; background: #f3f4f6; border-radius: 8px;">
+                            <div>
+                                <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Total Esperado
+                                </div>
+                                <div id="totalEsperadoAportes"
+                                    style="font-size: 1.5rem; font-weight: 700; color: #2563eb;">€0.00</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Total Pagado
+                                </div>
+                                <div id="totalPagadoAportes"
+                                    style="font-size: 1.5rem; font-weight: 700; color: #10b981;">€0.00</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Total
+                                    Pendiente</div>
+                                <div id="totalPendienteAportes"
+                                    style="font-size: 1.5rem; font-weight: 700; color: #ef4444;">€0.00</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Porcentaje
+                                    Pagado</div>
+                                <div id="porcentajePagadoAportes"
+                                    style="font-size: 1.5rem; font-weight: 700; color: #6366f1;">0%</div>
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <table id="aportesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Socio</th>
+                                        <th>Teléfono</th>
+                                        <th>Cuota Mensual</th>
+                                        <th>Estado</th>
+                                        <th>Fecha de Pago</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="aportesTableBody">
+                                    <tr>
+                                        <td colspan="6" class="empty-state">
+                                            <div class="empty-state-icon">📅</div>
+                                            <p>Cargando seguimiento de aportes...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tab: Administración -->
-        <div id="panelAdmin" class="tab-panel hidden">
-            <!-- Sub-tabs de Administración -->
-            <div class="sub-tabs">
-                <button class="sub-tab-btn" id="subTabSocios" onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('socios').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
-                    <span class="material-icons-round">people</span> Gestión de Socios
-                </button>
-                <button class="sub-tab-btn active" id="subTabGastos" onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('gastos').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
-                    <span class="material-icons-round">trending_down</span> Gastos
-                </button>
-                <button class="sub-tab-btn" id="subTabIngresos" onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('ingresos').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
-                    <span class="material-icons-round">trending_up</span> Ingresos
-                </button>
-                <button class="sub-tab-btn" id="subTabAportes" onclick="if(typeof window.switchAdminTab==='function'){window.switchAdminTab('aportes').catch(e=>{console.error('Error:',e);alert('Error al cambiar de pestaña. Por favor, recarga la página.');});}">
-                    <span class="material-icons-round">calendar_month</span> Seguimiento de Aportes
-                </button>
-            </div>
-
-            <!-- Sub-tab: Gestión de Socios (Admin) -->
-            <div id="sociosTab" class="sub-tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">Gestión de Socios</h2>
-                        <button class="btn btn-primary" id="addSocioBtn" onclick="try{window.openAddModal();}catch(e){alert('Error: '+e.message);}">
-                            <span class="material-icons-round">add</span>
-                            Agregar Socio
-                        </button>
-                    </div>
-
-                    <!-- Tabla de Socios Completa (solo en Admin) -->
-                    <div class="table-container">
-                        <table id="adminSociosTable">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Apellido</th>
-                                    <th>Email</th>
-                                    <th>Teléfono</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminSociosTableBody">
-                                <tr>
-                                    <td colspan="7" class="empty-state">
-                                        <div class="empty-state-icon">📋</div>
-                                        <p>No hay socios registrados</p>
-                                        <p style="font-size: 0.875rem; margin-top: 0.5rem;">Haz clic en "Agregar Socio" para comenzar</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        <!-- Modal: Agregar/Editar Socio -->
+        <div id="socioModal" class="modal hidden">
+            <div class="modal-content modal-lg">
+                <div class="modal-header">
+                    <h2 id="modalTitle" class="modal-title">Agregar Socio</h2>
+                    <button type="button" class="btn-close" onclick="closeModal()">×</button>
                 </div>
-            </div>
 
-            <!-- Sub-tab: Gastos -->
-            <div id="gastosTab" class="sub-tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">Gestión de Gastos</h2>
-                        <button class="btn btn-primary" id="addGastoBtn" onclick="try{window.openAddGastoModal();}catch(e){alert('Error: '+e.message);}">
-                            <span class="material-icons-round">add</span>
-                            Agregar Gasto
-                        </button>
-                    </div>
-                    <div class="table-container">
-                        <table id="gastosTable">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Concepto</th>
-                                    <th>Monto</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="gastosTableBody">
-                                <tr>
-                                    <td colspan="4" class="empty-state">
-                                        <div class="empty-state-icon">💰</div>
-                                        <p>No hay gastos registrados</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+                <form id="socioForm">
+                    <!-- 1. Identificación básica de todos los integrantes de la familia -->
+                    <h3
+                        style="margin-top: 1rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                        1. Identificación de los Integrantes de la Familia
+                    </h3>
 
-            <!-- Sub-tab: Ingresos -->
-            <div id="ingresosTab" class="sub-tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">Gestión de Ingresos</h2>
-                        <button class="btn btn-primary" id="addIngresoBtn" onclick="try{window.openAddIngresoModal();}catch(e){alert('Error: '+e.message);}">
-                            <span class="material-icons-round">add</span>
-                            Agregar Ingreso
-                        </button>
+                    <div class="form-group">
+                        <label class="form-label required">Número de miembros de la familia</label>
+                        <input type="number" id="modalNumMiembros" class="form-input" min="1" value="1" required>
+                        <small class="form-help">Incluyéndote a ti</small>
                     </div>
-                    <div class="table-container">
-                        <table id="ingresosTable">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Concepto</th>
-                                    <th>Monto</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ingresosTableBody">
-                                <tr>
-                                    <td colspan="4" class="empty-state">
-                                        <div class="empty-state-icon">💵</div>
-                                        <p>No hay ingresos registrados</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Sub-tab: Seguimiento de Aportes -->
-            <div id="aportesTab" class="sub-tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">Seguimiento de Aportes Mensuales</h2>
-                        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                            <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                <label class="form-label" style="margin: 0;">Mes/Año:</label>
-                                <select id="mesAporteSelector" class="form-select" style="width: auto;" onchange="if(typeof window.renderAportesTable==='function'){window.renderAportesTable().catch(e=>{console.error('Error:',e);alert('Error al cargar aportes.');});}">
-                                    <!-- Se llenará dinámicamente -->
-                                </select>
+                    <div id="modalMiembrosContainer"></div>
+
+                    <!-- 2. Datos de contacto -->
+                    <h3
+                        style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                        2. Datos de Contacto
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label required">Teléfono</label>
+                        <input type="tel" id="modalTelefono" class="form-input" required>
                     </div>
-                            <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                <label class="form-label" style="margin: 0;">Filtro:</label>
-                                <select id="filtroAportesSelector" class="form-select" style="width: auto;" onchange="if(typeof window.renderAportesTable==='function'){window.renderAportesTable().catch(e=>{console.error('Error:',e);alert('Error al cargar aportes.');});}">
-                                    <option value="todos">Todos</option>
-                                    <option value="pagados">Ya Pagados</option>
-                                    <option value="pendientes">Falta por Pagar</option>
+
+                    <div class="form-group">
+                        <label class="form-label required">Correo electrónico</label>
+                        <input type="email" id="modalEmail" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Contacto de emergencia (opcional)</label>
+                        <input type="text" id="modalContactoEmergencia" class="form-input"
+                            placeholder="Nombre y teléfono">
+                        <small class="form-help">Nombre completo y número de teléfono de una persona de contacto en caso
+                            de emergencia</small>
+                    </div>
+
+                    <!-- 3. Situación del socio en la cooperativa -->
+                    <h3
+                        style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                        3. Situación del Socio en la Cooperativa
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label required">Fecha de ingreso</label>
+                        <input type="date" id="modalFechaIngreso" class="form-input" required>
+                        <small class="form-help">Fecha en que te unes a la cooperativa</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select id="modalEstado" class="form-select" required>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
                         </select>
                     </div>
-                        </div>
+
+                    <!-- 4. Aportaciones y obligaciones -->
+                    <h3
+                        style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                        4. Aportaciones y Obligaciones
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label required">Cuota mensual (€)</label>
+                        <input type="number" id="modalCuotaMensual" class="form-input" min="0" step="0.01" value="5"
+                            required>
+                        <small class="form-help">Aporte mensual a la cooperativa (ejemplo: 5 €)</small>
                     </div>
 
-                    <!-- Resumen de Aportes -->
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; background: #f3f4f6; border-radius: 8px;">
-                        <div>
-                            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Total Esperado</div>
-                            <div id="totalEsperadoAportes" style="font-size: 1.5rem; font-weight: 700; color: #2563eb;">€0.00</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Total Pagado</div>
-                            <div id="totalPagadoAportes" style="font-size: 1.5rem; font-weight: 700; color: #10b981;">€0.00</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Total Pendiente</div>
-                            <div id="totalPendienteAportes" style="font-size: 1.5rem; font-weight: 700; color: #ef4444;">€0.00</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Porcentaje Pagado</div>
-                            <div id="porcentajePagadoAportes" style="font-size: 1.5rem; font-weight: 700; color: #6366f1;">0%</div>
-                        </div>
+                    <!-- 5. Autorizaciones legales -->
+                    <h3
+                        style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                        5. Autorizaciones Legales
+                    </h3>
+
+                    <div class="form-group">
+                        <label style="display: flex; align-items: start; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" id="modalConsentimientoDatos" class="form-checkbox" required>
+                            <span class="form-label">Consentimiento para uso interno de datos</span>
+                        </label>
+                        <small class="form-help">Acepto que mis datos sean utilizados únicamente para fines internos de
+                            la cooperativa, cumpliendo con la normativa de protección de datos.</small>
                     </div>
 
-                    <div class="table-container">
-                        <table id="aportesTable">
-                            <thead>
-                                <tr>
-                                    <th>Socio</th>
-                                    <th>Teléfono</th>
-                                    <th>Cuota Mensual</th>
-                                    <th>Estado</th>
-                                    <th>Fecha de Pago</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="aportesTableBody">
-                                <tr>
-                                    <td colspan="6" class="empty-state">
-                                        <div class="empty-state-icon">📅</div>
-                                        <p>Cargando seguimiento de aportes...</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: start; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" id="modalAceptacionNormas" class="form-checkbox" required>
+                            <span class="form-label">Aceptación de normas internas y régimen disciplinario</span>
+                        </label>
+                        <small class="form-help">Acepto las normas internas de la cooperativa y el régimen disciplinario
+                            establecido.</small>
                     </div>
+
+                    <!-- 6. Participación y disponibilidad -->
+                    <h3
+                        style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                        6. Participación y Disponibilidad
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label">Áreas donde desea colaborar</label>
+                        <select id="modalAreasColaboracion" class="form-select" multiple style="min-height: 100px;">
+                            <option value="administracion">Administración</option>
+                            <option value="eventos">Eventos</option>
+                            <option value="apoyo_social">Apoyo Social</option>
+                            <option value="comunicacion">Comunicación</option>
+                            <option value="finanzas">Finanzas</option>
+                            <option value="proyectos">Proyectos</option>
+                        </select>
+                        <small class="form-help">Mantén presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples
+                            opciones</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Otras áreas (especificar)</label>
+                        <input type="text" id="modalOtrasAreas" class="form-input"
+                            placeholder="Especifica otras áreas donde te gustaría colaborar">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">Disponibilidad aproximada</label>
+                        <input type="number" id="modalDisponibilidadHoras" class="form-input" min="0" step="1" value="0"
+                            required>
+                        <small class="form-help">Horas por mes que puedes dedicar a la cooperativa</small>
+                    </div>
+
+                    <!-- 7. Observaciones -->
+                    <h3
+                        style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
+                        7. Observaciones (Opcional)
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label">Observaciones adicionales</label>
+                        <textarea id="modalObservaciones" class="form-input" rows="4"
+                            placeholder="Escribe aquí cualquier información adicional que consideres relevante..."></textarea>
+                        <small class="form-help">Información adicional, comentarios o cualquier dato que quieras
+                            compartir con la cooperativa</small>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 2rem;">
+                        <button type="submit" class="btn btn-primary" id="submitSocioBtn">Guardar</button>
+                        <button type="button" class="btn btn-outline" id="cancelModalBtn">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal: Ver Detalles Completos del Socio -->
+        <div id="socioDetallesModal" class="modal hidden">
+            <div class="modal-content modal-lg">
+                <div class="modal-header">
+                    <h2 class="modal-title">Detalles del Socio</h2>
+                    <button type="button" class="btn-close" onclick="window.closeSocioDetallesModal();">×</button>
+                </div>
+                <div id="socioDetallesContent" style="padding: 1.5rem;">
+                    <!-- Contenido se llenará dinámicamente -->
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal: Agregar/Editar Socio -->
-    <div id="socioModal" class="modal hidden">
-        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
-            <div class="modal-header">
-                <h2 id="modalTitle" class="modal-title">Agregar Socio</h2>
-                <button type="button" class="btn-close" onclick="closeModal()">×</button>
-            </div>
-
-            <form id="socioForm">
-                <!-- 1. Identificación básica de todos los integrantes de la familia -->
-                <h3 style="margin-top: 1rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
-                    1. Identificación de los Integrantes de la Familia
-                </h3>
-
-                <div class="form-group">
-                    <label class="form-label required">Número de miembros de la familia</label>
-                    <input type="number" id="modalNumMiembros" class="form-input" min="1" value="1" required>
-                    <small class="form-help">Incluyéndote a ti</small>
+        <!-- Modal: Agregar/Editar Gasto -->
+        <div id="gastoModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="gastoModalTitle" class="modal-title">Agregar Gasto</h2>
+                    <button type="button" class="btn-close" onclick="closeGastoModal()">×</button>
                 </div>
 
-                <div id="modalMiembrosContainer"></div>
+                <form id="gastoForm">
+                    <div class="form-group">
+                        <label class="form-label">Fecha</label>
+                        <input type="date" id="gastoFecha" class="form-input" required>
+                    </div>
 
-                <!-- 2. Datos de contacto -->
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
-                    2. Datos de Contacto
-                </h3>
+                    <div class="form-group">
+                        <label class="form-label">Concepto</label>
+                        <input type="text" id="gastoConcepto" class="form-input" required>
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-label required">Teléfono</label>
-                    <input type="tel" id="modalTelefono" class="form-input" required>
-                </div>
+                    <div class="form-group">
+                        <label class="form-label">Monto (€)</label>
+                        <input type="number" id="gastoMonto" class="form-input" min="0" step="0.01" required>
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-label required">Correo electrónico</label>
-                    <input type="email" id="modalEmail" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Contacto de emergencia (opcional)</label>
-                    <input type="text" id="modalContactoEmergencia" class="form-input" placeholder="Nombre y teléfono">
-                    <small class="form-help">Nombre completo y número de teléfono de una persona de contacto en caso de emergencia</small>
-                </div>
-
-                <!-- 3. Situación del socio en la cooperativa -->
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
-                    3. Situación del Socio en la Cooperativa
-                </h3>
-
-                <div class="form-group">
-                    <label class="form-label required">Fecha de ingreso</label>
-                    <input type="date" id="modalFechaIngreso" class="form-input" required>
-                    <small class="form-help">Fecha en que te unes a la cooperativa</small>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Estado</label>
-                    <select id="modalEstado" class="form-select" required>
-                        <option value="Activo">Activo</option>
-                        <option value="Inactivo">Inactivo</option>
-                    </select>
-                </div>
-
-                <!-- 4. Aportaciones y obligaciones -->
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
-                    4. Aportaciones y Obligaciones
-                </h3>
-
-                <div class="form-group">
-                    <label class="form-label required">Cuota mensual (€)</label>
-                    <input type="number" id="modalCuotaMensual" class="form-input" min="0" step="0.01" value="5" required>
-                    <small class="form-help">Aporte mensual a la cooperativa (ejemplo: 5 €)</small>
-                </div>
-
-                <!-- 5. Autorizaciones legales -->
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
-                    5. Autorizaciones Legales
-                </h3>
-
-                <div class="form-group">
-                    <label style="display: flex; align-items: start; gap: 0.5rem; cursor: pointer;">
-                        <input type="checkbox" id="modalConsentimientoDatos" class="form-checkbox" required>
-                        <span class="form-label">Consentimiento para uso interno de datos</span>
-                    </label>
-                    <small class="form-help">Acepto que mis datos sean utilizados únicamente para fines internos de la cooperativa, cumpliendo con la normativa de protección de datos.</small>
-                </div>
-
-                <div class="form-group">
-                    <label style="display: flex; align-items: start; gap: 0.5rem; cursor: pointer;">
-                        <input type="checkbox" id="modalAceptacionNormas" class="form-checkbox" required>
-                        <span class="form-label">Aceptación de normas internas y régimen disciplinario</span>
-                    </label>
-                    <small class="form-help">Acepto las normas internas de la cooperativa y el régimen disciplinario establecido.</small>
-                </div>
-
-                <!-- 6. Participación y disponibilidad -->
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
-                    6. Participación y Disponibilidad
-                </h3>
-
-                <div class="form-group">
-                    <label class="form-label">Áreas donde desea colaborar</label>
-                    <select id="modalAreasColaboracion" class="form-select" multiple style="min-height: 100px;">
-                        <option value="administracion">Administración</option>
-                        <option value="eventos">Eventos</option>
-                        <option value="apoyo_social">Apoyo Social</option>
-                        <option value="comunicacion">Comunicación</option>
-                        <option value="finanzas">Finanzas</option>
-                        <option value="proyectos">Proyectos</option>
-                    </select>
-                    <small class="form-help">Mantén presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples opciones</small>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Otras áreas (especificar)</label>
-                    <input type="text" id="modalOtrasAreas" class="form-input" placeholder="Especifica otras áreas donde te gustaría colaborar">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label required">Disponibilidad aproximada</label>
-                    <input type="number" id="modalDisponibilidadHoras" class="form-input" min="0" step="1" value="0" required>
-                    <small class="form-help">Horas por mes que puedes dedicar a la cooperativa</small>
-                </div>
-
-                <!-- 7. Observaciones -->
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem;">
-                    7. Observaciones (Opcional)
-                </h3>
-
-                <div class="form-group">
-                    <label class="form-label">Observaciones adicionales</label>
-                    <textarea id="modalObservaciones" class="form-input" rows="4" placeholder="Escribe aquí cualquier información adicional que consideres relevante..."></textarea>
-                    <small class="form-help">Información adicional, comentarios o cualquier dato que quieras compartir con la cooperativa</small>
-                </div>
-
-                <div class="form-actions" style="margin-top: 2rem;">
-                    <button type="submit" class="btn btn-primary" id="submitSocioBtn">Guardar</button>
-                    <button type="button" class="btn btn-outline" id="cancelModalBtn">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal: Ver Detalles Completos del Socio -->
-    <div id="socioDetallesModal" class="modal hidden">
-        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
-            <div class="modal-header">
-                <h2 class="modal-title">Detalles del Socio</h2>
-                <button type="button" class="btn-close" onclick="window.closeSocioDetallesModal();">×</button>
-            </div>
-            <div id="socioDetallesContent" style="padding: 1.5rem;">
-                <!-- Contenido se llenará dinámicamente -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-outline" onclick="closeGastoModal()">Cancelar</button>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
 
-    <!-- Modal: Agregar/Editar Gasto -->
-    <div id="gastoModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="gastoModalTitle" class="modal-title">Agregar Gasto</h2>
-                <button type="button" class="btn-close" onclick="closeGastoModal()">×</button>
+        <!-- Modal: Agregar/Editar Ingreso -->
+        <div id="ingresoModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="ingresoModalTitle" class="modal-title">Agregar Ingreso</h2>
+                    <button type="button" class="btn-close" onclick="closeIngresoModal()">×</button>
+                </div>
+
+                <form id="ingresoForm">
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Ingreso</label>
+                        <select id="ingresoTipo" class="form-select" required
+                            onchange="if(typeof window.handleCambioTipoIngreso==='function'){window.handleCambioTipoIngreso();}">
+                            <option value="otro">Otro Ingreso</option>
+                            <option value="aporte_socio">Aporte de Socio</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="ingresoSocioGroup" style="display: none;">
+                        <label class="form-label">Socio</label>
+                        <select id="ingresoSocioId" class="form-select">
+                            <option value="">-- Seleccione un socio --</option>
+                        </select>
+                        <small class="form-help">Al seleccionar un socio, el concepto y monto se llenarán
+                            automáticamente con su cuota mensual</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Fecha</label>
+                        <input type="date" id="ingresoFecha" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Concepto</label>
+                        <input type="text" id="ingresoConcepto" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Monto (€)</label>
+                        <input type="number" id="ingresoMonto" class="form-input" min="0" step="0.01" required>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-outline" onclick="closeIngresoModal()">Cancelar</button>
+                    </div>
+                </form>
             </div>
-
-            <form id="gastoForm">
-                <div class="form-group">
-                    <label class="form-label">Fecha</label>
-                    <input type="date" id="gastoFecha" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Concepto</label>
-                    <input type="text" id="gastoConcepto" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Monto (€)</label>
-                    <input type="number" id="gastoMonto" class="form-input" min="0" step="0.01" required>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                    <button type="button" class="btn btn-outline" onclick="closeGastoModal()">Cancelar</button>
-                </div>
-            </form>
         </div>
-    </div>
 
-    <!-- Modal: Agregar/Editar Ingreso -->
-    <div id="ingresoModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="ingresoModalTitle" class="modal-title">Agregar Ingreso</h2>
-                <button type="button" class="btn-close" onclick="closeIngresoModal()">×</button>
+        <!-- Modal: Agregar/Editar Pago -->
+        <div id="pagoModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="pagoModalTitle" class="modal-title">Registrar Pago</h2>
+                    <button type="button" class="btn-close" onclick="closePagoModal()">×</button>
+                </div>
+
+                <form id="pagoForm">
+                    <div class="form-group">
+                        <label class="form-label">Socio</label>
+                        <select id="pagoSocioId" class="form-select" required>
+                            <option value="">-- Seleccione un socio --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Fecha</label>
+                        <input type="date" id="pagoFecha" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Monto (€)</label>
+                        <input type="number" id="pagoMonto" class="form-input" min="0" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Concepto</label>
+                        <input type="text" id="pagoConcepto" class="form-input" required>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-outline" onclick="closePagoModal()">Cancelar</button>
+                    </div>
+                </form>
             </div>
-
-            <form id="ingresoForm">
-                <div class="form-group">
-                    <label class="form-label">Tipo de Ingreso</label>
-                    <select id="ingresoTipo" class="form-select" required onchange="if(typeof window.handleCambioTipoIngreso==='function'){window.handleCambioTipoIngreso();}">
-                        <option value="otro">Otro Ingreso</option>
-                        <option value="aporte_socio">Aporte de Socio</option>
-                    </select>
-                </div>
-
-                <div class="form-group" id="ingresoSocioGroup" style="display: none;">
-                    <label class="form-label">Socio</label>
-                    <select id="ingresoSocioId" class="form-select">
-                        <option value="">-- Seleccione un socio --</option>
-                    </select>
-                    <small class="form-help">Al seleccionar un socio, el concepto y monto se llenarán automáticamente con su cuota mensual</small>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Fecha</label>
-                    <input type="date" id="ingresoFecha" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Concepto</label>
-                    <input type="text" id="ingresoConcepto" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Monto (€)</label>
-                    <input type="number" id="ingresoMonto" class="form-input" min="0" step="0.01" required>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                    <button type="button" class="btn btn-outline" onclick="closeIngresoModal()">Cancelar</button>
-                </div>
-            </form>
         </div>
-    </div>
 
-    <!-- Modal: Agregar/Editar Pago -->
-    <div id="pagoModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="pagoModalTitle" class="modal-title">Registrar Pago</h2>
-                <button type="button" class="btn-close" onclick="closePagoModal()">×</button>
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Cooperativa Pro-Vivienda mi Esperanza - Versión 1.0.0</p>
+        </footer>
+
+        <!-- Firma del Creador -->
+        <!-- Firma del Creador -->
+        <div class="creator-signature">
+            <div style="margin-bottom: 2px;">
+                creado por <span style="font-weight: 600;">Alexander Acero</span>
             </div>
-
-            <form id="pagoForm">
-                <div class="form-group">
-                    <label class="form-label">Socio</label>
-                    <select id="pagoSocioId" class="form-select" required>
-                        <option value="">-- Seleccione un socio --</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Fecha</label>
-                    <input type="date" id="pagoFecha" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Monto (€)</label>
-                    <input type="number" id="pagoMonto" class="form-input" min="0" step="0.01" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Concepto</label>
-                    <input type="text" id="pagoConcepto" class="form-input" required>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                    <button type="button" class="btn btn-outline" onclick="closePagoModal()">Cancelar</button>
-                </div>
-            </form>
+            <div>
+                <a href="tel:+34642868261">
+                    642 868 261
+                </a>
+            </div>
         </div>
-    </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>Cooperativa Pro-Vivienda mi Esperanza - Versión 1.0.0</p>
-    </footer>
-
-    <!-- Firma del Creador -->
-    <div style="position: fixed; bottom: 15px; right: 15px; z-index: 1000; font-family: 'Poppins', sans-serif; font-size: 0.75rem; color: #1e40af; text-align: right; pointer-events: none; transition: all 0.3s ease; opacity: 0.9;" 
-         onmouseover="this.style.opacity='1'; this.style.color='#1e3a8a';" 
-         onmouseout="this.style.opacity='0.9'; this.style.color='#1e40af';">
-        <div style="font-weight: 300; letter-spacing: 0.5px; margin-bottom: 2px;">
-            creado por <span style="font-weight: 600; color: #1e3a8a;">Alexander Acero</span>
-        </div>
-        <div style="font-weight: 300; letter-spacing: 1px; font-size: 0.7rem; color: #1e40af;">
-            <a href="tel:+34642868261" style="color: #1e40af; text-decoration: none; pointer-events: auto;" 
-               onmouseover="this.style.textDecoration='underline'; this.style.color='#1e3a8a';" 
-               onmouseout="this.style.textDecoration='none'; this.style.color='#1e40af';">
-                642 868 261
-            </a>
-        </div>
-    </div>
-
-  <!-- Scripts -->
-    <!-- Script de respaldo para capturar errores -->
-    <script>
-        // Asegurar que la función de verificación esté disponible
-        window.addEventListener('DOMContentLoaded', function() {
-            console.log('📄 DOM cargado, verificando función de acceso...');
-            if (typeof window.checkAppPassword === 'function') {
-                console.log('✅ Función checkAppPassword disponible');
-            } else {
-                console.warn('⚠️ Función checkAppPassword no disponible aún');
-            }
-        });
-        
-        // Capturar errores de JavaScript globalmente
-        window.addEventListener('error', function(e) {
-            console.error('Error global capturado:', e.error);
-            console.error('En:', e.filename, 'línea', e.lineno);
-        });
-
-        // Capturar errores de promesas rechazadas
-        window.addEventListener('unhandledrejection', function(e) {
-            console.error('Promesa rechazada sin manejar:', e.reason);
-        });
-
-        console.log('✅ Script de respaldo cargado');
-        
-        // Verificar carga de scripts después de un delay
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                console.log('🔍 Verificando funciones disponibles...');
-                const functions = [
-                    'openAddModal', 
-                    'openAddGastoModal', 
-                    'openAddIngresoModal', 
-                    'openAddPagoModal',
-                    'switchTab',
-                    'switchAdminTab'
-                ];
-                
-                functions.forEach(function(fnName) {
-                    if (typeof window[fnName] === 'function') {
-                        console.log('✅ ' + fnName + ' está disponible');
-                    } else {
-                        console.error('❌ ' + fnName + ' NO está disponible');
-                    }
-                });
-            }, 1000);
-        });
-    </script>
-    
-    <!-- Scripts en orden: primero db.js, luego admin-panel.js, finalmente main.js -->
-    <script src="js/database.js"></script>
-    <script src="js/db.js"></script>
-    <script src="js/admin-panel.js"></script>
-    <script src="js/main.js"></script>
-    
-    <!-- Script para generar QR cuando la página esté lista -->
-    <script>
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                if (typeof window.generateQRCode === 'function') {
-                    window.generateQRCode();
+        <!-- Scripts -->
+        <!-- Script de respaldo para capturar errores -->
+        <script>
+            // Asegurar que la función de verificación esté disponible
+            window.addEventListener('DOMContentLoaded', function () {
+                console.log('📄 DOM cargado, verificando función de acceso...');
+                if (typeof window.checkAppPassword === 'function') {
+                    console.log('✅ Función checkAppPassword disponible');
+                } else {
+                    console.warn('⚠️ Función checkAppPassword no disponible aún');
                 }
-            }, 500);
-        });
-    </script>
-    
-    <!-- Script de verificación final y reconexión forzada -->
-    <script>
-        // Función para reconectar todos los botones
-        function reconectarBotones() {
-            console.log('🔧 Reconectando botones...');
-            
-            // Botón Agregar Socio
-            const addSocioBtn = document.getElementById('addSocioBtn');
-            if (addSocioBtn) {
-                // Remover listeners anteriores
-                addSocioBtn.onclick = null;
-                const newBtn = addSocioBtn.cloneNode(true);
-                addSocioBtn.parentNode.replaceChild(newBtn, addSocioBtn);
-                
-                // Agregar nuevo listener
-                document.getElementById('addSocioBtn').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🔵 Click detectado en Agregar Socio');
-                    if (typeof window.openAddModal === 'function') {
-                        window.openAddModal();
-                    } else {
-                        alert('Función no disponible. Por favor recarga la página.');
+            });
+
+            // Capturar errores de JavaScript globalmente
+            window.addEventListener('error', function (e) {
+                console.error('Error global capturado:', e.error);
+                console.error('En:', e.filename, 'línea', e.lineno);
+            });
+
+            // Capturar errores de promesas rechazadas
+            window.addEventListener('unhandledrejection', function (e) {
+                console.error('Promesa rechazada sin manejar:', e.reason);
+            });
+
+            console.log('✅ Script de respaldo cargado');
+
+            // Verificar carga de scripts después de un delay
+            window.addEventListener('load', function () {
+                setTimeout(function () {
+                    console.log('🔍 Verificando funciones disponibles...');
+                    const functions = [
+                        'openAddModal',
+                        'openAddGastoModal',
+                        'openAddIngresoModal',
+                        'openAddPagoModal',
+                        'switchTab',
+                        'switchAdminTab'
+                    ];
+
+                    functions.forEach(function (fnName) {
+                        if (typeof window[fnName] === 'function') {
+                            console.log('✅ ' + fnName + ' está disponible');
+                        } else {
+                            console.error('❌ ' + fnName + ' NO está disponible');
+                        }
+                    });
+                }, 1000);
+            });
+        </script>
+
+        <!-- Scripts en orden: primero db.js, luego admin-panel.js, finalmente main.js -->
+        <script src="js/database.js"></script>
+        <script src="js/db.js"></script>
+        <script src="js/admin-panel.js"></script>
+        <script src="js/main.js"></script>
+
+        <!-- Script para generar QR cuando la página esté lista -->
+        <script>
+            window.addEventListener('load', function () {
+                setTimeout(function () {
+                    if (typeof window.generateQRCode === 'function') {
+                        window.generateQRCode();
                     }
-                });
-                console.log('✅ Botón Agregar Socio reconectado');
-            }
-            
-            // Botón Agregar Gasto
-            const addGastoBtn = document.getElementById('addGastoBtn');
-            if (addGastoBtn) {
-                addGastoBtn.onclick = null;
-                addGastoBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🔵 Click detectado en Agregar Gasto');
-                    if (typeof window.openAddGastoModal === 'function') {
-                        window.openAddGastoModal();
-                    } else {
-                        alert('Función no disponible. Por favor recarga la página.');
-                    }
-                });
-                console.log('✅ Botón Agregar Gasto reconectado');
-            }
-            
-            // Botón Agregar Ingreso
-            const addIngresoBtn = document.getElementById('addIngresoBtn');
-            if (addIngresoBtn) {
-                addIngresoBtn.onclick = null;
-                addIngresoBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🔵 Click detectado en Agregar Ingreso');
-                    if (typeof window.openAddIngresoModal === 'function') {
-                        window.openAddIngresoModal();
-                    } else {
-                        alert('Función no disponible. Por favor recarga la página.');
-                    }
-                });
-                console.log('✅ Botón Agregar Ingreso reconectado');
-            }
-            
-            // Botón Registrar Pago
-            const addPagoBtn = document.getElementById('addPagoBtn');
-            if (addPagoBtn) {
-                addPagoBtn.onclick = null;
-                addPagoBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🔵 Click detectado en Registrar Pago');
-                    if (typeof window.openAddPagoModal === 'function') {
-                        window.openAddPagoModal();
-                    } else {
-                        alert('Función no disponible. Por favor recarga la página.');
-                    }
-                });
-                console.log('✅ Botón Registrar Pago reconectado');
-            }
-            
-            // Botones de tabs
-            const tabSocios = document.getElementById('tabSocios');
-            if (tabSocios) {
-                tabSocios.onclick = null;
-                tabSocios.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (typeof window.switchTab === 'function') {
-                        window.switchTab('socios');
-                    }
-                });
-            }
-            
-            const tabAdmin = document.getElementById('tabAdmin');
-            if (tabAdmin) {
-                tabAdmin.onclick = null;
-                tabAdmin.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    // El switchTab ya verifica la autenticación
-                    if (typeof window.switchTab === 'function') {
-                        window.switchTab('admin').catch(err => console.error('Error:', err));
-                    }
-                });
-            }
-            
-            // Configurar event listeners para el modal de administración
-            const adminPasswordInput = document.getElementById('adminPasswordInput');
-            const adminLoginButton = document.getElementById('adminLoginButton');
-            const adminLoginForm = document.getElementById('adminLoginForm');
-            
-            if (adminPasswordInput) {
-                adminPasswordInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
+                }, 500);
+            });
+        </script>
+
+        <!-- Script de verificación final y reconexión forzada -->
+        <script>
+            // Función para reconectar todos los botones
+            function reconectarBotones() {
+                console.log('🔧 Reconectando botones...');
+
+                // Botón Agregar Socio
+                const addSocioBtn = document.getElementById('addSocioBtn');
+                if (addSocioBtn) {
+                    // Remover listeners anteriores
+                    addSocioBtn.onclick = null;
+                    const newBtn = addSocioBtn.cloneNode(true);
+                    addSocioBtn.parentNode.replaceChild(newBtn, addSocioBtn);
+
+                    // Agregar nuevo listener
+                    document.getElementById('addSocioBtn').addEventListener('click', function (e) {
                         e.preventDefault();
+                        e.stopPropagation();
+                        console.log('🔵 Click detectado en Agregar Socio');
+                        if (typeof window.openAddModal === 'function') {
+                            window.openAddModal();
+                        } else {
+                            alert('Función no disponible. Por favor recarga la página.');
+                        }
+                    });
+                    console.log('✅ Botón Agregar Socio reconectado');
+                }
+
+                // Botón Agregar Gasto
+                const addGastoBtn = document.getElementById('addGastoBtn');
+                if (addGastoBtn) {
+                    addGastoBtn.onclick = null;
+                    addGastoBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('🔵 Click detectado en Agregar Gasto');
+                        if (typeof window.openAddGastoModal === 'function') {
+                            window.openAddGastoModal();
+                        } else {
+                            alert('Función no disponible. Por favor recarga la página.');
+                        }
+                    });
+                    console.log('✅ Botón Agregar Gasto reconectado');
+                }
+
+                // Botón Agregar Ingreso
+                const addIngresoBtn = document.getElementById('addIngresoBtn');
+                if (addIngresoBtn) {
+                    addIngresoBtn.onclick = null;
+                    addIngresoBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('🔵 Click detectado en Agregar Ingreso');
+                        if (typeof window.openAddIngresoModal === 'function') {
+                            window.openAddIngresoModal();
+                        } else {
+                            alert('Función no disponible. Por favor recarga la página.');
+                        }
+                    });
+                    console.log('✅ Botón Agregar Ingreso reconectado');
+                }
+
+                // Botón Registrar Pago
+                const addPagoBtn = document.getElementById('addPagoBtn');
+                if (addPagoBtn) {
+                    addPagoBtn.onclick = null;
+                    addPagoBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('🔵 Click detectado en Registrar Pago');
+                        if (typeof window.openAddPagoModal === 'function') {
+                            window.openAddPagoModal();
+                        } else {
+                            alert('Función no disponible. Por favor recarga la página.');
+                        }
+                    });
+                    console.log('✅ Botón Registrar Pago reconectado');
+                }
+
+                // Botones de tabs
+                const tabSocios = document.getElementById('tabSocios');
+                if (tabSocios) {
+                    tabSocios.onclick = null;
+                    tabSocios.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        if (typeof window.switchTab === 'function') {
+                            window.switchTab('socios');
+                        }
+                    });
+                }
+
+                const tabAdmin = document.getElementById('tabAdmin');
+                if (tabAdmin) {
+                    tabAdmin.onclick = null;
+                    tabAdmin.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        // El switchTab ya verifica la autenticación
+                        if (typeof window.switchTab === 'function') {
+                            window.switchTab('admin').catch(err => console.error('Error:', err));
+                        }
+                    });
+                }
+
+                // Configurar event listeners para el modal de administración
+                const adminPasswordInput = document.getElementById('adminPasswordInput');
+                const adminLoginButton = document.getElementById('adminLoginButton');
+                const adminLoginForm = document.getElementById('adminLoginForm');
+
+                if (adminPasswordInput) {
+                    adminPasswordInput.addEventListener('keypress', function (e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (typeof window.checkAdminPassword === 'function') {
+                                window.checkAdminPassword();
+                            }
+                        }
+                    });
+                }
+
+                if (adminLoginButton) {
+                    adminLoginButton.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
                         if (typeof window.checkAdminPassword === 'function') {
                             window.checkAdminPassword();
                         }
-                    }
-                });
-            }
-            
-            if (adminLoginButton) {
-                adminLoginButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (typeof window.checkAdminPassword === 'function') {
-                        window.checkAdminPassword();
-                    }
-                    return false;
-                });
-            }
-            
-            if (adminLoginForm) {
-                adminLoginForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (typeof window.checkAdminPassword === 'function') {
-                        window.checkAdminPassword();
-                    }
-                    return false;
-                });
-            }
-        }
-        
-        // Ejecutar cuando la página cargue completamente
-        window.addEventListener('load', function() {
-            console.log('📄 Página completamente cargada');
-            
-            // Esperar un poco para que todos los scripts carguen
-            setTimeout(function() {
-                console.log('🔍 Verificando funciones disponibles...');
-                const functions = [
-                    'openAddModal', 
-                    'openAddGastoModal', 
-                    'openAddIngresoModal', 
-                    'openAddPagoModal',
-                    'switchTab',
-                    'switchAdminTab'
-                ];
-                
-                functions.forEach(function(fnName) {
-                    if (typeof window[fnName] === 'function') {
-                        console.log('✅ ' + fnName + ' está disponible');
-                    } else {
-                        console.error('❌ ' + fnName + ' NO está disponible');
-                    }
-                });
-                
-                // Reconectar botones después de verificar
-                reconectarBotones();
-                
-                // Actualizar balance y conteo de socios
-                if (typeof window.updateBalanceDisplay === 'function') {
-                    window.updateBalanceDisplay().catch(err => console.error('Error actualizando balance:', err));
+                        return false;
+                    });
                 }
-            }, 500);
-        });
-    </script>
+
+                if (adminLoginForm) {
+                    adminLoginForm.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (typeof window.checkAdminPassword === 'function') {
+                            window.checkAdminPassword();
+                        }
+                        return false;
+                    });
+                }
+            }
+
+            // Ejecutar cuando la página cargue completamente
+            window.addEventListener('load', function () {
+                console.log('📄 Página completamente cargada');
+
+                // Esperar un poco para que todos los scripts carguen
+                setTimeout(function () {
+                    console.log('🔍 Verificando funciones disponibles...');
+                    const functions = [
+                        'openAddModal',
+                        'openAddGastoModal',
+                        'openAddIngresoModal',
+                        'openAddPagoModal',
+                        'switchTab',
+                        'switchAdminTab'
+                    ];
+
+                    functions.forEach(function (fnName) {
+                        if (typeof window[fnName] === 'function') {
+                            console.log('✅ ' + fnName + ' está disponible');
+                        } else {
+                            console.error('❌ ' + fnName + ' NO está disponible');
+                        }
+                    });
+
+                    // Reconectar botones después de verificar
+                    reconectarBotones();
+
+                    // Actualizar balance y conteo de socios
+                    if (typeof window.updateBalanceDisplay === 'function') {
+                        window.updateBalanceDisplay().catch(err => console.error('Error actualizando balance:', err));
+                    }
+                }, 500);
+            });
+        </script>
     </div>
     <!-- Fin del contenido principal -->
     </div>
     <!-- Fin appContent -->
 </body>
+
 </html>

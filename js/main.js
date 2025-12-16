@@ -74,15 +74,19 @@
                 }
             }
 
-            // Ocultar modal de login
-            if (loginModal) {
-                loginModal.style.display = 'none';
-                loginModal.remove();
-            }
-
-            // Mostrar contenido de la app
+            // Mostrar contenido de la app PRIMERO
             if (appContent) {
                 appContent.style.display = 'block';
+                appContent.style.visibility = 'visible';
+            }
+
+            // Ocultar modal de login DESPUÉS
+            if (loginModal) {
+                loginModal.style.display = 'none';
+                loginModal.style.visibility = 'hidden';
+                setTimeout(() => {
+                    loginModal.remove();
+                }, 300);
             }
 
             // Inicializar la aplicación

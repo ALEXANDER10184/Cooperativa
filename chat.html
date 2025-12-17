@@ -82,6 +82,15 @@
     <script src="js/main.js"></script>
     <script src="js/api.js"></script>
     <script src="js/chat.js"></script>
+    <script>
+        // Inicializar modo alto contraste
+        document.addEventListener('DOMContentLoaded', function() {
+            const isHighContrast = localStorage.getItem('highContrast') === 'true';
+            if (isHighContrast) {
+                document.body.classList.add('high-contrast');
+            }
+        });
+    </script>
 </body>
 
 </html>

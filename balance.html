@@ -93,6 +93,15 @@
     <script type="module" src="js/main.js"></script>
     <script src="js/i18n.js"></script>
     <script>
+        // Inicializar modo alto contraste
+        document.addEventListener('DOMContentLoaded', function() {
+            const isHighContrast = localStorage.getItem('highContrast') === 'true';
+            if (isHighContrast) {
+                document.body.classList.add('high-contrast');
+            }
+        });
+    </script>
+    <script>
         // Esperar a que main.js cargue y las funciones estén disponibles
         document.addEventListener('DOMContentLoaded', async function () {
             // Translate page

@@ -904,7 +904,7 @@
                             <button class="btn-icon btn-icon-view view-btn" data-id="${socio.id}" title="Ver Detalles" style="background: #e0e7ff; color: #6366f1;">
                                 <span class="material-icons-round">visibility</span>
                             </button>
-                        <button class="btn-icon btn-icon-edit edit-btn" data-id="${socio.id}" data-socio-id="${socio.id}" title="Editar" onclick="event.stopPropagation(); if(typeof window.openEditModal==='function'){window.openEditModal('${socio.id}');}else{alert('Función no disponible');}">
+                        <button class="btn-icon btn-icon-edit edit-btn" data-id="${socio.id}" data-socio-id="${socio.id}" title="Editar" onclick="event.stopPropagation(); event.preventDefault(); if(typeof window.openEditModal==='function'){window.openEditModal('${socio.id.replace(/'/g, "\\'")}');}else{alert('Función no disponible');}">
                             <span class="material-icons-round">edit</span>
                         </button>
                         <button class="btn-icon btn-icon-delete delete-btn" data-id="${socio.id}" title="Eliminar">

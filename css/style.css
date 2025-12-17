@@ -613,6 +613,26 @@ tbody tr:last-child td {
 
 .modal-content.modal-lg {
   max-width: 900px;
+  width: 95%;
+}
+
+.info-section-glass {
+  transition: all 0.3s ease;
+}
+
+.info-section-glass:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.member-card-glass {
+  transition: all 0.3s ease;
+}
+
+.member-card-glass:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-color: rgba(56, 189, 248, 0.3) !important;
 }
 
 .modal-header {

@@ -1149,7 +1149,13 @@
             }
 
             content.innerHTML = html;
+            
+            // Mostrar modal removiendo clase hidden y forzando display
             modal.classList.remove('hidden');
+            modal.style.setProperty('display', 'flex', 'important');
+            modal.style.setProperty('visibility', 'visible', 'important');
+            
+            console.log('✅ Modal de detalles del socio abierto');
         } catch (error) {
             console.error('❌ Error al mostrar detalles del socio:', error);
             alert('Error al cargar los detalles del socio');
@@ -1162,7 +1168,9 @@
     window.closeSocioDetallesModal = function () {
         const modal = document.getElementById('socioDetallesModal');
         if (modal) {
+            modal.style.setProperty('display', 'none', 'important');
             modal.classList.add('hidden');
+            console.log('✅ Modal de detalles cerrado');
         }
     };
 

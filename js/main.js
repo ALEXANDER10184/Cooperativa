@@ -1453,7 +1453,12 @@
                 numMiembrosInput.addEventListener('input', updateModalMiembrosFamilia);
             }
 
+            // Mostrar modal removiendo clase hidden y forzando display
             socioModal.classList.remove('hidden');
+            socioModal.style.setProperty('display', 'flex', 'important');
+            socioModal.style.setProperty('visibility', 'visible', 'important');
+            socioModal.style.setProperty('z-index', '10000', 'important');
+            
             console.log('✅ Modal abierto correctamente');
         } catch (error) {
             console.error('❌ Error al abrir modal:', error);
@@ -1491,15 +1496,11 @@
                 return;
             }
 
-            // Cargar datos básicos del socio
-            const nombreInput = document.getElementById('modalNombre') || nombre;
-            const apellidoInput = document.getElementById('modalApellido') || apellido;
-            const emailInput = document.getElementById('modalEmail') || email;
-            const telefonoInput = document.getElementById('modalTelefono') || telefono;
-            const estadoInput = document.getElementById('modalEstado') || estado;
+            // Cargar datos básicos del socio - el modal solo tiene email, telefono y estado
+            const emailInput = document.getElementById('modalEmail');
+            const telefonoInput = document.getElementById('modalTelefono');
+            const estadoInput = document.getElementById('modalEstado');
 
-            if (nombreInput) nombreInput.value = socio.nombre || '';
-            if (apellidoInput) apellidoInput.value = socio.apellido || '';
             if (emailInput) emailInput.value = socio.email || '';
             if (telefonoInput) telefonoInput.value = socio.telefono || '';
             if (estadoInput) estadoInput.value = socio.estado || 'Activo';

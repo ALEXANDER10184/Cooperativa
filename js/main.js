@@ -1006,80 +1006,113 @@
                 }
             }
 
-            // Construir HTML con toda la información
+            // Debug: verificar estructura de datos
+            console.log('📋 Datos del socio:', socio);
+            console.log('👥 Miembros:', socio.miembros);
+            
+            // Construir HTML con toda la información - Diseño Moderno Glassmorphism
             let html = `
-                <div style="display: grid; gap: 2rem;">
+                <div style="display: grid; gap: 1.5rem;">
                     <!-- Información de Contacto -->
-                    <div>
-                        <h3 style="color: var(--color-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary);">
+                    <div class="info-section-glass" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 1.5rem; transition: all 0.3s ease;">
+                        <h3 style="color: var(--color-primary); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid rgba(56, 189, 248, 0.3); font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="material-icons-round" style="font-size: 1.25rem;">contact_mail</span>
                             2. Datos de Contacto
                         </h3>
                         <div style="display: grid; gap: 1rem;">
-                            <div>
-                                <strong>Teléfono:</strong> ${escapeHtml(socio.telefono || 'No especificado')}
+                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px;">
+                                <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8;">phone</span>
+                                <div><strong style="color: var(--text-secondary); margin-right: 0.5rem;">Teléfono:</strong><span style="color: var(--text-primary);">${escapeHtml(socio.telefono || 'No especificado')}</span></div>
                             </div>
-                            <div>
-                                <strong>Email:</strong> ${escapeHtml(socio.email || 'No especificado')}
+                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px;">
+                                <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8;">email</span>
+                                <div><strong style="color: var(--text-secondary); margin-right: 0.5rem;">Email:</strong><span style="color: var(--text-primary);">${escapeHtml(socio.email || 'No especificado')}</span></div>
                             </div>
                             ${socio.contactoEmergencia ? `
-                            <div>
-                                <strong>Contacto de emergencia:</strong> ${escapeHtml(socio.contactoEmergencia)}
+                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px;">
+                                <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8;">emergency</span>
+                                <div><strong style="color: var(--text-secondary); margin-right: 0.5rem;">Contacto de emergencia:</strong><span style="color: var(--text-primary);">${escapeHtml(socio.contactoEmergencia)}</span></div>
                             </div>
                             ` : ''}
                         </div>
                     </div>
 
                     <!-- Situación en la Cooperativa -->
-                    <div>
-                        <h3 style="color: var(--color-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary);">
+                    <div class="info-section-glass" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 1.5rem;">
+                        <h3 style="color: var(--color-primary); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid rgba(56, 189, 248, 0.3); font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="material-icons-round" style="font-size: 1.25rem;">business</span>
                             3. Situación del Socio en la Cooperativa
                         </h3>
-                        <div>
-                            <strong>Fecha de ingreso:</strong> ${formatDate(socio.fechaIngreso)}
-                        </div>
-                        <div style="margin-top: 0.5rem;">
-                            <strong>Estado:</strong> 
-                            <span class="badge ${socio.estado === 'Activo' || socio.estado === 'activo' ? 'badge-active' : 'badge-inactive'}">
-                                ${socio.estado || 'Activo'}
-                            </span>
+                        <div style="display: grid; gap: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px;">
+                                <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8;">event</span>
+                                <div><strong style="color: var(--text-secondary); margin-right: 0.5rem;">Fecha de ingreso:</strong><span style="color: var(--text-primary);">${formatDate(socio.fechaIngreso)}</span></div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px;">
+                                <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8;">check_circle</span>
+                                <div><strong style="color: var(--text-secondary); margin-right: 0.5rem;">Estado:</strong> 
+                                    <span class="badge ${socio.estado === 'Activo' || socio.estado === 'activo' ? 'badge-active' : 'badge-inactive'}">
+                                        ${socio.estado || 'Activo'}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Aportaciones -->
-                    <div>
-                        <h3 style="color: var(--color-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary);">
+                    <div class="info-section-glass" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 1.5rem;">
+                        <h3 style="color: var(--color-primary); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid rgba(56, 189, 248, 0.3); font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="material-icons-round" style="font-size: 1.25rem;">payments</span>
                             4. Aportaciones y Obligaciones
                         </h3>
-                        <div>
-                            <strong>Cuota mensual:</strong> ${window.formatCurrency ? window.formatCurrency(socio.cuotaMensual || 0) : (socio.cuotaMensual || 0) + ' €'}
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px;">
+                            <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8;">euro</span>
+                            <div><strong style="color: var(--text-secondary); margin-right: 0.5rem;">Cuota mensual:</strong><span style="color: var(--text-primary); font-size: 1.125rem; font-weight: 600;">${window.formatCurrency ? window.formatCurrency(socio.cuotaMensual || 0) : (socio.cuotaMensual || 0) + ' €'}</span></div>
                         </div>
                     </div>
 
                     <!-- Autorizaciones -->
                     ${socio.consentimientoDatos || socio.aceptacionNormas ? `
-                    <div>
-                        <h3 style="color: var(--color-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary);">
+                    <div class="info-section-glass" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 1.5rem;">
+                        <h3 style="color: var(--color-primary); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid rgba(56, 189, 248, 0.3); font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="material-icons-round" style="font-size: 1.25rem;">verified</span>
                             5. Autorizaciones Legales
                         </h3>
-                        <div style="display: grid; gap: 0.5rem;">
-                            ${socio.consentimientoDatos ? '<div>✅ Consentimiento para uso interno de datos</div>' : ''}
-                            ${socio.aceptacionNormas ? '<div>✅ Aceptación de normas internas</div>' : ''}
-                            ${socio.fechaConsentimiento ? `<div style="font-size: 0.875rem; color: #6b7280;">Fecha de consentimiento: ${formatDate(socio.fechaConsentimiento)}</div>` : ''}
+                        <div style="display: grid; gap: 0.875rem;">
+                            ${socio.consentimientoDatos ? `
+                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                <span class="material-icons-round" style="color: #10b981; font-size: 1.25rem;">check_circle</span>
+                                <div style="color: var(--text-primary); font-weight: 500;">Consentimiento para uso interno de datos</div>
+                            </div>
+                            ` : ''}
+                            ${socio.aceptacionNormas ? `
+                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                <span class="material-icons-round" style="color: #10b981; font-size: 1.25rem;">check_circle</span>
+                                <div style="color: var(--text-primary); font-weight: 500;">Aceptación de normas internas</div>
+                            </div>
+                            ` : ''}
+                            ${socio.fechaConsentimiento ? `
+                            <div style="padding: 0.875rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px;">
+                                <div style="font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Fecha de consentimiento</div>
+                                <div style="color: var(--text-primary);">${formatDate(socio.fechaConsentimiento)}</div>
+                            </div>
+                            ` : ''}
                         </div>
                     </div>
                     ` : ''}
 
                     <!-- Participación -->
                     ${socio.areasColaboracion || socio.disponibilidadHoras ? `
-                    <div>
-                        <h3 style="color: var(--color-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary);">
+                    <div class="info-section-glass" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 1.5rem;">
+                        <h3 style="color: var(--color-primary); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid rgba(56, 189, 248, 0.3); font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="material-icons-round" style="font-size: 1.25rem;">volunteer_activism</span>
                             6. Participación y Disponibilidad
                         </h3>
-                        <div style="display: grid; gap: 1rem;">
+                        <div style="display: grid; gap: 1.25rem;">
                             ${socio.areasColaboracion && socio.areasColaboracion.length > 0 ? `
                             <div>
-                                <strong>Áreas de colaboración:</strong>
-                                <div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                <div style="font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem;">Áreas de colaboración</div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.625rem;">
                                     ${socio.areasColaboracion.map(area => {
                 const areaNames = {
                     'administracion': 'Administración',
@@ -1089,23 +1122,33 @@
                     'finanzas': 'Finanzas',
                     'proyectos': 'Proyectos'
                 };
-                return `<span style="background: #e0e7ff; color: #6366f1; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem;">${areaNames[area] || area}</span>`;
+                return `<span style="background: rgba(56, 189, 248, 0.15); color: var(--color-primary); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 500; border: 1px solid rgba(56, 189, 248, 0.3);">${areaNames[area] || area}</span>`;
             }).join('')}
                                 </div>
                             </div>
                             ` : ''}
                             ${socio.otrasAreas ? `
-                            <div>
-                                <strong>Otras áreas:</strong> ${escapeHtml(socio.otrasAreas)}
+                            <div style="display: flex; align-items: start; gap: 0.75rem; padding: 0.875rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px;">
+                                <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8; margin-top: 2px;">add_circle</span>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Otras áreas</div>
+                                    <div style="color: var(--text-primary); font-weight: 500;">${escapeHtml(socio.otrasAreas)}</div>
+                                </div>
                             </div>
                             ` : ''}
-                            <div>
-                                <strong>Disponibilidad:</strong> ${socio.disponibilidadHoras || 0} horas/mes
+                            ${socio.disponibilidadHoras ? `
+                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px;">
+                                <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8;">schedule</span>
+                                <div><strong style="color: var(--text-secondary); margin-right: 0.5rem;">Disponibilidad:</strong><span style="color: var(--text-primary); font-weight: 600;">${socio.disponibilidadHoras} horas/mes</span></div>
                             </div>
+                            ` : ''}
                             ${socio.observaciones ? `
-                                <div style="margin-top: 1rem; padding: 1rem; background: #f3f4f6; border-radius: 8px; border-left: 4px solid var(--color-primary);">
-                                    <p style="margin: 0 0 0.5rem 0; font-weight: 600; color: var(--color-primary);">Observaciones:</p>
-                                    <p style="margin: 0; white-space: pre-wrap;">${escapeHtml(socio.observaciones)}</p>
+                                <div style="margin-top: 0.5rem; padding: 1.25rem; background: rgba(56, 189, 248, 0.08); border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.2); border-left: 4px solid var(--color-primary);">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                        <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary);">note</span>
+                                        <p style="margin: 0; font-weight: 600; color: var(--color-primary);">Observaciones</p>
+                                    </div>
+                                    <p style="margin: 0; white-space: pre-wrap; color: var(--text-primary); line-height: 1.6;">${escapeHtml(socio.observaciones)}</p>
                                 </div>
                             ` : ''}
                         </div>
@@ -1114,39 +1157,160 @@
                 </div>
             `;
 
-            // Agregar información de miembros de la familia si existe
-            if (socio.miembros && socio.miembros.length > 0) {
-                let miembrosHtml = `
-                    <div>
-                        <h3 style="color: var(--color-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary);">
+            // Agregar información de miembros de la familia - Diseño Moderno
+            let miembrosHtml = '';
+            
+            // Verificar si hay miembros o si el primer miembro tiene datos (socio principal)
+            const tieneMiembros = socio.miembros && socio.miembros.length > 0;
+            const tieneDatosSocioPrincipal = socio.nombre || socio.apellido;
+            
+            // Si hay miembros en el array, mostrar todos
+            if (tieneMiembros) {
+                miembrosHtml = `
+                    <div class="info-section-glass" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 1.5rem;">
+                        <h3 style="color: var(--color-primary); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid rgba(56, 189, 248, 0.3); font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="material-icons-round" style="font-size: 1.25rem;">groups</span>
                             1. Identificación de los Integrantes de la Familia (${socio.miembros.length} ${socio.miembros.length === 1 ? 'miembro' : 'miembros'})
                         </h3>
-                        <div style="display: grid; gap: 1.5rem;">
+                        <div style="display: grid; gap: 1.25rem;">
                 `;
 
                 socio.miembros.forEach((miembro, index) => {
-                    miembrosHtml += `
-                        <div style="background: #f9fafb; padding: 1.5rem; border-radius: 8px; border: 1px solid #e5e7eb;">
-                            <h4 style="margin-bottom: 1rem; color: var(--color-primary);">Miembro ${index + 1}</h4>
-                            <div style="display: grid; gap: 0.75rem;">
-                                <div><strong>Nombre completo:</strong> ${escapeHtml(miembro.nombreCompleto || '')}</div>
-                                <div><strong>Documento:</strong> ${escapeHtml(miembro.tipoDocumento ? (miembro.tipoDocumento.toUpperCase() + ': ' + miembro.numeroDocumento) : '')}</div>
-                                <div><strong>Fecha de nacimiento:</strong> ${formatDate(miembro.fechaNacimiento)}</div>
-                                <div><strong>Nacionalidad:</strong> ${escapeHtml(miembro.nacionalidad || '')}</div>
-                                <div><strong>Domicilio actual:</strong> ${escapeHtml(miembro.domicilioActual || '')}</div>
-                                <div><strong>Profesión:</strong> ${escapeHtml(miembro.profesion || '')}</div>
+                    // Verificar si el miembro tiene datos
+                    const tieneDatos = miembro.nombreCompleto || miembro.tipoDocumento || miembro.numeroDocumento;
+                    
+                    if (tieneDatos) {
+                        miembrosHtml += `
+                            <div class="member-card-glass" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden; transition: all 0.3s ease;">
+                                <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.5), transparent);"></div>
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+                                    <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(56, 189, 248, 0.3);">
+                                        <span class="material-icons-round" style="color: var(--color-primary); font-size: 1.25rem;">person</span>
+                                    </div>
+                                    <h4 style="margin: 0; color: var(--text-primary); font-size: 1.125rem; font-weight: 600;">Miembro ${index + 1}</h4>
+                                </div>
+                                <div style="display: grid; gap: 1rem;">
+                                    ${miembro.nombreCompleto ? `
+                                    <div style="display: flex; align-items: start; gap: 0.75rem; padding: 0.875rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px;">
+                                        <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8; margin-top: 2px;">badge</span>
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Nombre completo</div>
+                                            <div style="color: var(--text-primary); font-weight: 500;">${escapeHtml(miembro.nombreCompleto)}</div>
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                    ${miembro.tipoDocumento && miembro.numeroDocumento ? `
+                                    <div style="display: flex; align-items: start; gap: 0.75rem; padding: 0.875rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px;">
+                                        <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8; margin-top: 2px;">description</span>
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Documento</div>
+                                            <div style="color: var(--text-primary); font-weight: 500;">${escapeHtml(miembro.tipoDocumento.toUpperCase())}: ${escapeHtml(miembro.numeroDocumento)}</div>
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                    ${miembro.fechaNacimiento ? `
+                                    <div style="display: flex; align-items: start; gap: 0.75rem; padding: 0.875rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px;">
+                                        <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8; margin-top: 2px;">cake</span>
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Fecha de nacimiento</div>
+                                            <div style="color: var(--text-primary); font-weight: 500;">${formatDate(miembro.fechaNacimiento)}</div>
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                    ${miembro.nacionalidad ? `
+                                    <div style="display: flex; align-items: start; gap: 0.75rem; padding: 0.875rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px;">
+                                        <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8; margin-top: 2px;">public</span>
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Nacionalidad</div>
+                                            <div style="color: var(--text-primary); font-weight: 500;">${escapeHtml(miembro.nacionalidad)}</div>
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                    ${miembro.domicilioActual ? `
+                                    <div style="display: flex; align-items: start; gap: 0.75rem; padding: 0.875rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px;">
+                                        <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8; margin-top: 2px;">home</span>
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Domicilio actual</div>
+                                            <div style="color: var(--text-primary); font-weight: 500;">${escapeHtml(miembro.domicilioActual)}</div>
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                    ${miembro.profesion ? `
+                                    <div style="display: flex; align-items: start; gap: 0.75rem; padding: 0.875rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px;">
+                                        <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8; margin-top: 2px;">work</span>
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Profesión</div>
+                                            <div style="color: var(--text-primary); font-weight: 500;">${escapeHtml(miembro.profesion)}</div>
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                </div>
                             </div>
+                        `;
+                    }
+                });
+
+                // Si no hay miembros con datos, mostrar mensaje
+                if (!miembrosHtml.includes('member-card-glass')) {
+                    miembrosHtml += `
+                        <div style="padding: 2rem; text-align: center; color: var(--text-tertiary);">
+                            <span class="material-icons-round" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem; display: block;">person_off</span>
+                            <p style="margin: 0;">No hay información de miembros registrada</p>
                         </div>
                     `;
-                });
+                }
 
                 miembrosHtml += `
                         </div>
                     </div>
                 `;
-
-                html = miembrosHtml + html;
+            } else if (tieneDatosSocioPrincipal) {
+                // Si no hay array de miembros pero hay datos del socio principal, mostrar como miembro 1
+                miembrosHtml = `
+                    <div class="info-section-glass" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 1.5rem;">
+                        <h3 style="color: var(--color-primary); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid rgba(56, 189, 248, 0.3); font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="material-icons-round" style="font-size: 1.25rem;">person</span>
+                            1. Información del Socio Principal
+                        </h3>
+                        <div class="member-card-glass" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.5), transparent);"></div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(56, 189, 248, 0.3);">
+                                    <span class="material-icons-round" style="color: var(--color-primary); font-size: 1.25rem;">person</span>
+                                </div>
+                                <h4 style="margin: 0; color: var(--text-primary); font-size: 1.125rem; font-weight: 600;">${escapeHtml((socio.nombre || '') + ' ' + (socio.apellido || '')).trim() || 'Socio Principal'}</h4>
+                            </div>
+                            <div style="display: grid; gap: 1rem;">
+                                ${socio.nombre || socio.apellido ? `
+                                <div style="display: flex; align-items: start; gap: 0.75rem; padding: 0.875rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px;">
+                                    <span class="material-icons-round" style="font-size: 1.125rem; color: var(--color-primary); opacity: 0.8; margin-top: 2px;">badge</span>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Nombre completo</div>
+                                        <div style="color: var(--text-primary); font-weight: 500;">${escapeHtml((socio.nombre || '') + ' ' + (socio.apellido || '')).trim()}</div>
+                                    </div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // No hay información de miembros
+                miembrosHtml = `
+                    <div class="info-section-glass" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 1.5rem;">
+                        <h3 style="color: var(--color-primary); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid rgba(56, 189, 248, 0.3); font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="material-icons-round" style="font-size: 1.25rem;">groups</span>
+                            1. Identificación de los Integrantes de la Familia
+                        </h3>
+                        <div style="padding: 2rem; text-align: center; color: var(--text-tertiary);">
+                            <span class="material-icons-round" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem; display: block;">person_off</span>
+                            <p style="margin: 0;">No hay información de miembros registrada</p>
+                        </div>
+                    </div>
+                `;
             }
+
+            html = miembrosHtml + html;
 
             content.innerHTML = html;
             

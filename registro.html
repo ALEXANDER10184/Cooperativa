@@ -231,6 +231,20 @@
     <script src="js/database.js"></script>
     <script src="js/db.js"></script>
     <script src="js/registro.js"></script>
+    <script>
+        // Inicializar modo alto contraste si está disponible
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.initHighContrast === 'function') {
+                window.initHighContrast();
+            } else {
+                // Si no está disponible, inicializar directamente
+                const isHighContrast = localStorage.getItem('highContrast') === 'true';
+                if (isHighContrast) {
+                    document.body.classList.add('high-contrast');
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -815,6 +815,278 @@ tbody tr:last-child td {
   text-align: center;
 }
 
+/* ============================================
+   HIGH CONTRAST MODE - ACCESIBILIDAD
+   ============================================ */
+body.high-contrast {
+  /* Fondo más oscuro y uniforme - eliminar gradientes */
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+body.high-contrast :root,
+body.high-contrast {
+  /* Texto principal más claro (blanco alto contraste) */
+  --text-primary: #FFFFFF;
+  --text-secondary: #E0E0E0;
+  --text-tertiary: #CCCCCC;
+  
+  /* Fondo más oscuro */
+  --bg-app: #000000;
+  --bg-surface: #0A0A0A;
+  
+  /* Bordes más marcados y visibles */
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-border-highlight: rgba(255, 255, 255, 0.6);
+  
+  /* Transparencias reducidas para mejor legibilidad */
+  --glass-layer-1: rgba(255, 255, 255, 0.12);
+  --glass-layer-2: rgba(255, 255, 255, 0.18);
+  
+  /* Sombras más marcadas */
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+}
+
+/* Tipografía con mayor peso en alto contraste */
+body.high-contrast h1,
+body.high-contrast h2,
+body.high-contrast h3,
+body.high-contrast h4,
+body.high-contrast h5,
+body.high-contrast h6 {
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+}
+
+body.high-contrast p {
+  color: #E0E0E0 !important;
+}
+
+/* Cards con bordes más marcados */
+body.high-contrast .card {
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  background: rgba(20, 20, 20, 0.95) !important;
+}
+
+body.high-contrast .card:hover {
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  background: rgba(30, 30, 30, 0.98) !important;
+}
+
+/* Bordes de tablas más marcados */
+body.high-contrast th,
+body.high-contrast td {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+body.high-contrast thead {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+body.high-contrast tbody tr:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Formularios con mejor contraste */
+body.high-contrast .form-input,
+body.high-contrast .form-select,
+body.high-contrast textarea {
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  background: rgba(10, 10, 10, 0.9) !important;
+  color: #FFFFFF !important;
+}
+
+body.high-contrast .form-input:focus,
+body.high-contrast .form-select:focus,
+body.high-contrast textarea:focus {
+  border-color: var(--color-primary) !important;
+  border-width: 2px !important;
+  background: rgba(15, 15, 15, 0.95) !important;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3) !important;
+}
+
+body.high-contrast .form-label {
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+}
+
+/* Botones con mejor contraste */
+body.high-contrast .btn-outline {
+  border: 2px solid rgba(255, 255, 255, 0.5) !important;
+  background: rgba(20, 20, 20, 0.9) !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+}
+
+body.high-contrast .btn-outline:hover {
+  border-color: #FFFFFF !important;
+  background: rgba(40, 40, 40, 0.95) !important;
+  color: #FFFFFF !important;
+}
+
+body.high-contrast .btn-icon {
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  background: rgba(20, 20, 20, 0.9) !important;
+}
+
+body.high-contrast .btn-icon:hover {
+  border-color: rgba(255, 255, 255, 0.7) !important;
+  background: rgba(40, 40, 40, 0.95) !important;
+}
+
+/* Badges con mejor contraste */
+body.high-contrast .badge-active {
+  background: rgba(16, 185, 129, 0.3) !important;
+  color: #10B981 !important;
+  border: 1px solid #10B981 !important;
+  font-weight: 700 !important;
+}
+
+body.high-contrast .badge-inactive {
+  background: rgba(239, 68, 68, 0.3) !important;
+  color: #EF4444 !important;
+  border: 1px solid #EF4444 !important;
+  font-weight: 700 !important;
+}
+
+/* Navbar con mejor contraste */
+body.high-contrast .navbar {
+  background: rgba(0, 0, 0, 0.95) !important;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+body.high-contrast .navbar-title {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
+/* Modales con mejor contraste */
+body.high-contrast .modal {
+  background: rgba(0, 0, 0, 0.95) !important;
+}
+
+body.high-contrast .modal-content {
+  background: #0A0A0A !important;
+  border: 2px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+body.high-contrast .card-header {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+body.high-contrast .card-title {
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+}
+
+/* Tabs con mejor contraste */
+body.high-contrast .tab-btn {
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+body.high-contrast .tab-btn.active {
+  border: 2px solid var(--color-primary) !important;
+  background: rgba(56, 189, 248, 0.2) !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+}
+
+body.high-contrast .sub-tab-btn {
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+body.high-contrast .sub-tab-btn.active {
+  border: 2px solid var(--color-primary) !important;
+  background: rgba(56, 189, 248, 0.2) !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+}
+
+/* Table container con mejor contraste */
+body.high-contrast .table-container {
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Stats cards con mejor contraste */
+body.high-contrast .stat-card {
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  background: rgba(20, 20, 20, 0.95) !important;
+}
+
+body.high-contrast .stat-label {
+  color: #CCCCCC !important;
+  font-weight: 600 !important;
+}
+
+body.high-contrast .stat-value {
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+}
+
+/* Estados visuales con mejor contraste */
+body.high-contrast .alert {
+  border: 2px solid !important;
+}
+
+body.high-contrast .alert-error {
+  border-color: #EF4444 !important;
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+}
+
+/* Botón de alto contraste activo */
+body.high-contrast #toggleContrastBtn {
+  background: var(--color-primary) !important;
+  color: #000000 !important;
+  border: 2px solid var(--color-primary) !important;
+  font-weight: 700 !important;
+}
+
+body.high-contrast #toggleContrastBtn:hover {
+  background: #7dd3fc !important;
+  border-color: #7dd3fc !important;
+}
+
+/* Header en registro.html con mejor contraste */
+body.high-contrast .header {
+  background: rgba(0, 0, 0, 0.95) !important;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+body.high-contrast .main-logo-text {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
+/* Chat messages con mejor contraste */
+body.high-contrast .chat-message {
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  background: rgba(20, 20, 20, 0.95) !important;
+}
+
+body.high-contrast .chat-message-name {
+  color: var(--color-primary) !important;
+  font-weight: 700 !important;
+}
+
+body.high-contrast .chat-input-container {
+  border-top: 2px solid rgba(255, 255, 255, 0.4) !important;
+  background: rgba(10, 10, 10, 0.95) !important;
+}
+
+/* QR card con mejor contraste */
+body.high-contrast .qr-code-glass {
+  border: 2px solid rgba(255, 255, 255, 0.5) !important;
+  background: rgba(20, 20, 20, 0.95) !important;
+}
+
+body.high-contrast .qr-message-card {
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  background: rgba(15, 15, 15, 0.95) !important;
+}
+
 .password-text {
   font-size: 2rem;
   font-weight: 800;

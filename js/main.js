@@ -58,9 +58,9 @@
         console.log('🔑 Contraseña ingresada (limpia):', enteredPassword);
         console.log('🔑 Contraseña esperada:', expectedPassword);
 
-        // Comparación exacta (case-sensitive para mayor seguridad)
-        // Pero normalizar a minúsculas para evitar problemas de teclado
-        const isCorrectPassword = enteredPassword.toLowerCase() === expectedPassword.toLowerCase();
+        // Normalizar a minúsculas para evitar problemas de teclado
+        // Comparación exacta pero case-insensitive
+        const isCorrectPassword = enteredPassword.toLowerCase().trim() === expectedPassword.toLowerCase().trim();
         
         if (isCorrectPassword) {
             console.log('✅ Contraseña correcta - Autenticando...');
@@ -99,6 +99,17 @@
             if (typeof initUI === 'function') {
                 setTimeout(() => {
                     initUI().catch(err => console.error('Error inicializando:', err));
+                    
+                    // Si es administrador, navegar directamente a la pestaña de administración
+                    if (isAdmin) {
+                        setTimeout(() => {
+                            if (typeof window.switchTab === 'function') {
+                                window.switchTab('admin').catch(err => {
+                                    console.error('Error cambiando a admin:', err);
+                                });
+                            }
+                        }, 200);
+                    }
                 }, 100);
             }
         } else {
@@ -512,11 +523,51 @@
     }
 
     /**
+     * Inicializa el modo alto contraste
+     * Función global para uso en todas las páginas
+     */
+    window.initHighContrast = function() {
+        // Cargar preferencia guardada
+        const isHighContrast = localStorage.getItem('highContrast') === 'true';
+        
+        if (isHighContrast) {
+            document.body.classList.add('high-contrast');
+        }
+        
+        // Agregar listener al botón si existe
+        const toggleBtn = document.getElementById('toggleContrastBtn');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                const body = document.body;
+                const isActive = body.classList.contains('high-contrast');
+                
+                if (isActive) {
+                    body.classList.remove('high-contrast');
+                    localStorage.setItem('highContrast', 'false');
+                } else {
+                    body.classList.add('high-contrast');
+                    localStorage.setItem('highContrast', 'true');
+                }
+            });
+        }
+    };
+
+    // Función local que llama a la global
+    function initHighContrast() {
+        if (typeof window.initHighContrast === 'function') {
+            window.initHighContrast();
+        }
+    }
+
+    /**
      * Inicializa la aplicación
      */
     async function initUI() {
         try {
             console.log('🚀 Iniciando aplicación...');
+
+            // Inicializar modo alto contraste
+            initHighContrast();
 
             // Inicializar referencias del DOM
             initDOMReferences();

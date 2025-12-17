@@ -124,8 +124,8 @@ function showNotification(message, type = 'info') {
         console.log('🔑 Contraseña ingresada (limpia):', enteredPassword);
         console.log('🔑 Contraseña esperada:', ADMIN_PASSWORD);
         
-        // Comparación flexible (mayúsculas/minúsculas)
-        const isCorrectPassword = enteredPassword === ADMIN_PASSWORD || enteredPassword.toLowerCase() === ADMIN_PASSWORD.toLowerCase();
+        // Comparación exacta (case-sensitive)
+        const isCorrectPassword = enteredPassword === ADMIN_PASSWORD;
         
         if (isCorrectPassword) {
             console.log('✅ Contraseña de administración correcta');

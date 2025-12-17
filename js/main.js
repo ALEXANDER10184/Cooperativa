@@ -9,8 +9,9 @@
     // ============================================
     // ACCESS PASSWORD PROTECTION - NUEVO SISTEMA
     // ============================================
-    const APP_PASSWORD = 'miesperanza';
-    const ADMIN_ACCESS_PASSWORD = 'coopmiesperanza';
+    // Contraseñas de acceso
+    const APP_PASSWORD = 'miesperanza'; // Para acceso general (socios, registro)
+    const ADMIN_ACCESS_PASSWORD = 'coopmiesperanza'; // Para acceso como administrador
 
     /**
      * Verifica si el usuario está autenticado
@@ -57,8 +58,8 @@
         console.log('🔑 Contraseña ingresada (limpia):', enteredPassword);
         console.log('🔑 Contraseña esperada:', expectedPassword);
 
-        // Comparación (permitir mayúsculas/minúsculas por si hay problemas de teclado)
-        const isCorrectPassword = enteredPassword === expectedPassword || enteredPassword.toLowerCase() === expectedPassword.toLowerCase();
+        // Comparación exacta (case-sensitive para mayor seguridad)
+        const isCorrectPassword = enteredPassword === expectedPassword;
         
         if (isCorrectPassword) {
             console.log('✅ Contraseña correcta - Autenticando...');

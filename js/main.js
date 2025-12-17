@@ -1466,10 +1466,14 @@
      */
     window.openEditModal = async function (id) {
         try {
-            if (!socioModal || !modalTitle || !socioForm || !nombre || !apellido || !email || !telefono || !estado) {
+            console.log('✏️ Abriendo modal de edición para socio ID:', id);
+            
+            // Reinicializar referencias del DOM si es necesario
+            if (!socioModal || !modalTitle || !socioForm) {
                 initDOMReferences();
                 if (!socioModal || !modalTitle || !socioForm) {
                     console.error('❌ Referencias del DOM no inicializadas');
+                    alert('Error: elementos del modal no encontrados. Por favor recarga la página.');
                     return;
                 }
             }
@@ -1480,35 +1484,117 @@
             }
 
             const socio = await window.getItem('socios', id);
+            console.log('📋 Datos del socio a editar:', socio);
 
             if (!socio) {
                 alert('Socio no encontrado');
                 return;
             }
 
-            nombre.value = socio.nombre || '';
-            apellido.value = socio.apellido || '';
-            email.value = socio.email || '';
-            telefono.value = socio.telefono || '';
-            estado.value = socio.estado || 'Activo';
+            // Cargar datos básicos del socio
+            const nombreInput = document.getElementById('modalNombre') || nombre;
+            const apellidoInput = document.getElementById('modalApellido') || apellido;
+            const emailInput = document.getElementById('modalEmail') || email;
+            const telefonoInput = document.getElementById('modalTelefono') || telefono;
+            const estadoInput = document.getElementById('modalEstado') || estado;
 
-            // Cargar observaciones
+            if (nombreInput) nombreInput.value = socio.nombre || '';
+            if (apellidoInput) apellidoInput.value = socio.apellido || '';
+            if (emailInput) emailInput.value = socio.email || '';
+            if (telefonoInput) telefonoInput.value = socio.telefono || '';
+            if (estadoInput) estadoInput.value = socio.estado || 'Activo';
+
+            // Cargar otros campos
+            const contactoEmergencia = document.getElementById('modalContactoEmergencia');
+            if (contactoEmergencia) contactoEmergencia.value = socio.contactoEmergencia || '';
+
+            const fechaIngreso = document.getElementById('modalFechaIngreso');
+            if (fechaIngreso) fechaIngreso.value = socio.fechaIngreso || '';
+
+            const cuotaMensual = document.getElementById('modalCuotaMensual');
+            if (cuotaMensual) cuotaMensual.value = socio.cuotaMensual || 0;
+
+            const disponibilidadHoras = document.getElementById('modalDisponibilidadHoras');
+            if (disponibilidadHoras) disponibilidadHoras.value = socio.disponibilidadHoras || 0;
+
+            const otrasAreas = document.getElementById('modalOtrasAreas');
+            if (otrasAreas) otrasAreas.value = socio.otrasAreas || '';
+
             const observacionesField = document.getElementById('modalObservaciones');
-            if (observacionesField) {
-                observacionesField.value = socio.observaciones || '';
+            if (observacionesField) observacionesField.value = socio.observaciones || '';
+
+            // Cargar checkboxes de autorización
+            const consentimientoDatos = document.getElementById('modalConsentimientoDatos');
+            if (consentimientoDatos) consentimientoDatos.checked = socio.consentimientoDatos || false;
+
+            const aceptacionNormas = document.getElementById('modalAceptacionNormas');
+            if (aceptacionNormas) aceptacionNormas.checked = socio.aceptacionNormas || false;
+
+            // Cargar áreas de colaboración
+            const areasColaboracion = document.getElementById('modalAreasColaboracion');
+            if (areasColaboracion && socio.areasColaboracion && Array.isArray(socio.areasColaboracion)) {
+                // Limpiar selección previa
+                Array.from(areasColaboracion.options).forEach(option => {
+                    option.selected = false;
+                });
+                // Seleccionar las áreas del socio
+                socio.areasColaboracion.forEach(area => {
+                    const option = Array.from(areasColaboracion.options).find(opt => opt.value === area);
+                    if (option) option.selected = true;
+                });
+            }
+
+            // Cargar miembros de la familia
+            if (socio.miembros && Array.isArray(socio.miembros) && socio.miembros.length > 0) {
+                const numMiembrosInput = document.getElementById('modalNumMiembros');
+                if (numMiembrosInput) {
+                    numMiembrosInput.value = socio.miembros.length;
+                    // Actualizar el contenedor de miembros
+                    if (typeof updateModalMiembrosFamilia === 'function') {
+                        updateModalMiembrosFamilia();
+                    }
+                }
+
+                // Llenar los campos de miembros
+                setTimeout(() => {
+                    socio.miembros.forEach((miembro, index) => {
+                        const nombreField = document.querySelector(`.modal-member-nombre[data-index="${index}"]`);
+                        const tipoDocField = document.querySelector(`.modal-member-tipo-doc[data-index="${index}"]`);
+                        const docNumField = document.querySelector(`.modal-member-doc-num[data-index="${index}"]`);
+                        const fechaNacField = document.querySelector(`.modal-member-fecha-nac[data-index="${index}"]`);
+                        const nacionalidadField = document.querySelector(`.modal-member-nacionalidad[data-index="${index}"]`);
+                        const domicilioField = document.querySelector(`.modal-member-domicilio[data-index="${index}"]`);
+                        const profesionField = document.querySelector(`.modal-member-profesion[data-index="${index}"]`);
+
+                        if (nombreField) nombreField.value = miembro.nombreCompleto || '';
+                        if (tipoDocField) tipoDocField.value = miembro.tipoDocumento || '';
+                        if (docNumField) docNumField.value = miembro.numeroDocumento || '';
+                        if (fechaNacField) fechaNacField.value = miembro.fechaNacimiento || '';
+                        if (nacionalidadField) nacionalidadField.value = miembro.nacionalidad || '';
+                        if (domicilioField) domicilioField.value = miembro.domicilioActual || '';
+                        if (profesionField) profesionField.value = miembro.profesion || '';
+                    });
+                }, 100);
             }
 
             currentEditId = id;
-            modalTitle.textContent = 'Editar Socio';
+            if (modalTitle) modalTitle.textContent = 'Editar Socio';
 
             if (submitSocioBtn) {
                 submitSocioBtn.textContent = 'Actualizar';
             }
 
+            // Mostrar modal removiendo clase hidden y forzando display
             socioModal.classList.remove('hidden');
+            socioModal.style.setProperty('display', 'flex', 'important');
+            socioModal.style.setProperty('visibility', 'visible', 'important');
+            socioModal.style.setProperty('z-index', '10000', 'important');
+            
+            console.log('✅ Modal de edición abierto');
         } catch (error) {
             console.error('❌ Error al abrir modal de edición:', error);
-            alert('Error al cargar los datos del socio');
+            console.error('Stack:', error.stack);
+            alert('Error al cargar los datos del socio: ' + error.message);
         }
     };
 
@@ -1520,8 +1606,10 @@
             initDOMReferences();
         }
         if (socioModal) {
+            socioModal.style.setProperty('display', 'none', 'important');
             socioModal.classList.add('hidden');
             currentEditId = null;
+            console.log('✅ Modal cerrado');
         }
     };
 

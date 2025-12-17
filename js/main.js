@@ -11,7 +11,7 @@
     // ============================================
     // Contraseñas de acceso
     const APP_PASSWORD = 'miesperanza'; // Para acceso general (socios, registro)
-    const ADMIN_ACCESS_PASSWORD = 'coopmiesperanza'; // Para acceso como administrador
+    const ADMIN_ACCESS_PASSWORD = 'coopmiesperanza'; // Para acceso como administrador desde login inicial
 
     /**
      * Verifica si el usuario está autenticado
@@ -59,7 +59,8 @@
         console.log('🔑 Contraseña esperada:', expectedPassword);
 
         // Comparación exacta (case-sensitive para mayor seguridad)
-        const isCorrectPassword = enteredPassword === expectedPassword;
+        // Pero normalizar a minúsculas para evitar problemas de teclado
+        const isCorrectPassword = enteredPassword.toLowerCase() === expectedPassword.toLowerCase();
         
         if (isCorrectPassword) {
             console.log('✅ Contraseña correcta - Autenticando...');
@@ -71,8 +72,12 @@
             if (isAdmin) {
                 if (typeof window.setAdminAuthenticated === 'function') {
                     window.setAdminAuthenticated();
-                    console.log('✅ Autenticado como administrador');
+                    console.log('✅ Autenticado como administrador desde login principal');
                 }
+            } else {
+                // Si no es admin, asegurarse de que no esté autenticado como admin
+                // (por si había una sesión previa)
+                sessionStorage.removeItem('adminAuth');
             }
 
             // Mostrar contenido de la app PRIMERO

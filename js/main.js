@@ -932,14 +932,30 @@
                 }
 
                 if (editBtn) {
-                    editBtn.addEventListener('click', async () => {
+                    editBtn.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        console.log('✏️ Click en botón editar para socio ID:', socio.id);
+                        console.log('🔍 window.openEditModal existe?', typeof window.openEditModal);
+                        
                         try {
+                            if (typeof window.openEditModal !== 'function') {
+                                console.error('❌ window.openEditModal no es una función');
+                                alert('Error: La función de edición no está disponible. Por favor recarga la página.');
+                                return;
+                            }
+                            
                             await window.openEditModal(socio.id);
+                            console.log('✅ openEditModal ejecutado');
                         } catch (error) {
-                            console.error('Error abriendo modal de edición:', error);
-                            alert('Error al abrir el formulario de edición');
+                            console.error('❌ Error abriendo modal de edición:', error);
+                            console.error('Stack:', error.stack);
+                            alert('Error al abrir el formulario de edición: ' + error.message);
                         }
                     });
+                } else {
+                    console.warn('⚠️ Botón de editar no encontrado para socio:', socio.id);
                 }
 
                 if (deleteBtn) {
@@ -1471,17 +1487,29 @@
      */
     window.openEditModal = async function (id) {
         try {
-            console.log('✏️ Abriendo modal de edición para socio ID:', id);
+            console.log('✏️ openEditModal llamado con ID:', id);
+            
+            if (!id) {
+                console.error('❌ ID de socio no proporcionado');
+                alert('Error: ID de socio no válido');
+                return;
+            }
             
             // Reinicializar referencias del DOM si es necesario
             if (!socioModal || !modalTitle || !socioForm) {
+                console.log('🔄 Reinicializando referencias del DOM...');
                 initDOMReferences();
                 if (!socioModal || !modalTitle || !socioForm) {
-                    console.error('❌ Referencias del DOM no inicializadas');
+                    console.error('❌ Referencias del DOM no inicializadas después de initDOMReferences');
+                    console.error('socioModal:', socioModal);
+                    console.error('modalTitle:', modalTitle);
+                    console.error('socioForm:', socioForm);
                     alert('Error: elementos del modal no encontrados. Por favor recarga la página.');
                     return;
                 }
             }
+            
+            console.log('✅ Referencias del DOM verificadas');
 
             if (typeof window.getItem !== 'function') {
                 alert('Error: funciones de base de datos no disponibles');
